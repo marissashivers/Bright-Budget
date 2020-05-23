@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
-
+  // each object is a route and within the object, we have settings
   const routes = [
   {
     path: '/',
