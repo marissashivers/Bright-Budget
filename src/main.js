@@ -8,6 +8,7 @@ import store from './store'
 
 // VueFire
 import { firestorePlugin } from 'vuefire'
+Vue.use(firestorePlugin)
 
 // Bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -16,12 +17,18 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import moment from 'moment'
 Vue.prototype.moment = moment
 
-Vue.use(firestorePlugin)
+// Vuetify
+import vuetify from './plugins/vuetify';
+
+// Datepicker
+import Datepicker from 'vuejs-datepicker';
 
 Vue.config.productionTip = false
 
 new Vue({
   router,
   store,
+  vuetify,
+  Datepicker,
   render: h => h(App)
 }).$mount('#app')
