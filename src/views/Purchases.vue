@@ -8,6 +8,7 @@
       <li>Bootstrap table layout</li>
       <li>Vuetify</li>
       <li>Datepicker</li>
+      <li>Bootstrap Vue, Modal, forms</li>
     </ul>
 
     <AddPurchase></AddPurchase>
