@@ -1,4 +1,5 @@
 # finance-app-v3
+Personal project to get experienced with web development. Uses Vue.js and Firebase.
 
 ## Project setup
 ```
