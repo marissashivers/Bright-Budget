@@ -5,6 +5,9 @@
 </template>
 
 <script>
+    export default {
+        name: 'PurchaseViz'
+    }
     module.exports = {
         props: ['purchases']
     }
