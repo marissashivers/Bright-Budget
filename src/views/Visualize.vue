@@ -15,6 +15,24 @@
         <div v-if="formatDate(purchase.createdAt.toDate()) == formatDate(selectedDate)"> {{ purchase.purchasedAt }} @ {{ moment(purchase.createdAt.toDate()).format('MMM Do YYYY') }}</div>
     </div>
 
+    <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Search"
+        single-line
+        hide-details
+    ></v-text-field>
+    <v-data-table
+        :headers="headers"
+        :items="db"
+        :items-per-page="5"
+        :search="search"
+        class="elevation-1"
+    >
+        <template v-slot:item.createdAt="{ item }">{{ moment(item.createdAt.toDate()).format('MMMM Do, YYYY') }}</template>
+        <template v-slot:item.purchaseAmount="{ item } ">{{ "$" + (Math.round(item.purchaseAmount*100)/100).toFixed(2) }}</template>
+    </v-data-table>
+
   </div>
 </template>
 
@@ -39,6 +57,18 @@ export default {
             db: [],
             dbToDisplay: [],
             selectedDate: new Date(),
+            search: null,
+            headers: [
+                {
+                    text: 'Date',
+                    align: 'start',
+                    sortable: true,
+                    value: 'createdAt'
+                },
+                { text: 'Purchased At', value: 'purchasedAt'},
+                { text: 'Amount', value: 'purchaseAmount'},
+                { text: 'Category', value: 'purchaseCategory'}
+            ],
         }
     },
     firestore() {
@@ -50,8 +80,13 @@ export default {
     methods: {
         formatDate(date) {
             return moment(date).format('MMM YYYY');
-        }
-    }
+        },
+        getColor(price) {
+            if (price > 50) return 'red'
+            else if (price < 10) return 'yellow'
+            else return 'green'
+        },
+    },
 }
 </script>
 
