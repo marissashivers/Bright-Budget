@@ -1,6 +1,15 @@
 <template>
     <div class="container">
 
+        <!-- Add purchase category button-->
+        <form>
+            <b-form-group>
+                <label>Add purchase category</label>
+                <b-form-input type="text" v-model="categoryInput" />
+                <b-button type="submit"  @click.prevent="addCategory()" class="btn btn-primary">Add</b-button>
+            </b-form-group>
+        </form>
+
         <!-- BOOTSTRAP VUE MODAL -->
         <b-modal 
             id="edit-purchase-modal" 
@@ -54,8 +63,11 @@
                 <div class="col">
                     <label>Category</label>
                     <select class="form-control" v-model="purchaseCategory">
-                        <option v-for="(item, key) in categories" :key="key">
+                        <!-- <option v-for="(item, key) in categories" :key="key">
                             {{item}}
+                        </option> -->
+                        <option v-for="item in categories" :key="item.id">
+                            {{ item.category }}
                         </option>
                     </select>
                 </div>
@@ -110,6 +122,7 @@
 
 <script>
     import { purchaseCollection } from '../firebase';
+    import { categoryCollection } from '../firebase';
     import moment from 'moment';
     import Datepicker from 'vuejs-datepicker';
 
@@ -121,19 +134,17 @@
         data() {
             return {
                 purchase: null,
+                category: null,
+                categories: [],
                 purchases: [],
                 purchasedAt: null,
                 purchaseAmount: null,
                 purchaseCategory: null,
                 createdAt: new Date(),
-                categories: {
-                    "select1": "Food",
-                    "select2": "Shopping",
-                    "select3": "Clothing"
-                },
                 currentlyEditing: '',
                 isModalVisible: false,
                 totalPurchases: 0,
+                categoryInput: '',
             }
         },
         computed: {
@@ -145,7 +156,8 @@
         },
         firestore() {
             return {
-                purchases: purchaseCollection.orderBy('createdAt', 'desc')
+                purchases: purchaseCollection.orderBy('createdAt', 'desc'),
+                categories: categoryCollection,
             }
         },
         methods: {
@@ -167,6 +179,18 @@
                 this.createdAt = null;
                 this.purchaseAmount = null;
                 this.purchasedAt = '';
+            },
+            addCategory() {
+                categoryCollection.add({
+                    category: this.categoryInput,
+                    createdAt: new Date(),
+                })
+                .then(function(docRef) {
+                    console.log("Category written with ID: ", docRef.id);
+                })
+                .catch(function(error) {
+                    console.error("Error adding category document: ", error);
+                });
             },
             deletePurchase(purchase) {
                 purchaseCollection.doc(purchase.id).delete()
