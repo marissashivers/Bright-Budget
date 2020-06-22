@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <Chart></Chart>
 
     <hr />
 
@@ -15,60 +14,33 @@
         <div v-if="formatDate(purchase.createdAt.toDate()) == formatDate(selectedDate)"> {{ purchase.purchasedAt }} @ {{ moment(purchase.createdAt.toDate()).format('MMM Do YYYY') }}</div>
     </div>
 
-    <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        label="Search"
-        single-line
-        hide-details
-    ></v-text-field>
-    <v-data-table
-        :headers="headers"
-        :items="db"
-        :items-per-page="5"
-        :search="search"
-        class="elevation-1"
-    >
-        <template v-slot:item.createdAt="{ item }">{{ moment(item.createdAt.toDate()).format('MMMM Do, YYYY') }}</template>
-        <template v-slot:item.purchaseAmount="{ item } ">{{ "$" + (Math.round(item.purchaseAmount*100)/100).toFixed(2) }}</template>
-    </v-data-table>
+    <!-- Purchase List VUE component -->
+    <PurchaseList></PurchaseList>
 
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import Chart from '@/components/Chart.vue';
 import Datepicker from 'vuejs-datepicker';
 import { purchaseCollection } from '../firebase';
 import moment from 'moment';
+import PurchaseList from '@/components/PurchaseList.vue'
 
 export default {
     name: 'visualize',
     components: {
-        Chart,
         Datepicker,
+        PurchaseList,
     },
     computed: {
     },
     data() {
         return {
             purchase: null,
-            db: [],
             dbToDisplay: [],
             selectedDate: new Date(),
             search: null,
-            headers: [
-                {
-                    text: 'Date',
-                    align: 'start',
-                    sortable: true,
-                    value: 'createdAt'
-                },
-                { text: 'Purchased At', value: 'purchasedAt'},
-                { text: 'Amount', value: 'purchaseAmount'},
-                { text: 'Category', value: 'purchaseCategory'}
-            ],
         }
     },
     firestore() {

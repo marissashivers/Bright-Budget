@@ -9,6 +9,7 @@
       <li>Vuetify</li>
       <li>Datepicker</li>
       <li>Bootstrap Vue, Modal, forms</li>
+      <li>Chart.js wrapper for Vue</li>
     </ul>
 
     <AddPurchase></AddPurchase>
