@@ -10,6 +10,7 @@
       <li>Datepicker</li>
       <li>Bootstrap Vue, Modal, forms</li>
       <li>Chart.js wrapper for Vue</li>
+      <li>https://www.sitepoint.com/creating-beautiful-charts-vue-chart-js/</li>
     </ul>
 
     <AddPurchase></AddPurchase>

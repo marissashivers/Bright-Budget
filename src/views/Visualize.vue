@@ -17,6 +17,16 @@
     <!-- Purchase List VUE component -->
     <PurchaseList></PurchaseList>
 
+    <br />
+    <br />
+    <br />
+    <hr />
+
+    <h1>Demo examples of vue-chartjs</h1>
+    <!-- LINE CHART -->
+    <h3>Line Chart</h3>
+    <line-chart></line-chart>
+
   </div>
 </template>
 
@@ -26,12 +36,14 @@ import Datepicker from 'vuejs-datepicker';
 import { purchaseCollection } from '../firebase';
 import moment from 'moment';
 import PurchaseList from '@/components/PurchaseList.vue'
+import LineChart from '@/components/LineChart.vue'
 
 export default {
-    name: 'visualize',
+    name: 'Visualize',
     components: {
         Datepicker,
         PurchaseList,
+        LineChart,
     },
     computed: {
     },
