@@ -25,7 +25,7 @@
     <h1>Demo examples of vue-chartjs</h1>
     <!-- LINE CHART -->
     <h3>Line Chart</h3>
-    <line-chart></line-chart>
+    <RandomChart></RandomChart>
 
   </div>
 </template>
@@ -36,14 +36,14 @@ import Datepicker from 'vuejs-datepicker';
 import { purchaseCollection } from '../firebase';
 import moment from 'moment';
 import PurchaseList from '@/components/PurchaseList.vue'
-import LineChart from '@/components/LineChart.vue'
+import RandomChart from '@/components/RandomChart.vue'
 
 export default {
     name: 'Visualize',
     components: {
         Datepicker,
         PurchaseList,
-        LineChart,
+        RandomChart,
     },
     computed: {
     },
