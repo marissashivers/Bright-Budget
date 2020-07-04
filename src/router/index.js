@@ -33,6 +33,11 @@ Vue.use(VueRouter)
     name: 'Register',
     component: () => import('../views/Register.vue')
   },
+  {
+    path: "/meetings",
+    name: 'Meetings',
+    component: () => import('../views/Meetings.vue')
+  },
 ]
 
 const router = new VueRouter({

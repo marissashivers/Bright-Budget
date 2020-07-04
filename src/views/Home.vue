@@ -3,7 +3,7 @@
     <div class="text-secondary text-center">
       <div v-if="user" class="text-center">
         Welcome back 
-        <span class="font-weight-bold text-info">{{ user }}</span>,
+        <span class="font-weight-bold text-info">{{ user.displayName }}</span>,
         <a href="#" class="text-primary" role="button" @click="$emit('logout')">logout</a>
       </div>
     </div>
@@ -12,8 +12,8 @@
         <div class="col-10 col-md-10 col-lg-8 col-xl-7">
           <h4 class="display-4 text-primary mt-3 mb-2">Budgeting Tool</h4>
           <p class="lead">
-            This simple app lets you input all your purchases, allows you to analyze information, and
-            picks random users to award giveaways. It's a good example of a
+            This simple app lets you input all your purchases, allows you to analyze information, and 
+            perform complex analysis on your purchases with a simple UI. It's a good example of a
             Single Page Application which includes connection to a database and
             routing. It's a practical way to learn
             <a href="https://vuejs.org/">Vue.js</a>
@@ -22,18 +22,22 @@
             from the LinkedIn learning course, "Vue.js: Full Stack Application with Firebase".
           </p>
 
+          <!-- buttons -->
           <router-link
             class="btn btn-outline-primary mr-2"
             to="/register"
+            v-if="!user"
           >Register</router-link>
           <router-link
             class="btn btn-outline-primary mr-2"
             to="/login"
+            v-if="!user"
           >Log In</router-link>
           <router-link
             class="btn btn-primary"
-            to="/meetings"
-          >Meetings</router-link>
+            to="/purchases"
+            v-if="user"
+          >Purchases</router-link>
         </div>
       </div>
     </div>

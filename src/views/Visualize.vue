@@ -40,6 +40,7 @@ import RandomChart from '@/components/RandomChart.vue'
 
 export default {
     name: 'Visualize',
+    props: ["purchases"],
     components: {
         Datepicker,
         PurchaseList,

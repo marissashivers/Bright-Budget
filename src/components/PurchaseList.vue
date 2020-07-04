@@ -34,7 +34,7 @@ export default {
     },
     data() {
         return {
-            db: [],
+            db: purchaseCollection.orderBy('createdAt', 'desc'),
             search: null,
             headers: [
                 {
@@ -47,11 +47,6 @@ export default {
                 { text: 'Amount', value: 'purchaseAmount'},
                 { text: 'Category', value: 'purchaseCategory'}
             ],
-        }
-    },
-    firestore() {
-        return {
-            db: purchaseCollection.orderBy('createdAt', 'desc'),
         }
     },
 }
