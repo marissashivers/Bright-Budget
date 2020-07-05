@@ -260,10 +260,6 @@
     li {
         margin: 0 10px;
     }
-    .container {
-        padding-left: 300px;
-        padding-right: 300px;
-    }
     .btn-primary {
         margin-right: 12px;
     }

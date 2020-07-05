@@ -15,6 +15,7 @@
       @addMeeting="addMeeting"
       @deleteMeeting="deleteMeeting"
       @addPurchase="addPurchase"
+      @deletePurchase="deletePurchase"
     />
 
   </div>
@@ -64,8 +65,16 @@ export default {
       .doc(this.user.uid)
       .collection("purchases").add({
         purchaseLocation: location,
-        purchaseAmount: amount
+        purchaseAmount: amount,
+        createdAt: new Date()
       });
+    },
+    deletePurchase: function(purchaseId) {
+      db.collection("users")
+      .doc(this.user.uid)
+      .collection("purchases")
+      .doc(purchaseId)
+      .delete();
     }
   },
   mounted() {
@@ -95,7 +104,7 @@ export default {
           });
         });
       } // end if
-      // for purchases...
+      // purchases database:
       if (user) {
         this.user = user;
         // reading dynamic snapshot for users collection
@@ -109,17 +118,12 @@ export default {
             snapData.push({
               id: doc.id,
               purchaseLocation: doc.data().purchaseLocation,
-              purchaseAmount: doc.data().purchaseAmount
+              purchaseAmount: doc.data().purchaseAmount,
+              createdAt: doc.data().createdAt
             });
           });
           // sort the old fashion way
-          this.purchases = snapData.sort((a, b) => {
-            if (a.purchaseLocation.toLowerCase() < b.purchaseLocation.toLowerCase()) {
-              return -1;
-            } else {
-              return 1;
-            }
-          });
+          this.purchases = snapData;
         });
       }
     });
