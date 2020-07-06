@@ -30,9 +30,9 @@ import Datepicker from 'vuejs-datepicker';
 
 // font-awesome
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faUserSecret, faLink, faListUl, faRandom, faUndo, faStar, faEnvelope, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faUserSecret, faLink, faListUl, faRandom, faUndo, faStar, faEnvelope, faTrash, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-library.add(faUserSecret, faLink, faListUl, faRandom, faUndo, faStar, faEnvelope, faTrash);
+library.add(faUserSecret, faLink, faListUl, faRandom, faUndo, faStar, faEnvelope, faTrash, faPencilAlt);
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 

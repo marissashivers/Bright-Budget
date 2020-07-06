@@ -47,6 +47,19 @@
     <h1>Doubled clicks: {{ double }} </h1>
     <button @click="clicked">Click here </button>
 
+    <ul> Souces
+      <li>Firebase JavasScript SDK and reference</li>
+      <li>https://www.positronx.io/vue-js-firebase-build-vue-crud-app-with-cloud-firestore/</li>
+      <li>Bootstrap table layout</li>
+      <li>Vuetify</li>
+      <li>Datepicker</li>
+      <li>Bootstrap Vue, Modal, forms</li>
+      <li>Chart.js wrapper for Vue</li>
+      <li>https://www.sitepoint.com/creating-beautiful-charts-vue-chart-js/</li>
+      <li>HELPED WITH FIREBASE AUTH: https://stackoverflow.com/questions/56817919/import-firebase-firestore-returns-undefined</li>
+      <li>Custom Pagination: https://codepen.io/bilalo05/pen/oNgrKXo</li>
+    </ul>
+
   </div>
 </template>
 

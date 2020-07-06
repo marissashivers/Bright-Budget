@@ -1,6 +1,8 @@
 <template>
     <div class="container">
 
+        <h2> Old stuff to keep for legacy purposes...</h2>
+
         <!-- Add purchase category button-->
         <form>
             <b-form-group>
@@ -117,7 +119,33 @@
         <!-- total purchases -->
         <h2>Total Purchases: ${{ getTotalPurchases.toFixed(2) }}</h2>
 
+            <div>
+        <!-- SEARCH BAR -->
+        <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Search"
+            single-line
+            hide-details
+        ></v-text-field>
+
+        <!-- DATA TABLE -->
+        <v-data-table
+            :headers="headers"
+            :items="db"
+            :items-per-page="10"
+            :search="search"
+            class="elevation-1"
+        >
+            <!-- <template v-slot:item.createdAt="{ item }">{{ moment(item.createdAt.toDate()).format('MMMM Do, YYYY') }}</template>
+            <template v-slot:item.purchaseAmount="{ item } ">{{ "$" + (Math.round(item.purchaseAmount*100)/100).toFixed(2) }}</template> -->
+        </v-data-table>
     </div>
+
+    </div>
+
+
+    
 </template>
 
 <script>
@@ -145,6 +173,19 @@
                 isModalVisible: false,
                 totalPurchases: 0,
                 categoryInput: '',
+                db: purchaseCollection.orderBy('createdAt', 'desc'),
+                search: null,
+                headers: [
+                    {
+                        text: 'Date',
+                        align: 'start',
+                        sortable: true,
+                        value: 'createdAt'
+                    },
+                    { text: 'Purchased At', value: 'purchasedAt'},
+                    { text: 'Amount', value: 'purchaseAmount'},
+                    { text: 'Category', value: 'purchaseCategory'}
+                ],
             }
         },
         computed: {

@@ -1,27 +1,6 @@
 <template>
   <div class="container">
 
-    <hr />
-
-    <h2>Purchases...</h2>
-    <b-input-group class="w-25">
-        <label>Filter by month</label>
-        <datepicker class="form-control" v-model="selectedDate" placeholder="select date" :minimumView="'month'" :maximumView="'month'" >Select Date</datepicker>
-    </b-input-group>
-
-    <h3>Your purchases for {{ formatDate(selectedDate) }}:</h3>
-    <div v-for="purchase in db" :key="purchase.id">
-        <div v-if="formatDate(purchase.createdAt.toDate()) == formatDate(selectedDate)"> {{ purchase.purchasedAt }} @ {{ moment(purchase.createdAt.toDate()).format('MMM Do YYYY') }}</div>
-    </div>
-
-    <!-- Purchase List VUE component -->
-    <PurchaseList></PurchaseList>
-
-    <br />
-    <br />
-    <br />
-    <hr />
-
     <h1>Demo examples of vue-chartjs</h1>
     <!-- LINE CHART -->
     <h3>Line Chart</h3>
@@ -32,18 +11,15 @@
 
 <script>
 // @ is an alias to /src
-import Datepicker from 'vuejs-datepicker';
+//import Datepicker from 'vuejs-datepicker';
 import { purchaseCollection } from '../firebase';
 import moment from 'moment';
-import PurchaseList from '@/components/PurchaseList.vue'
 import RandomChart from '@/components/RandomChart.vue'
 
 export default {
     name: 'Visualize',
     props: ["purchases"],
     components: {
-        Datepicker,
-        PurchaseList,
         RandomChart,
     },
     computed: {
