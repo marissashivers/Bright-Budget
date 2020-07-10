@@ -6,7 +6,7 @@
       <div class="col-12 col-md-9 col-lg-7">
         <h1
           class="font-weight-light text-center"
-        >Add a Purchase</h1>
+        >Add a Purchase/Category</h1>
         <div class="card bg-light">
           <div class="card-body text-center">
             <form class="formgroup">

@@ -5,7 +5,7 @@
       :user="user" 
       @logout="logout"
     />
-    <!-- pass "user" as prop in router -->
+    <!-- pass props to router -->
     <router-view 
       class="container" 
       :user="user" 
@@ -68,7 +68,7 @@ export default {
       .doc(this.user.uid)
       .collection("purchases").add({
         purchaseLocation: location,
-        purchaseAmount: amount,
+        purchaseAmount: Number(amount),
         createdAt: new Date(),
         purchaseCategory: category
       });

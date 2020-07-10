@@ -3,7 +3,9 @@
   import { Bar } from 'vue-chartjs'
   //Exporting this so it can be used in other components
   export default {
+    name: "BarChartComponent",
     extends: Bar,
+    props: ["purchases", "categories"],
     data () {
       return {
         datacollection: {

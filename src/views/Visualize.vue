@@ -4,7 +4,9 @@
     <h1>Demo examples of vue-chartjs</h1>
     <!-- LINE CHART -->
     <h3>Line Chart</h3>
-    <RandomChart></RandomChart>
+
+    <LineChartComponent v-bind:purchases="this.purchases" v-bind:categories="this.categories"></LineChartComponent>
+    <BarChartComponent v:bind:purchases="this.purchases" v-bind:categories="this.categories"></BarChartComponent>
 
   </div>
 </template>
@@ -14,13 +16,16 @@
 //import Datepicker from 'vuejs-datepicker';
 import { purchaseCollection } from '../firebase';
 import moment from 'moment';
-import RandomChart from '@/components/RandomChart.vue'
+import LineChartComponent from '@/components/LineChart.vue';
+import BarChartComponent from "@/components/BarChart.vue";
 
 export default {
     name: 'Visualize',
-    props: ["purchases"],
+    inheritAttrs: false,
+    props: ["user", "purchases", "categories"],
     components: {
-        RandomChart,
+        LineChartComponent,
+        BarChartComponent,
     },
     computed: {
     },
