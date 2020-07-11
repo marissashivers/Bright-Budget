@@ -63,13 +63,13 @@ export default {
       .doc(payload)
       .delete();
     },
-    addPurchase: function(location, amount, category) {
+    addPurchase: function(location, amount, category, date) {
       db.collection("users")
       .doc(this.user.uid)
       .collection("purchases").add({
         purchaseLocation: location,
         purchaseAmount: Number(amount),
-        createdAt: new Date(),
+        createdAt: date,
         purchaseCategory: category
       });
     },
@@ -118,7 +118,6 @@ export default {
       } // end if
       // purchases database:
       if (user) {
-        // reading dynamic snapshot for users collection
         db.collection("users")
         .doc(this.user.uid)
         .collection("purchases")
@@ -134,8 +133,8 @@ export default {
               purchaseCategory: doc.data().purchaseCategory
             });
           });
-          // sort the old fashion way
-          this.purchases = snapData;
+          // Return purchase in order from most recent purchase.
+          this.purchases = snapData.reverse();
         });
       }// end if
       // categories database:

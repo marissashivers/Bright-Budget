@@ -2,11 +2,15 @@
   <div class="container">
 
     <h1>Demo examples of vue-chartjs</h1>
-    <!-- LINE CHART -->
     <h3>Line Chart</h3>
 
-    <LineChartComponent v-bind:purchases="this.purchases" v-bind:categories="this.categories"></LineChartComponent>
-    <BarChartComponent v:bind:purchases="this.purchases" v-bind:categories="this.categories"></BarChartComponent>
+    <BarChartComponent v-bind:purchases="this.purchases" v-bind:categories="this.categories"></BarChartComponent>
+
+    <br />
+    <br />
+    <h3>Pie Chart</h3>
+    <PieChartComponent v-bind:purchases="this.purchases" v-bind:categories="this.categories"></PieChartComponent>
+
 
   </div>
 </template>
@@ -16,16 +20,16 @@
 //import Datepicker from 'vuejs-datepicker';
 import { purchaseCollection } from '../firebase';
 import moment from 'moment';
-import LineChartComponent from '@/components/LineChart.vue';
 import BarChartComponent from "@/components/BarChart.vue";
+import PieChartComponent from "@/components/PieChart.vue";
 
 export default {
     name: 'Visualize',
     inheritAttrs: false,
     props: ["user", "purchases", "categories"],
     components: {
-        LineChartComponent,
         BarChartComponent,
+        PieChartComponent,
     },
     computed: {
     },

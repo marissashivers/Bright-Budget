@@ -15,7 +15,7 @@
                   type="text"
                   class="form-control"
                   name="purchaseLocation"
-                  placeholder="Purchase location"
+                  placeholder="Location"
                   aria-describedby="buttonAdd"
                   v-model="purchaseLocation"
                   ref="purchaseLocation"
@@ -24,7 +24,7 @@
                   type="text"
                   class="form-control"
                   name="purchaseAmount"
-                  placeholder="Purchase amount"
+                  placeholder="Amount"
                   aria-describedby="buttonAdd"
                   v-model="purchaseAmount"
                   ref="purchaseAmount"
@@ -35,13 +35,18 @@
                   v-model="purchaseCategory"
                   aria-describedby="buttonAdd"
                   ref="purchaseCategory"
-                  
                 >
-                  <option value="null" disabled hidden>Select category</option>
+                  <option value="null" disabled hidden>Category</option>
                   <option v-for="item in categories" :key="item.id">
                     {{ item.category }}
                   </option>
                 </select>
+                <!-- datepicker -->
+                <datepicker 
+                  v-model="createdAt" 
+                  class="form-control">
+                </datepicker>
+                <!-- submit button for + -->
                 <div class="input-group-append">
                   <button
                     type="submit"
@@ -156,10 +161,12 @@
 
 <script>
   import moment from 'moment';
+  import Datepicker from 'vuejs-datepicker';
   
   export default {
     name: 'purchases',
     components: {
+      Datepicker,
     },
     props: ["user", "purchases", "categories"],
     data() {
@@ -167,6 +174,7 @@
         purchaseLocation: null,
         purchaseAmount: null,
         purchaseCategory: null,
+        createdAt: new Date(),
         addCategory: null,
         page: 1,
         perPage: 5,
@@ -191,10 +199,11 @@
     },
     methods: {
       handleAddPurchase: function() {
-            this.$emit("addPurchase", this.purchaseLocation, this.purchaseAmount, this.purchaseCategory);
+            this.$emit("addPurchase", this.purchaseLocation, this.purchaseAmount, this.purchaseCategory, this.createdAt);
             this.purchaseLocation = null;
             this.purchaseAmount = null;
             this.purchaseCategory = null;
+            this.createdAt = null;
             this.$refs.purchaseLocation.focus();
       },
       handleDeletePurchase(purchase) {

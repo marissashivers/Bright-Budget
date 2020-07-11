@@ -1,56 +1,103 @@
+<template>
+    <div class="small">
+        <bar-chart :chart-data="datacollection"></bar-chart>
+    </div>
+</template>
+
 <script>
-  //Importing Bar class from the vue-chartjs wrapper
-  import { Bar } from 'vue-chartjs'
-  //Exporting this so it can be used in other components
-  export default {
+import BarChart from './BarChart.js';
+
+export default {
     name: "BarChartComponent",
-    extends: Bar,
+    inheritAttrs: false,
     props: ["purchases", "categories"],
-    data () {
-      return {
-        datacollection: {
-          // ------------ Data to be represented on x-axis ------------
-          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-          datasets: [
-            {
-              label: 'Data One',
-              backgroundColor: '#f87979',
-              pointBackgroundColor: 'white',
-              borderWidth: 1,
-              pointBorderColor: '#249EBF',
-              //Data to be represented on y-axis
-              data: [40, 20, 30, 50, 90, 10, 20, 40, 50, 70, 90, 100]
-            }
-          ]
+    components: {
+        BarChart,
+    },
+    computed: {
+        categoriesToString() {
+            var v = [];
+            this.categories.forEach(item => v.push(item.category))
+            return v;
         },
-        // ------------Chart.js options that controls the appearance of the chart ------------
-        options: {
-          scales: {
-            yAxes: [{
-              ticks: {
-                beginAtZero: true
-              },
-              gridLines: {
-                display: true
-              }
-            }],
-            xAxes: [ {
-              gridLines: {
-                display: false
-              }
-            }]
-          },
-          legend: {
-            display: true
-          },
-          responsive: true,
-          maintainAspectRatio: false
+        purchasesByCategory() {
+            // https://stackoverflow.com/questions/40774697/how-to-group-an-array-of-objects-by-key
+            // var result = this.purchases.reduce(function(r, a) {
+            //     r[a.purchaseCategory] = r[a.purchaseCategory] || [];
+            //     r[a.purchaseCategory].push(a);
+            //     return r;
+            // }, Object.create(null));
+
+            var result = this.groupBy(this.purchases, 'purchaseCategory');
+
+            var totals = [];
+            for(var cat in result) {
+                // result[cat] to acces array of objects
+                // https://gist.github.com/benwells/0111163b3cccfad0804d994c70de7aa1
+                var catTotal = result[cat].reduce(function(prev, cur) {
+                    return prev + cur.purchaseAmount;
+                }, 0);
+                console.log(catTotal);
+                totals.push(catTotal);
+            }
+            console.log(totals);
+            return totals;
+        },
+
+    },
+    data () {
+        return {
+            datacollection: null
         }
-      }
     },
     mounted () {
-      //renderChart function renders the chart with the datacollection and options object.
-      this.renderChart(this.datacollection, this.options)
+        this.fillData()
+    },
+    methods: {
+        fillData () {
+            // this.datacollection = {
+            //     labels: this.categoriesToString,
+            //     datasets: [
+            //     {
+            //         label: 'Data One',
+            //         backgroundColor: '#f87979',
+            //         data: [1, 2]
+            //     }, 
+            //     {
+            //         label: 'Data Two',
+            //         backgroundColor: '#00000',
+            //         data: [5, 4]
+            //     }
+            //     ]
+            // }
+            this.datacollection = { 
+                labels: this.categoriesToString,
+                datasets: [
+                    {
+                        label: 'Purchases',
+                        backgroundColor: '#05ad38',
+                        data: this.purchasesByCategory
+                    }
+                ]
+            }
+        },
+        groupBy(array, key) {
+            const result = {};
+            this.categoriesToString.forEach(ca => {
+                result[ca] = [];
+            })
+            array.forEach(item => {
+                if(!result[item[key]]) {
+                    result[item[key]] = [];
+                }
+                result[item[key]].push(item);
+            });
+            return result;
+        }
     }
-  }
+}
 </script>
+
+<style>
+
+</style>
