@@ -100,6 +100,7 @@
           <td>{{ item.purchaseLocation }}</td>
           <td>${{ item.purchaseAmount }}</td>
           <td>{{ item.purchaseCategory }}</td>
+          <!-- actions -->
           <td>
             <section
               class="btn-group align-self-center"

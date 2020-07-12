@@ -42,11 +42,6 @@
       </div>
     </div>
 
-    <!-- vuex experimentation -->
-    <h1>Number of clicks: {{ counter }} </h1>
-    <h1>Doubled clicks: {{ double }} </h1>
-    <button @click="clicked">Click here </button>
-
     <ul> Souces
       <li>Firebase JavasScript SDK and reference</li>
       <li>https://www.positronx.io/vue-js-firebase-build-vue-crud-app-with-cloud-firestore/</li>
