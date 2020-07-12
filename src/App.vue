@@ -16,6 +16,7 @@
       @addMeeting="addMeeting"
       @deleteMeeting="deleteMeeting"
       @addPurchase="addPurchase"
+      @savePurchase="savePurchase"
       @deletePurchase="deletePurchase"
       @addCategory="addCategory"
     />
@@ -72,6 +73,19 @@ export default {
         createdAt: date,
         purchaseCategory: category
       });
+    },
+    savePurchase: function(purchaseToEdit) {
+      console.log(purchaseToEdit.id);
+      db.collection("users")
+      .doc(this.user.uid)
+      .collection("purchases")
+      .doc(purchaseToEdit.id)
+      .update({
+        purchaseLocation: purchaseToEdit.purchaseLocation,
+        purchaseAmount: Number(purchaseToEdit.purchaseAmount),
+        createdAt: purchaseToEdit.createdAt,
+        purchaseCategory: purchaseToEdit.purchaseCategory
+      });      
     },
     addCategory: function(payload) {
       db.collection("users")

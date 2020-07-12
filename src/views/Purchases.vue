@@ -95,11 +95,73 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in displayedPurchases" :key="item.id">
-          <td>{{ formatDate(item.createdAt.toDate()) }}</td>
-          <td>{{ item.purchaseLocation }}</td>
-          <td>${{ item.purchaseAmount }}</td>
-          <td>{{ item.purchaseCategory }}</td>
+        <tr v-for="item in displayedPurchases" :key="item.id" :class="{editing: item == editedPurchase}" v-cloak>
+          <!-- date -->
+          <td>
+            <div class="view">
+                {{ formatDate(item.createdAt.toDate()) }}
+            </div>
+            <div class="edit">
+                <datepicker 
+                  v-model="createdAt" 
+                  class="form-control">
+                </datepicker>
+            </div>
+          </td>
+          <!-- purchase location -->
+          <td>
+            <div class="view">
+              {{ item.purchaseLocation }}
+            </div>
+            <div class="edit">
+              <input
+                type="text"
+                class="form-control"
+                name="purchaseLocation"
+                placeholder="Location"
+                aria-describedby="buttonAdd"
+                v-model="item.purchaseLocation"
+                ref="purchaseLocation"
+              />
+            </div>
+          </td>
+          <!-- purchase amount -->
+          <td>
+            <div class="view">
+              ${{ item.purchaseAmount }}
+            </div>
+            <div class="edit">
+              <input
+                type="text"
+                class="form-control"
+                name="purchaseAmount"
+                placeholder="Amount"
+                aria-describedby="buttonAdd"
+                v-model="item.purchaseAmount"
+                ref="purchaseAmount"
+              />
+            </div>
+          </td>
+          <!-- purchase category -->
+          <td>
+            <div class="view">
+              {{ item.purchaseCategory }}
+            </div>
+            <div class="edit">
+              <select
+                name="purchaseCategory"
+                class="form-control"
+                v-model="item.purchaseCategory"
+                aria-describedby="buttonAdd"
+                ref="purchaseCategory"
+              >
+                <option value="null" disabled hidden>Category</option>
+                <option v-for="item in categories" :key="item.id">
+                  {{ item.category }}
+                </option>
+              </select>
+            </div>
+          </td>
           <!-- actions -->
           <td>
             <section
@@ -108,9 +170,16 @@
               aria-label="Purchase Options"
             >
               <button 
-                class="btn btn-sm btn-outline-secondary"
+                class="btn btn-sm btn-outline-secondary view"
+                @click="editPurchase(item)"
               >
                 <font-awesome-icon icon="pencil-alt" />
+              </button>
+              <button
+                class="btn btn-sm btn-outline-secondary edit"
+                @click="handleSavePurchase(item)"
+              >
+                <font-awesome-icon icon="save"></font-awesome-icon>
               </button>
               <button 
                 class="btn btn-sm btn-outline-secondary" 
@@ -180,6 +249,8 @@
         page: 1,
         perPage: 5,
         pages: [],
+        editMode: false,
+        editedPurchase: null,
       }
     },
     computed: {
@@ -206,6 +277,10 @@
             this.purchaseCategory = null;
             this.createdAt = null;
             this.$refs.purchaseLocation.focus();
+      },
+      handleSavePurchase(purchase) {
+        this.$emit("savePurchase", purchase);
+        this.editMode = false;
       },
       handleDeletePurchase(purchase) {
         this.$emit("deletePurchase", purchase.id)
@@ -234,6 +309,10 @@
       formatDate(date) {
         return moment(date).format('MMM Do, YYYY');
       },
+      editPurchase(purchase) {
+        this.editMode = true;
+        this.editedPurchase = purchase;
+      },
     }
   }
 </script>
@@ -247,5 +326,18 @@ button.page-link {
   font-size: 20px;
   color: #29b3ed;
   font-weight: 500;
+}
+
+[v-cloak] {
+  display: none;
+}
+.edit {
+  display: none;
+}
+.editing .edit {
+  display: block;
+}
+.editing .view {
+  display: none;
 }
 </style>
