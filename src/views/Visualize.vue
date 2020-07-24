@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <button type="button" class="btn btn-outline-primary" @click="filterLastMonth()">Last Month</button>
-    <button type="button" class="btn btn-outline-primary">Last 3 Months</button>
+    <button type="button" class="btn btn-outline-primary" @click="filterLastThreeMonths()">Last 3 Months</button>
     <button type="button" class="btn btn-outline-primary">Last 365 Days</button>
     <button type="button" class="btn btn-outline-primary">Custom</button>
 
@@ -9,15 +9,22 @@
     <br />
     <br />
 
-    <h3>Line Chart</h3>
-    <BarChartComponent v-bind:purchases="this.purchases" v-bind:categories="this.categories"></BarChartComponent>
+    <div class="small">
+        <h3>Dynamically chagning bar chart 2</h3>
+        <BarChart2 :data="this.chartDataBar" :options="this.chartOptionsBar"></BarChart2>
+    </div>
 <!--
+    <h3>Bar Chart</h3>
+    <BarChartComponent v-bind:purchases="this.purchases" v-bind:categories="this.categories"></BarChartComponent>
+
     <h3>Pie Chart</h3>
     <PieChartComponent v-bind:purchases="this.purchases" v-bind:categories="this.categories"></PieChartComponent>
     -->
 
-    <h4>PieChart2 filter by date</h4>
-    <PieChart2 :data="this.chartData" :options="this.chartOptions"></PieChart2>
+    <div class="small">
+        <h4>PieChart2 filter by date</h4>
+        <PieChart2 :data="this.chartData" :options="this.chartOptions"></PieChart2>
+    </div>
 
   </div>
 </template>
@@ -27,18 +34,20 @@
 //import Datepicker from 'vuejs-datepicker';
 import { purchaseCollection } from '../firebase';
 import moment from 'moment';
-import BarChartComponent from "@/components/BarChart.vue";
+//import BarChartComponent from "@/components/BarChart.vue";
 //import PieChartComponent from "@/components/PieChart.vue";
 import PieChart2 from "@/components/PieChart2.vue";
+import BarChart2 from "@/components/BarChart2.vue";
 
 export default {
     name: 'Visualize',
     inheritAttrs: false,
     props: ["user", "purchases", "categories"],
     components: {
-        BarChartComponent,
+        //BarChartComponent,
         //PieChartComponent,
         PieChart2,
+        BarChart2,
     },
     created: function() {
         this.fetchData()
@@ -55,7 +64,11 @@ export default {
 
             // PIE CHART TESTING
             chartOptions: null,
-            chartData: null
+            chartData: null,
+
+            // Bar chart
+            chartDataBar: null,
+            chartOptionsBar: null,
         }
     },
     firestore() {
@@ -78,18 +91,40 @@ export default {
             this.chartOptions =  {
                 title: {
                     display: true,
-                    text: 'Purchases by Category'
+                    text: 'Purchases by Category',
+                    maintainAspectRatio: false,
                 }
+            }
+            this.chartDataBar = {
+                labels: this.categoriesToString(),
+                datasets: [
+                    {
+                        label: "Purchases",
+                        backgroundColor: "green",
+                        data: this.purchasesByCategory()
+                    }
+                ]
             }
         },
         formatDate(date) {
             return moment(date).format('MMM YYYY');
         },
         filterLastMonth() {
-            console.log(this.purchasesFiltered);
             var today = new Date();
             var lastMonth = new Date();
             lastMonth.setMonth(lastMonth.getMonth()-1);
+            var results = this.purchases.filter(purch => {
+                let date = purch.createdAt.toDate();
+                return date >= lastMonth && date <= today;
+            });
+            this.purchasesFiltered = results;
+            // reset chart data
+            this.fetchData();
+        },
+        filterLastThreeMonths() {
+            var today = new Date();
+            var lastMonth = new Date();
+            lastMonth.setMonth(lastMonth.getMonth()-3);
             var results = this.purchases.filter(purch => {
                 let date = purch.createdAt.toDate();
                 return date >= lastMonth && date <= today;
@@ -149,5 +184,8 @@ export default {
     .container {
         padding-left: 300px;
         padding-right: 300px;
+    }
+    .small {
+        width: 500px;
     }
 </style>

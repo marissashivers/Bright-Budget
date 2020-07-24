@@ -21,9 +21,7 @@ export default {
             return v;
         },
         purchasesByCategory() {
-
             var result = this.groupBy(this.purchases, 'purchaseCategory');
-
             var totals = [];
             for(var cat in result) {
                 // result[cat] to acces array of objects
@@ -47,21 +45,6 @@ export default {
     },
     methods: {
         fillData () {
-            // this.datacollection = {
-            //     labels: this.categoriesToString,
-            //     datasets: [
-            //     {
-            //         label: 'Data One',
-            //         backgroundColor: '#f87979',
-            //         data: [1, 2]
-            //     }, 
-            //     {
-            //         label: 'Data Two',
-            //         backgroundColor: '#00000',
-            //         data: [5, 4]
-            //     }
-            //     ]
-            // }
             this.datacollection = { 
                 labels: this.categoriesToString,
                 datasets: [
