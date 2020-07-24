@@ -21,12 +21,6 @@ export default {
             return v;
         },
         purchasesByCategory() {
-            // https://stackoverflow.com/questions/40774697/how-to-group-an-array-of-objects-by-key
-            // var result = this.purchases.reduce(function(r, a) {
-            //     r[a.purchaseCategory] = r[a.purchaseCategory] || [];
-            //     r[a.purchaseCategory].push(a);
-            //     return r;
-            // }, Object.create(null));
 
             var result = this.groupBy(this.purchases, 'purchaseCategory');
 
@@ -37,10 +31,8 @@ export default {
                 var catTotal = result[cat].reduce(function(prev, cur) {
                     return prev + cur.purchaseAmount;
                 }, 0);
-                console.log(catTotal);
                 totals.push(catTotal);
             }
-            console.log(totals);
             return totals;
         },
 

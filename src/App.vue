@@ -75,7 +75,6 @@ export default {
       });
     },
     savePurchase: function(purchaseToEdit) {
-      console.log(purchaseToEdit.id);
       db.collection("users")
       .doc(this.user.uid)
       .collection("purchases")
@@ -101,7 +100,7 @@ export default {
       .collection("purchases")
       .doc(purchaseId)
       .delete();
-    }
+    },
   },
   mounted() {
     auth.onAuthStateChanged(user => {

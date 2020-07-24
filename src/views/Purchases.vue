@@ -95,7 +95,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in displayedPurchases" :key="item.id" :class="{editing: item == editedPurchase}" v-cloak>
+        <tr v-for="item in displayedPurchases" :key="item.id" :class="{editing: item == editedPurchase && editMode == true}" v-cloak>
           <!-- date -->
           <td>
             <div class="view">
@@ -103,7 +103,7 @@
             </div>
             <div class="edit">
                 <datepicker 
-                  v-model="createdAt" 
+                  v-model="editedPurchaseDate" 
                   class="form-control">
                 </datepicker>
             </div>
@@ -193,7 +193,8 @@
       </tbody>
     </table>
 
-    <nav aria-label="Page navigation example">
+    <!-- Page Navigation -->
+    <nav aria-label="Page navigation">
       <ul class="pagination">
         <li class="page-item">
           <button 
@@ -249,8 +250,10 @@
         page: 1,
         perPage: 5,
         pages: [],
+
         editMode: false,
         editedPurchase: null,
+        editedPurchaseDate: null,
       }
     },
     computed: {
@@ -271,16 +274,16 @@
     },
     methods: {
       handleAddPurchase: function() {
-            this.$emit("addPurchase", this.purchaseLocation, this.purchaseAmount, this.purchaseCategory, this.createdAt);
-            this.purchaseLocation = null;
-            this.purchaseAmount = null;
-            this.purchaseCategory = null;
-            this.createdAt = null;
-            this.$refs.purchaseLocation.focus();
+        this.$emit("addPurchase", this.purchaseLocation, this.purchaseAmount, this.purchaseCategory, this.createdAt);
+        this.purchaseLocation = null;
+        this.purchaseAmount = null;
+        this.purchaseCategory = null;
+        this.createdAt = new Date();
       },
       handleSavePurchase(purchase) {
-        this.$emit("savePurchase", purchase);
+        purchase.createdAt = this.editedPurchaseDate;
         this.editMode = false;
+        this.$emit("savePurchase", purchase);
       },
       handleDeletePurchase(purchase) {
         this.$emit("deletePurchase", purchase.id)
@@ -312,6 +315,7 @@
       editPurchase(purchase) {
         this.editMode = true;
         this.editedPurchase = purchase;
+        this.editedPurchaseDate = purchase.createdAt.toDate();
       },
     }
   }
