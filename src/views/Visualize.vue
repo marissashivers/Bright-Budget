@@ -11,11 +11,12 @@
 
     <h3>Line Chart</h3>
     <BarChartComponent v-bind:purchases="this.purchases" v-bind:categories="this.categories"></BarChartComponent>
-
+<!--
     <h3>Pie Chart</h3>
     <PieChartComponent v-bind:purchases="this.purchases" v-bind:categories="this.categories"></PieChartComponent>
+    -->
 
-    <h4>filter by date</h4>
+    <h4>PieChart2 filter by date</h4>
     <PieChart2 :data="this.chartData" :options="this.chartOptions"></PieChart2>
 
   </div>
@@ -27,7 +28,7 @@
 import { purchaseCollection } from '../firebase';
 import moment from 'moment';
 import BarChartComponent from "@/components/BarChart.vue";
-import PieChartComponent from "@/components/PieChart.vue";
+//import PieChartComponent from "@/components/PieChart.vue";
 import PieChart2 from "@/components/PieChart2.vue";
 
 export default {
@@ -36,11 +37,69 @@ export default {
     props: ["user", "purchases", "categories"],
     components: {
         BarChartComponent,
-        PieChartComponent,
+        //PieChartComponent,
         PieChart2,
+    },
+    created: function() {
+        this.fetchData()
     },
     computed: {
         // PIE CHART TESTING
+    },
+    data() {
+        return {
+            purchase: null,
+            selectedDate: new Date(),
+            search: null,
+            purchasesFiltered: this.purchases,
+
+            // PIE CHART TESTING
+            chartOptions: null,
+            chartData: null
+        }
+    },
+    firestore() {
+        return {
+            db: purchaseCollection.orderBy('createdAt', 'desc'),
+        }
+    },
+    methods: {
+        fetchData: function() {
+            this.chartData = {
+                labels: this.categoriesToString(),
+                datasets: [
+                    {
+                        label: 'Purchases',
+                        backgroundColor: this.generateBgColorArray(),
+                        data: this.purchasesByCategory()
+                    }
+                ]
+            }
+            this.chartOptions =  {
+                title: {
+                    display: true,
+                    text: 'Purchases by Category'
+                }
+            }
+        },
+        formatDate(date) {
+            return moment(date).format('MMM YYYY');
+        },
+        filterLastMonth() {
+            console.log(this.purchasesFiltered);
+            var today = new Date();
+            var lastMonth = new Date();
+            lastMonth.setMonth(lastMonth.getMonth()-1);
+            var results = this.purchases.filter(purch => {
+                let date = purch.createdAt.toDate();
+                return date >= lastMonth && date <= today;
+            });
+            this.purchasesFiltered = results;
+            // reset chart data
+            this.fetchData();
+        },
+
+        // PIE CHART EXPERIMENTATION
         categoriesToString() {
             var v = [];
             this.categories.forEach(item => v.push(item.category))
@@ -59,69 +118,9 @@ export default {
             }
             return totals;
         },
-    },
-    data() {
-        return {
-            purchase: null,
-            selectedDate: new Date(),
-            search: null,
-            purchasesFiltered: this.purchases,
-
-            // PIE CHART TESTING
-            chartOptions: {
-                title: {
-                    display: true,
-                    text: 'Purchases by Category'
-                },
-            },
-            chartData: {
-                labels: () => this.categoriesToString(),
-                datasets: [
-                    {
-                        label: "Purchases",
-                        backgroundColor: () => this.generateBgColorArray(),
-                        data: () => this.purchasesByCategory(),
-                    }
-                ]
-            },
-        }
-    },
-    firestore() {
-        return {
-            db: purchaseCollection.orderBy('createdAt', 'desc'),
-        }
-    },
-    methods: {
-        formatDate(date) {
-            return moment(date).format('MMM YYYY');
-        },
-        getColor(price) {
-            if (price > 50) return 'red'
-            else if (price < 10) return 'yellow'
-            else return 'green'
-        },
-        filterLastMonth() {
-            console.log(this.purchasesFiltered);
-            var today = new Date();
-            var lastMonth = new Date();
-            lastMonth.setMonth(lastMonth.getMonth()-1);
-            var results = this.purchases.filter(purch => {
-                let date = purch.createdAt.toDate();
-                return date >= lastMonth && date <= today;
-            });
-            this.purchasesFiltered = results;
-            console.log(this.purchasesFiltered);
-        },
-
-        // PIE CHART EXPERIMENTATION
-        fillData() {
-            this.chartData = [
-                
-            ]
-        },
         groupBy(array, key) {
             const result = {};
-            this.categoriesToString.forEach(ca => {
+            this.categoriesToString().forEach(ca => {
                 result[ca] = [];
             })
             array.forEach(item => {
@@ -135,7 +134,7 @@ export default {
         generateBgColorArray() {
             var arr = [];
             var colors = ["#003f5c", "#2f4b7c", "#665191", "#a05195", "#d45087", "#f95d6a", "#ff7c43", "#ffa600"];
-            var length = this.categoriesToString.length;
+            var length = this.categoriesToString().length;
             for (var i = 0; i < length; i++) {
                 // generate random color
                 arr.push(colors[i]);

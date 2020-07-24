@@ -36,11 +36,11 @@ export default {
             }
             return totals;
         },
-
     },
     data () {
         return {
-            datacollection: null
+            datacollection: null,
+            options: null,
         }
     },
     mounted () {

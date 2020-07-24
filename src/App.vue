@@ -1,6 +1,7 @@
 <template>
   <div id="app">
 
+    <!-- NAVBAR -->
     <Navigation 
       :user="user" 
       @logout="logout"

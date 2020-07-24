@@ -6,15 +6,14 @@ export default {
     mounted() {
         this.renderChart(this.data, this.options)
     },
-    computed: {
-        chartData: function() {
-            return this.data;
+    watch: {
+        data: function() {
+            this.renderChart(this.data, this.options);
         }
     },
+    computed: {
+    },
     methods: {
-        renderLineChart: function() {
-            
-        }
     }
 }
 </script>
