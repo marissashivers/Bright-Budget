@@ -10,8 +10,7 @@
     <br />
     <h4>Dates displayed: {{ formatDate(this.start) }} to {{ formatDate(this.end) }}</h4>
 
-    <div class="small">
-        <h3>Bar chart - purchases by category</h3>
+    <div class="small card">
         <BarChart2 :data="this.chartDataBar" :options="this.chartOptionsBar"></BarChart2>
     </div>
 <!--
@@ -22,8 +21,7 @@
     <PieChartComponent v-bind:purchases="this.purchases" v-bind:categories="this.categories"></PieChartComponent>
     -->
 
-    <div class="small">
-        <h4>Pie Chart - purchases by category</h4>
+    <div class="small card">
         <PieChart2 :data="this.chartDataPie" :options="this.chartOptionsPie"></PieChart2>
     </div>
 
@@ -77,6 +75,10 @@ export default {
             // Bar chart
             chartOptionsBar: null,
             chartDataBar: null,
+
+            // Line chart
+            chartOptionsLine: null,
+            chartDataLine: null,
         }
     },
     firestore() {
@@ -92,7 +94,7 @@ export default {
                     {
                         label: 'Purchases',
                         backgroundColor: this.generateBgColorArray(),
-                        data: this.purchasesByCategory()
+                        data: this.getPurchasesByCategory()
                     }
                 ]
             }
@@ -129,9 +131,13 @@ export default {
                     {
                         label: "Purchases",
                         backgroundColor: "green",
-                        data: this.purchasesByCategory()
+                        data: this.getPurchasesByCategory()
                     }
                 ]
+            },
+            this.chartOptionsLine = {
+            },
+            this.chartDataLine = {
             }
         },
         formatDate(date) {
@@ -168,7 +174,7 @@ export default {
             this.categories.forEach(item => v.push(item.category))
             return v;
         },
-        purchasesByCategory() {
+        getPurchasesByCategory() {
             var result = this.groupBy(this.purchasesFiltered, 'purchaseCategory');
             var totals = [];
             for(var cat in result) {
@@ -180,6 +186,10 @@ export default {
                 totals.push(Number(catTotal).toFixed(2));
             }
             return totals;
+        },
+        getPurchasesByDay() {
+        },
+        getPurchasesByMonth() {
         },
         groupBy(array, key) {
             const result = {};
@@ -229,10 +239,16 @@ export default {
 
 <style scoped>
     .container {
-        padding-left: 300px;
-        padding-right: 300px;
+        padding-left: 50px;
+        padding-right: 50px;
     }
     .small {
-        width: 500px;
+        width: 400px;
+    }
+    .card {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        justify-content: space-between;
     }
 </style>
