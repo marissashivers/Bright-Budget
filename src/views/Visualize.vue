@@ -24,7 +24,7 @@
 
     <div class="small">
         <h4>Pie Chart - purchases by category</h4>
-        <PieChart2 :data="this.chartData" :options="this.chartOptions"></PieChart2>
+        <PieChart2 :data="this.chartDataPie" :options="this.chartOptionsPie"></PieChart2>
     </div>
 
   </div>
@@ -70,13 +70,13 @@ export default {
             end: new Date(),
             start: new Date(),
 
-            // PIE CHART TESTING
-            chartOptions: null,
-            chartData: null,
+            // Pie Chart
+            chartOptionsPie: null,
+            chartDataPie: null,
 
             // Bar chart
-            chartDataBar: null,
             chartOptionsBar: null,
+            chartDataBar: null,
         }
     },
     firestore() {
@@ -86,7 +86,7 @@ export default {
     },
     methods: {
         fetchData: function() {
-            this.chartData = {
+            this.chartDataPie = {
                 labels: this.categoriesToString(),
                 datasets: [
                     {
@@ -96,13 +96,33 @@ export default {
                     }
                 ]
             }
-            this.chartOptions =  {
+            this.chartOptionsPie =  {
                 title: {
                     display: true,
                     text: 'Purchases by Category',
                     maintainAspectRatio: false,
-                }
-            }
+                },
+                legend: {
+                    display: true,
+                    position: "right",
+                },
+                // tooltip display percentage: https://stackoverflow.com/questions/37257034/chart-js-2-0-doughnut-tooltip-percentages
+                tooltips: {
+                    callbacks: {
+                        label: function(tooltipItem, data) {
+                            var dataset = data.datasets[tooltipItem.datasetIndex];
+                            var meta = dataset._meta[Object.keys(dataset._meta)[0]];
+                            var total = meta.total;
+                            var currentValue = dataset.data[tooltipItem.index];
+                            var percentage = parseFloat((currentValue/total*100).toFixed(1));
+                            return currentValue + ' (' + percentage + '%)';
+                        },
+                        title: function(tooltipItem, data) {
+                            return data.labels[tooltipItem[0].index];
+                        }
+                    }
+                },
+            },
             this.chartDataBar = {
                 labels: this.categoriesToString(),
                 datasets: [
@@ -176,7 +196,26 @@ export default {
         },
         generateBgColorArray() {
             var arr = [];
-            var colors = ["#003f5c", "#2f4b7c", "#665191", "#a05195", "#d45087", "#f95d6a", "#ff7c43", "#ffa600"];
+            var colors = ["#3267cc",
+                        "#dc402b",
+                        "#f49831",
+                        "#47971a",
+                        "#9b3c99",
+                        "#3999c6",
+                        "#dd4777",
+                        "#66aa0f",
+                        "#b8352e",
+                        "#316395",
+                        "#994499",
+                        "#4bab99",
+                        "#aaaa1f",
+                        "#6840cc",
+                        "#e4742d",
+                        "#8c2618",
+                        "#662567",
+                        "#429362",
+                        "#5574a6",
+                        "#3b3eac"];
             var length = this.categoriesToString().length;
             for (var i = 0; i < length; i++) {
                 // generate random color
