@@ -42,6 +42,7 @@
       </div>
     </div>
 
+<!-- 
     <ul> Souces
       <li>Firebase JavasScript SDK and reference</li>
       <li>https://www.positronx.io/vue-js-firebase-build-vue-crud-app-with-cloud-firestore/</li>
@@ -54,6 +55,7 @@
       <li>HELPED WITH FIREBASE AUTH: https://stackoverflow.com/questions/56817919/import-firebase-firestore-returns-undefined</li>
       <li>Custom Pagination: https://codepen.io/bilalo05/pen/oNgrKXo</li>
     </ul>
+-->
 
   </div>
 </template>

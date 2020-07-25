@@ -8,6 +8,7 @@
     <br />
     <br />
     <br />
+    <h4>Dates displayed: {{ formatDate(this.start) }} to {{ formatDate(this.end) }}</h4>
 
     <div class="small">
         <h3>Dynamically chagning bar chart 2</h3>
@@ -50,7 +51,7 @@ export default {
         BarChart2,
     },
     created: function() {
-        this.fetchData()
+        this.fetchData();
     },
     computed: {
         // PIE CHART TESTING
@@ -61,6 +62,10 @@ export default {
             selectedDate: new Date(),
             search: null,
             purchasesFiltered: this.purchases,
+
+            // DATE FILTERING
+            end: new Date(),
+            start: new Date(),
 
             // PIE CHART TESTING
             chartOptions: null,
@@ -107,27 +112,27 @@ export default {
             }
         },
         formatDate(date) {
-            return moment(date).format('MMM YYYY');
+            return moment(date).format('MMM do YYYY');
         },
         filterLastMonth() {
-            var today = new Date();
-            var lastMonth = new Date();
-            lastMonth.setMonth(lastMonth.getMonth()-1);
+            this.end = new Date();
+            this.start = new Date();
+            this.start.setMonth(this.start.getMonth()-1);
             var results = this.purchases.filter(purch => {
                 let date = purch.createdAt.toDate();
-                return date >= lastMonth && date <= today;
+                return date >= this.start && date <= this.end;
             });
             this.purchasesFiltered = results;
             // reset chart data
             this.fetchData();
         },
         filterLastThreeMonths() {
-            var today = new Date();
-            var lastMonth = new Date();
-            lastMonth.setMonth(lastMonth.getMonth()-3);
+            this.end = new Date();
+            this.start = new Date();
+            this.start.setMonth(this.start.getMonth()-3);
             var results = this.purchases.filter(purch => {
                 let date = purch.createdAt.toDate();
-                return date >= lastMonth && date <= today;
+                return date >= this.start && date <= this.end;
             });
             this.purchasesFiltered = results;
             // reset chart data
@@ -175,7 +180,7 @@ export default {
                 arr.push(colors[i]);
             }
             return arr;
-        }
+        },
     },
 }
 </script>

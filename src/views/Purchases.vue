@@ -248,7 +248,7 @@
         createdAt: new Date(),
         addCategory: null,
         page: 1,
-        perPage: 5,
+        perPage: 10,
         pages: [],
 
         editMode: false,
@@ -271,6 +271,7 @@
     },
     created() {
       this.getPurchases();
+      this.setPages();
     },
     methods: {
       handleAddPurchase: function() {
