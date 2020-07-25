@@ -67,21 +67,10 @@ export default {
   components: {
   },
   computed: {
-    counter() {
-      // retrieve "counter" using $store keyword that was registered in Vuex Store
-      return this.$store.state.counter;
-    },
-    double() {
-      return this.$store.getters.doubleClicks;
-    }
   },
   mounted() {
   },
   methods: {
-    clicked() {
-      // commit (execute) the mutation called "increment"
-      this.$store.commit('increment');
-    }
   }
 }
 </script>
