@@ -10,7 +10,7 @@
     <div class="container text-center">
       <div class="row justify-content-center">
         <div class="col-10 col-md-10 col-lg-8 col-xl-7">
-          <h4 class="display-4 text-primary mt-3 mb-2">Budgeting Tool</h4>
+          <h4 class="display-4 text-primary mt-3 mb-2">Welcome to PurchaseViz</h4>
           <p class="lead">
             This simple app lets you input all your purchases, allows you to analyze information, and 
             perform complex analysis on your purchases with a simple UI. It's a good example of a

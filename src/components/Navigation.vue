@@ -1,7 +1,7 @@
 <template>
     <nav class="site-nav navbar navbar-expand bg-primary navbar-dark">
         <div class="container-fluid">
-            <router-link class="navbar-brand" to="/">Awesome Budget Tool</router-link>
+            <router-link class="navbar-brand" to="/">PurchaseViz</router-link>
             <div class="navbar-nav ml-auto">
                 <router-link class="nav-item nav-link" to="/purchases" v-if="user">purchases</router-link>
                 <router-link class="nav-item nav-link" to="/visualize" v-if="user">visualize</router-link>
