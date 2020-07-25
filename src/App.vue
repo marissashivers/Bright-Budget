@@ -1,6 +1,7 @@
 <template>
   <div id="app">
 
+    <!-- NAVBAR -->
     <Navigation 
       :user="user" 
       @logout="logout"
@@ -75,7 +76,6 @@ export default {
       });
     },
     savePurchase: function(purchaseToEdit) {
-      console.log(purchaseToEdit.id);
       db.collection("users")
       .doc(this.user.uid)
       .collection("purchases")
@@ -101,7 +101,7 @@ export default {
       .collection("purchases")
       .doc(purchaseId)
       .delete();
-    }
+    },
   },
   mounted() {
     auth.onAuthStateChanged(user => {

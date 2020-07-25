@@ -1,13 +1,15 @@
 <template>
     <div class="small">
-        <pie-chart :chart-data="datacollection"></pie-chart>
+        <pie-chart :chart-data="datacollection" :options="options"></pie-chart>
     </div>
 </template>
 
 <script>
 import PieChart from "./PieChart.js";
+import { Pie } from "vue-chartjs";
 
 export default {
+    extends: Pie,
     name: "PieChartComponent",
     inheritAttrs: false,
     props: ["purchases", "categories"],
@@ -23,7 +25,6 @@ export default {
         },
         purchasesByCategory() {
             var result = this.groupBy(this.purchases, 'purchaseCategory');
-
             var totals = [];
             for(var cat in result) {
                 // result[cat] to acces array of objects
@@ -35,11 +36,11 @@ export default {
             }
             return totals;
         },
-
     },
     data () {
         return {
-            datacollection: null
+            datacollection: null,
+            options: null,
         }
     },
     mounted () {
@@ -56,8 +57,14 @@ export default {
                         data: this.purchasesByCategory
                     }
                 ]
+            },
+            this.options = {
+                title: {
+                    display: true,
+                    text: 'Purchases by Category'
+                },
             }
-        },
+        }, // end fillData
         groupBy(array, key) {
             const result = {};
             this.categoriesToString.forEach(ca => {
@@ -73,16 +80,21 @@ export default {
         },
         generateBgColorArray() {
             var arr = [];
+            var colors = ["#003f5c", "#2f4b7c", "#665191", "#a05195", "#d45087", "#f95d6a", "#ff7c43", "#ffa600"];
             var length = this.categoriesToString.length;
             for (var i = 0; i < length; i++) {
                 // generate random color
-                arr.push("#"+((1<<24)*Math.random()|0).toString(16));
+                arr.push(colors[i]);
             }
             return arr;
         }
-    }
+    },
 }
 </script>
 
 <style scoped>
+.small {
+    max-width: 600px;
+    margin: 25px auto;
+}
 </style>

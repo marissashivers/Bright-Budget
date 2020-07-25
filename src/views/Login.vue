@@ -73,7 +73,6 @@ export default {
                 email: this.email,
                 password: this.password
             }
-
             auth
             .signInWithEmailAndPassword(info.email, info.password)
             .then(

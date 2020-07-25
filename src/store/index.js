@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+//mport { db } from './firebase';
 
 Vue.use(Vuex)
 
