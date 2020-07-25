@@ -11,7 +11,7 @@
     <h4>Dates displayed: {{ formatDate(this.start) }} to {{ formatDate(this.end) }}</h4>
 
     <div class="small">
-        <h3>Dynamically chagning bar chart 2</h3>
+        <h3>Bar chart - purchases by category</h3>
         <BarChart2 :data="this.chartDataBar" :options="this.chartOptionsBar"></BarChart2>
     </div>
 <!--
@@ -23,7 +23,7 @@
     -->
 
     <div class="small">
-        <h4>PieChart2 filter by date</h4>
+        <h4>Pie Chart - purchases by category</h4>
         <PieChart2 :data="this.chartData" :options="this.chartOptions"></PieChart2>
     </div>
 
@@ -52,6 +52,9 @@ export default {
     },
     created: function() {
         this.fetchData();
+    },
+    mounted() {
+        this.filterLastMonth();
     },
     computed: {
         // PIE CHART TESTING
@@ -154,7 +157,7 @@ export default {
                 var catTotal = result[cat].reduce(function(prev, cur) {
                     return prev + cur.purchaseAmount;
                 }, 0);
-                totals.push(catTotal);
+                totals.push(Number(catTotal).toFixed(2));
             }
             return totals;
         },

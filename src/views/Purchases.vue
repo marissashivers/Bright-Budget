@@ -128,7 +128,7 @@
           <!-- purchase amount -->
           <td>
             <div class="view">
-              ${{ item.purchaseAmount }}
+              ${{ Number(item.purchaseAmount).toFixed(2) }}
             </div>
             <div class="edit">
               <input
