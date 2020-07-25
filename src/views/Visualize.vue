@@ -8,7 +8,7 @@
     <br />
     <br />
     <br />
-    <h4>Dates displayed: {{ formatDate(this.start) }} to {{ formatDate(this.end) }}</h4>
+    <h3 style="text-align:center;">Dates displayed: {{ formatDate(this.start) }} to {{ formatDate(this.end) }}</h3>
 
     <div class="flex-container">
         <div class="small">
@@ -261,7 +261,7 @@ export default {
     .flex-container > div {
         background-color: white;
         margin: 10px;
-        padding: 20px;
+        padding: 10px;
         font-size: 30px;
         /* https://www.cssmatic.com/box-shadow */
         -webkit-box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
