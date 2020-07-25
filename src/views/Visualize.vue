@@ -10,8 +10,13 @@
     <br />
     <h4>Dates displayed: {{ formatDate(this.start) }} to {{ formatDate(this.end) }}</h4>
 
-    <div class="small card">
-        <BarChart2 :data="this.chartDataBar" :options="this.chartOptionsBar"></BarChart2>
+    <div class="flex-container">
+        <div class="small">
+            <BarChart2 :data="this.chartDataBar" :options="this.chartOptionsBar"></BarChart2>
+        </div>
+        <div class="small">
+            <PieChart2 :data="this.chartDataPie" :options="this.chartOptionsPie"></PieChart2>
+        </div>
     </div>
 <!--
     <h3>Bar Chart</h3>
@@ -20,10 +25,6 @@
     <h3>Pie Chart</h3>
     <PieChartComponent v-bind:purchases="this.purchases" v-bind:categories="this.categories"></PieChartComponent>
     -->
-
-    <div class="small card">
-        <PieChart2 :data="this.chartDataPie" :options="this.chartOptionsPie"></PieChart2>
-    </div>
 
   </div>
 </template>
@@ -101,7 +102,7 @@ export default {
             this.chartOptionsPie =  {
                 title: {
                     display: true,
-                    text: 'Purchases by Category',
+                    text: 'Pie Chart: Purchases by Category',
                     maintainAspectRatio: false,
                 },
                 legend: {
@@ -124,6 +125,12 @@ export default {
                         }
                     }
                 },
+            },
+            this.chartOptionsBar = {
+                title: {
+                    display: true,
+                    text: "Bar chart: Purchases by Category"
+                }
             },
             this.chartDataBar = {
                 labels: this.categoriesToString(),
@@ -243,12 +250,22 @@ export default {
         padding-right: 50px;
     }
     .small {
-        width: 400px;
+        width: 500px;
     }
-    .card {
+    /* flex */
+    .flex-container {
         display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        justify-content: space-between;
+        background-color: white;
+        flex-wrap: wrap;
+    }
+    .flex-container > div {
+        background-color: white;
+        margin: 10px;
+        padding: 20px;
+        font-size: 30px;
+        /* https://www.cssmatic.com/box-shadow */
+        -webkit-box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
+        -moz-box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
+        box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
     }
 </style>
