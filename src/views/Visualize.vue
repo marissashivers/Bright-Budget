@@ -1,13 +1,12 @@
 <template>
-  <div class="container">
-    <button type="button" class="btn btn-outline-primary" @click="filterLastMonth()">Last Month</button>
-    <button type="button" class="btn btn-outline-primary" @click="filterLastThreeMonths()">Last 3 Months</button>
-    <button type="button" class="btn btn-outline-primary">Last 365 Days</button>
-    <button type="button" class="btn btn-outline-primary">Custom</button>
+    <div class="container">
+        <div class="buttons">
+            <button type="button" class="btn btn-outline-primary" @click="filterLastMonth()">Last Month</button>
+            <button type="button" class="btn btn-outline-primary" @click="filterLastThreeMonths()">Last 3 Months</button>
+            <button type="button" class="btn btn-outline-primary" @click="filterLastYear()">Last 365 Days</button>
+            <button type="button" class="btn btn-outline-primary">Custom</button>
+        </div>
 
-    <br />
-    <br />
-    <br />
     <h3 style="text-align:center;">Dates displayed: {{ formatDate(this.start) }} to {{ formatDate(this.end) }}</h3>
 
     <div class="flex-container">
@@ -18,6 +17,12 @@
             <PieChart2 :data="this.chartDataPie" :options="this.chartOptionsPie"></PieChart2>
         </div>
     </div>
+
+    <div style="height:200px;">
+        <LineChart :data="this.chartDataLine" :options="this.chartOptionsLine"></LineChart>
+    </div>
+
+
 <!--
     <h3>Bar Chart</h3>
     <BarChartComponent v-bind:purchases="this.purchases" v-bind:categories="this.categories"></BarChartComponent>
@@ -26,7 +31,7 @@
     <PieChartComponent v-bind:purchases="this.purchases" v-bind:categories="this.categories"></PieChartComponent>
     -->
 
-  </div>
+    </div>
 </template>
 
 <script>
@@ -38,6 +43,7 @@ import moment from 'moment';
 //import PieChartComponent from "@/components/PieChart.vue";
 import PieChart2 from "@/components/PieChart2.vue";
 import BarChart2 from "@/components/BarChart2.vue";
+import LineChart from "@/components/LineChart.vue";
 
 export default {
     name: 'Visualize',
@@ -48,6 +54,7 @@ export default {
         //PieChartComponent,
         PieChart2,
         BarChart2,
+        LineChart,
     },
     created: function() {
         this.fetchData();
@@ -143,12 +150,52 @@ export default {
                 ]
             },
             this.chartOptionsLine = {
+                scales: {
+                    xAxes: [{
+                        // ticks: {
+                        //     maxTicksLimit: 8
+                        // }
+                    }],
+                    title: {
+                        display: true,
+                        title: "Time Series"
+                    },
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                },
+                responsive: true,
+                maintainAspectRatio: false
             },
             this.chartDataLine = {
+                // labels: [
+                //     "January",
+                //     "February",
+                //     "March",
+                //     "April",
+                //     "May",
+                //     "June",
+                //     "July",
+                //     "August",
+                //     "September",
+                //     "October",
+                //     "November",
+                //     "December"
+                // ],
+                labels: this.daysToString(),
+                datasets: [
+                    {
+                        label: "Dollars spent",
+                        backgroundColor: "#59ff85",
+                        data: this.getPurchasesByDay()
+                    },
+                ]
             }
-        },
+        }, // end fetchData()
         formatDate(date) {
-            return moment(date).format('MMM do YYYY');
+            return moment(date).format('MMM Do YYYY');
         },
         filterLastMonth() {
             this.end = new Date();
@@ -174,6 +221,17 @@ export default {
             // reset chart data
             this.fetchData();
         },
+        filterLastYear() {
+            this.end = new Date();
+            this.start = new Date();
+            this.start.setFullYear(this.start.getFullYear() - 1);
+            var results = this.purchases.filter(purch => {
+                let date = purch.createdAt.toDate();
+                return date >= this.start && date <= this.end;
+            });
+            this.purchasesFiltered = results;
+            this.fetchData();
+        },
 
         // PIE CHART EXPERIMENTATION
         categoriesToString() {
@@ -194,7 +252,32 @@ export default {
             }
             return totals;
         },
+        daysToString() {
+            // iterate through all filtered purchases
+            var daysArray = [];
+            this.purchasesFiltered.forEach(purch => {
+                var purchDate = purch.createdAt.toDate();
+                //purchDate = purchDate.toDateString();
+                purchDate = moment(purchDate).format('MMMM Do YY');
+                if (!daysArray.includes(purchDate)) daysArray.push(purchDate);
+            })
+            return daysArray;
+        },
         getPurchasesByDay() {
+            var purchMap = new Map();
+            this.purchasesFiltered.forEach(purch => {
+                var purchDate = purch.createdAt.toDate();
+                purchDate = purchDate.toDateString();
+                if (!purchMap.has(purchDate)) {
+                    purchMap.set(purchDate, purch.purchaseAmount);
+                }
+                else {
+                    purchMap[purchDate] += purch.purchaseAmount;
+                }
+            })
+            console.log(Array.from(purchMap.keys()));
+            console.log(Array.from(purchMap.values()));
+            return Array.from(purchMap.values());
         },
         getPurchasesByMonth() {
         },
@@ -251,6 +334,13 @@ export default {
     }
     .small {
         width: 500px;
+    }
+    .buttons {
+        text-align: center;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        padding-bottom: 20px;
     }
     /* flex */
     .flex-container {

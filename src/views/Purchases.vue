@@ -11,6 +11,11 @@
           <div class="card-body text-center">
             <form class="formgroup">
               <div class="input-group input-group-lg">
+                <!-- datepicker -->
+                <datepicker 
+                  v-model="createdAt" 
+                  class="form-control">
+                </datepicker>
                 <input
                   type="text"
                   class="form-control"
@@ -41,11 +46,6 @@
                     {{ item.category }}
                   </option>
                 </select>
-                <!-- datepicker -->
-                <datepicker 
-                  v-model="createdAt" 
-                  class="form-control">
-                </datepicker>
                 <!-- submit button for + -->
                 <div class="input-group-append">
                   <button

@@ -170,7 +170,7 @@ export default {
         })
       }
     });
-  },
+  }, // end mounted
 }
 </script>
 
