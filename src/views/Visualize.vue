@@ -9,14 +9,17 @@
 
     <h3 style="text-align:center;">Dates displayed: {{ formatDate(this.start) }} to {{ formatDate(this.end) }}</h3>
 
-    <div class="flex-container">
-        <div class="itemspan">
+    <!-- Bootstrap Grid System -->
+    <div class="row">
+        <div class="col-sm">
             <LineChart :data="this.chartDataLine" :options="this.chartOptionsLine"></LineChart>
         </div>
-        <div class="item">
+    </div>
+    <div class="row">
+        <div class="col-sm">
             <BarChart2 :data="this.chartDataBar" :options="this.chartOptionsBar"></BarChart2>
         </div>
-        <div class="item">
+        <div class="col-sm">
             <PieChart2 :data="this.chartDataPie" :options="this.chartOptionsPie"></PieChart2>
         </div>
     </div>
@@ -141,7 +144,7 @@ export default {
                         }
                     }
                 },
-            },
+            }
             this.chartOptionsBar = {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -149,7 +152,7 @@ export default {
                     display: true,
                     text: "Bar chart: Purchases by Category"
                 }
-            },
+            }
             this.chartDataBar = {
                 labels: this.categoriesToString(),
                 datasets: [
@@ -159,7 +162,7 @@ export default {
                         data: this.getPurchasesByCategory()
                     }
                 ]
-            },
+            }
             this.chartOptionsLine = {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -179,28 +182,15 @@ export default {
                         }
                     }]
                 },
-            },
+            }
+            var purchMap = this.getPurchasesByDay()
             this.chartDataLine = {
-                // labels: [
-                //     "January",
-                //     "February",
-                //     "March",
-                //     "April",
-                //     "May",
-                //     "June",
-                //     "July",
-                //     "August",
-                //     "September",
-                //     "October",
-                //     "November",
-                //     "December"
-                // ],
-                labels: this.daysToString(),
+                labels: Array.from(purchMap.keys()).reverse(),
                 datasets: [
                     {
                         label: "Dollars spent",
                         backgroundColor: "#59ff85",
-                        data: this.getPurchasesByDay()
+                        data: Array.from(purchMap.values()).reverse(),
                     },
                 ]
             }
@@ -275,7 +265,6 @@ export default {
             var end = this.purchasesFiltered[0].createdAt.toDate();
             var start = this.purchasesFiltered[this.purchasesFiltered.length-1].createdAt.toDate();
             //return daysArray;
-            console.log(this.enumerateDaysBetweenDates(start, end).reverse());
             return this.enumerateDaysBetweenDates(start, end).reverse();
         },
         getPurchasesByDay() {
@@ -306,12 +295,12 @@ export default {
                 purchMap.set(purchDate, purchMap.get(purchDate) + purch.purchaseAmount);
             })
 
-            var purchasesArray = Array.from(purchMap.values()).reverse();
+            //var purchasesArray = Array.from(purchMap.values()).reverse();
             // TOOD: first element in array is NaN, why?
             // temp fix:
-            purchasesArray = purchasesArray.slice(1);
-            console.log(purchasesArray);
-            return purchasesArray;
+            //purchasesArray = purchasesArray.slice(1);
+            console.log(purchMap);
+            return purchMap;
         },
         getPurchasesByMonth() {
         },
@@ -364,6 +353,7 @@ export default {
             var currDate = moment(startDate).startOf('day');
             var lastDate = moment(endDate).startOf('day');
 
+            dates.push(currDate.clone().toDate().toDateString());
             while (currDate.add(1, 'days').diff(lastDate) < 0) {
                 var temp = currDate.clone().toDate();
                 dates.push(temp.toDateString());
@@ -390,15 +380,7 @@ export default {
         margin-right: auto;
         padding-bottom: 20px;
     }
-    /* flex */
-    .flex-container {
-        display: flex;
-        background-color: white;
-        justify-content: space-around;
-        flex-direction: row;
-        flex-wrap: wrap;
-    }
-    .flex-container > div {
+    .col-sm {
         background-color: white;
         margin: 10px;
         padding: 10px;
@@ -407,11 +389,5 @@ export default {
         -webkit-box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
         -moz-box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
         box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
-    }
-    .flex-container > .item {
-        flex: 50%;
-    }
-    .flex-container > .itemspan {
-        flex: 100%;
     }
 </style>
