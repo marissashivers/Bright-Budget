@@ -7,41 +7,22 @@
             <button type="button" class="btn btn-outline-primary">Custom</button>
         </div>
 
-    <h3 style="text-align:center;">Dates displayed: {{ formatDate(this.start) }} to {{ formatDate(this.end) }}</h3>
+        <h3 style="text-align:center;">Dates displayed: {{ formatDate(this.start) }} to {{ formatDate(this.end) }}</h3>
 
-    <!-- Bootstrap Grid System -->
-    <div class="row">
-        <div class="col-sm">
-            <LineChart :data="this.chartDataLine" :options="this.chartOptionsLine"></LineChart>
+        <!-- Bootstrap Grid System -->
+        <div class="row">
+            <div class="col-sm">
+                <LineChart :data="this.chartDataLine" :options="this.chartOptionsLine"></LineChart>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-sm">
-            <BarChart2 :data="this.chartDataBar" :options="this.chartOptionsBar"></BarChart2>
+        <div class="row">
+            <div class="col-sm">
+                <BarChart2 :data="this.chartDataBar" :options="this.chartOptionsBar"></BarChart2>
+            </div>
+            <div class="col-sm">
+                <PieChart2 :data="this.chartDataPie" :options="this.chartOptionsPie"></PieChart2>
+            </div>
         </div>
-        <div class="col-sm">
-            <PieChart2 :data="this.chartDataPie" :options="this.chartOptionsPie"></PieChart2>
-        </div>
-    </div>
-
-    <!--
-        TODO: Line chart only accounts for days where purchases > 0,
-        it doesn't factor in days where purchases == 0.
-        Will need to fix if we want to display that.
-        Also need to fix formatting and CSS flex to add time series into flexbox.
-
-        Doesn't work correctly.
-    -->
-
-
-<!--
-    <h3>Bar Chart</h3>
-    <BarChartComponent v-bind:purchases="this.purchases" v-bind:categories="this.categories"></BarChartComponent>
-
-    <h3>Pie Chart</h3>
-    <PieChartComponent v-bind:purchases="this.purchases" v-bind:categories="this.categories"></PieChartComponent>
-    -->
-
     </div>
 </template>
 
@@ -196,7 +177,7 @@ export default {
             }
         }, // end fetchData()
         formatDate(date) {
-            return moment(date).format('MMM Do YYYY');
+            return moment(date).format('MMM Do, YYYY');
         },
         filterLastMonth() {
             this.end = new Date();
@@ -281,8 +262,8 @@ export default {
             //     }
             // })
             // return Array.from(purchMap.values());
-            var end = this.purchases[0].createdAt.toDate();
-            var start = this.purchases[this.purchases.length-1].createdAt.toDate();
+            var end = this.purchasesFiltered[0].createdAt.toDate();
+            var start = this.purchasesFiltered[this.purchasesFiltered.length-1].createdAt.toDate();
             var daysArray =  this.enumerateDaysBetweenDates(start, end);
 
             var purchMap = new Map();
@@ -295,11 +276,6 @@ export default {
                 purchMap.set(purchDate, purchMap.get(purchDate) + purch.purchaseAmount);
             })
 
-            //var purchasesArray = Array.from(purchMap.values()).reverse();
-            // TOOD: first element in array is NaN, why?
-            // temp fix:
-            //purchasesArray = purchasesArray.slice(1);
-            console.log(purchMap);
             return purchMap;
         },
         getPurchasesByMonth() {

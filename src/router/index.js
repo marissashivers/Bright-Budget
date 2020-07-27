@@ -36,12 +36,12 @@ const routes = [{
         component: () =>
             import ('../views/Register.vue')
     },
-    {
-        path: "/meetings",
-        name: 'Meetings',
-        component: () =>
-            import ('../views/Meetings.vue')
-    },
+    // {
+    //     path: "/meetings",
+    //     name: 'Meetings',
+    //     component: () =>
+    //         import ('../views/Meetings.vue')
+    // },
     {
         path: "/old",
         name: "Old",
