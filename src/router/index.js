@@ -43,6 +43,11 @@ const routes = [{
     //         import ('../views/Meetings.vue')
     // },
     {
+        path: "/budgets",
+        name: "Budgets",
+        component: () => import('../views/Budgets.vue')
+    },
+    {
         path: "/old",
         name: "Old",
         component: () =>

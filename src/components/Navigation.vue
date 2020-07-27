@@ -6,6 +6,7 @@
         <router-link class="nav-item nav-link" to="/purchases" v-if="user">purchases</router-link>
         <router-link class="nav-item nav-link" to="/visualize" v-if="user">visualize</router-link>
         <!-- <router-link class="nav-item nav-link" to="/meetings" v-if="user">meetings</router-link> -->
+        <router-link class="nav-item nav-link" to="/budgets" v-if="user">budgets</router-link>
         <router-link class="nav-item nav-link" to="/login" v-if="!user">login</router-link>
         <router-link class="nav-item nav-link" to="/register" v-if="!user">register</router-link>
         
