@@ -106,6 +106,7 @@ export default {
   mounted() {
     auth.onAuthStateChanged(user => {
       if (user) {
+        console.log("--> Accessing firebase database...");
         this.user = user;
         // reading dynamic snapshot for users collection
         db.collection("users")
@@ -129,9 +130,7 @@ export default {
             }
           });
         });
-      } // end if
-      // purchases database:
-      if (user) {
+        // purchases collection
         db.collection("users")
         .doc(this.user.uid)
         .collection("purchases")
@@ -150,9 +149,7 @@ export default {
           // Return purchase in order from most recent purchase.
           this.purchases = snapData.reverse();
         });
-      }// end if
-      // categories database:
-      if (user) {
+        // categories database
         db.collection("users")
         .doc(this.user.uid)
         .collection("categories")
@@ -167,8 +164,8 @@ export default {
           });
           // sort?
           this.categories = snapData;
-        })
-      }
+        });
+      } // end if
     });
   }, // end mounted
 }
