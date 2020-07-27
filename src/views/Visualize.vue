@@ -10,17 +10,25 @@
     <h3 style="text-align:center;">Dates displayed: {{ formatDate(this.start) }} to {{ formatDate(this.end) }}</h3>
 
     <div class="flex-container">
-        <div class="small">
+        <div class="itemspan">
+            <LineChart :data="this.chartDataLine" :options="this.chartOptionsLine"></LineChart>
+        </div>
+        <div class="item">
             <BarChart2 :data="this.chartDataBar" :options="this.chartOptionsBar"></BarChart2>
         </div>
-        <div class="small">
+        <div class="item">
             <PieChart2 :data="this.chartDataPie" :options="this.chartOptionsPie"></PieChart2>
         </div>
     </div>
 
-    <div style="height:200px;">
-        <LineChart :data="this.chartDataLine" :options="this.chartOptionsLine"></LineChart>
-    </div>
+    <!--
+        TODO: Line chart only accounts for days where purchases > 0,
+        it doesn't factor in days where purchases == 0.
+        Will need to fix if we want to display that.
+        Also need to fix formatting and CSS flex to add time series into flexbox.
+
+        Doesn't work correctly.
+    -->
 
 
 <!--
@@ -60,7 +68,7 @@ export default {
         this.fetchData();
     },
     mounted() {
-        this.filterLastMonth();
+        //this.filterLastMonth();
     },
     computed: {
         // PIE CHART TESTING
@@ -74,7 +82,7 @@ export default {
 
             // DATE FILTERING
             end: new Date(),
-            start: new Date(),
+            start: this.purchases[this.purchases.length-1].createdAt.toDate(),
 
             // Pie Chart
             chartOptionsPie: null,
@@ -107,10 +115,11 @@ export default {
                 ]
             }
             this.chartOptionsPie =  {
+                responsive: true,
+                maintainAspectRatio: false,
                 title: {
                     display: true,
                     text: 'Pie Chart: Purchases by Category',
-                    maintainAspectRatio: false,
                 },
                 legend: {
                     display: true,
@@ -134,6 +143,8 @@ export default {
                 },
             },
             this.chartOptionsBar = {
+                responsive: true,
+                maintainAspectRatio: false,
                 title: {
                     display: true,
                     text: "Bar chart: Purchases by Category"
@@ -150,6 +161,8 @@ export default {
                 ]
             },
             this.chartOptionsLine = {
+                responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     xAxes: [{
                         // ticks: {
@@ -166,8 +179,6 @@ export default {
                         }
                     }]
                 },
-                responsive: true,
-                maintainAspectRatio: false
             },
             this.chartDataLine = {
                 // labels: [
@@ -253,31 +264,54 @@ export default {
             return totals;
         },
         daysToString() {
-            // iterate through all filtered purchases
-            var daysArray = [];
-            this.purchasesFiltered.forEach(purch => {
-                var purchDate = purch.createdAt.toDate();
-                //purchDate = purchDate.toDateString();
-                purchDate = moment(purchDate).format('MMMM Do YY');
-                if (!daysArray.includes(purchDate)) daysArray.push(purchDate);
-            })
-            return daysArray;
+            // var daysArray = [];
+            // this.purchasesFiltered.forEach(purch => {
+            //     var purchDate = purch.createdAt.toDate();
+            //     //purchDate = purchDate.toDateString();
+            //     purchDate = moment(purchDate).format('MM-DD-YY');
+            //     if (!daysArray.includes(purchDate)) daysArray.push(purchDate);
+            // })
+
+            var end = this.purchasesFiltered[0].createdAt.toDate();
+            var start = this.purchasesFiltered[this.purchasesFiltered.length-1].createdAt.toDate();
+            //return daysArray;
+            console.log(this.enumerateDaysBetweenDates(start, end).reverse());
+            return this.enumerateDaysBetweenDates(start, end).reverse();
         },
         getPurchasesByDay() {
+            // var purchMap = new Map();
+            // this.purchasesFiltered.forEach(purch => {
+            //     var purchDate = purch.createdAt.toDate();
+            //     purchDate = purchDate.toDateString();
+            //     if (!purchMap.has(purchDate)) {
+            //         purchMap.set(purchDate, purch.purchaseAmount);
+            //     }
+            //     else {
+            //         //purchMap[purchDate] += purch.purchaseAmount;
+            //         purchMap.set(purchDate, purchMap.get(purchDate) + purch.purchaseAmount);
+            //     }
+            // })
+            // return Array.from(purchMap.values());
+            var end = this.purchases[0].createdAt.toDate();
+            var start = this.purchases[this.purchases.length-1].createdAt.toDate();
+            var daysArray =  this.enumerateDaysBetweenDates(start, end);
+
             var purchMap = new Map();
+            daysArray.forEach(day => {
+                purchMap.set(day, 0);
+            });
             this.purchasesFiltered.forEach(purch => {
                 var purchDate = purch.createdAt.toDate();
                 purchDate = purchDate.toDateString();
-                if (!purchMap.has(purchDate)) {
-                    purchMap.set(purchDate, purch.purchaseAmount);
-                }
-                else {
-                    purchMap[purchDate] += purch.purchaseAmount;
-                }
+                purchMap.set(purchDate, purchMap.get(purchDate) + purch.purchaseAmount);
             })
-            console.log(Array.from(purchMap.keys()));
-            console.log(Array.from(purchMap.values()));
-            return Array.from(purchMap.values());
+
+            var purchasesArray = Array.from(purchMap.values()).reverse();
+            // TOOD: first element in array is NaN, why?
+            // temp fix:
+            purchasesArray = purchasesArray.slice(1);
+            console.log(purchasesArray);
+            return purchasesArray;
         },
         getPurchasesByMonth() {
         },
@@ -294,6 +328,7 @@ export default {
             });
             return result;
         },
+        // helper functions
         generateBgColorArray() {
             var arr = [];
             var colors = ["#3267cc",
@@ -323,6 +358,22 @@ export default {
             }
             return arr;
         },
+        enumerateDaysBetweenDates(startDate, endDate) {
+            //https://stackoverflow.com/questions/23795522/how-to-enumerate-dates-between-two-dates-in-moment
+            var dates = [];
+            var currDate = moment(startDate).startOf('day');
+            var lastDate = moment(endDate).startOf('day');
+
+            while (currDate.add(1, 'days').diff(lastDate) < 0) {
+                var temp = currDate.clone().toDate();
+                dates.push(temp.toDateString());
+                //dates.push(currDate.clone().toDate());
+            }
+            var today = new Date();
+            today = today.toDateString();
+            dates.push(today);
+            return dates;
+        }
     },
 }
 </script>
@@ -331,9 +382,6 @@ export default {
     .container {
         padding-left: 50px;
         padding-right: 50px;
-    }
-    .small {
-        width: 500px;
     }
     .buttons {
         text-align: center;
@@ -346,6 +394,8 @@ export default {
     .flex-container {
         display: flex;
         background-color: white;
+        justify-content: space-around;
+        flex-direction: row;
         flex-wrap: wrap;
     }
     .flex-container > div {
@@ -357,5 +407,11 @@ export default {
         -webkit-box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
         -moz-box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
         box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
+    }
+    .flex-container > .item {
+        flex: 50%;
+    }
+    .flex-container > .itemspan {
+        flex: 100%;
     }
 </style>
