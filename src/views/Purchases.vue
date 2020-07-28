@@ -279,7 +279,7 @@
         this.purchaseLocation = null;
         this.purchaseAmount = null;
         this.purchaseCategory = null;
-        this.createdAt = new Date();
+        //this.createdAt = this.createdAt;
       },
       handleSavePurchase(purchase) {
         purchase.createdAt = this.editedPurchaseDate;

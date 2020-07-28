@@ -1,25 +1,16 @@
-# Budget Tracker
-Personal project to get experienced with web development. Uses Vue.js and Firebase.
+# PurchaseViz
+Personal project to get experienced with web development. Uses Vue.js, Firebase Authentication and Cloud Firestore.
 
-## Project setup
-```
-npm install
-```
+## About
+This project focuses on money management, budgeting, and data visualization. It allows users to create an account, add purchases, customize purchase categories, visualize trends in their spending, and create and manage budgets.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+I used Chart.js for the data visualization and Bootstrap for many of the buttons, forms, navigation, and other components.
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## Add a purchase
+![Add a purchase](https://i.imgur.com/IizVTa5.png)
 
-### Lints and fixes files
-```
-npm run lint
-```
+## Visualize your purchases
+![Visualize](https://i.imgur.com/ILxpneU.png)
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Manage budgets
+![Budgets](https://i.imgur.com/b5lBprv.png)

@@ -52,7 +52,7 @@ export default {
     this.fetchData();
   },
   mounted() {
-    //this.filterLastMonth();
+    this.filterLastMonth();
   },
   computed: {
     // PIE CHART TESTING
