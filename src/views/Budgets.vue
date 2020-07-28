@@ -10,16 +10,7 @@
           <div class="card-body text-center">
             <form class="formgroup">
               <div class="input-group input-group-lg">
-                <!-- datepicker -->
-                <input
-                  type="text"
-                  class="form-control"
-                  name="budgetAmount"
-                  placeholder="Amount"
-                  aria-describedby="buttonAdd"
-                  v-model="budgetAmount"
-                  ref="budgetAmount"
-                />
+                <!-- budget category -->
                 <select
                   name="budgetCategory"
                   class="form-control"
@@ -29,9 +20,19 @@
                 >
                   <option value="null" disabled hidden>Category</option>
                   <option v-for="item in categories" :key="item.id" :disabled="currentBudgetsArray.includes(item.category)">
-                    {{ item.category }}
+                    {{ item.category }} <span v-if="currentBudgetsArray.includes(item.category)">(already exists)</span>
                   </option>
                 </select>
+                <!-- budget amount -->
+                <input
+                  type="text"
+                  class="form-control"
+                  name="budgetAmount"
+                  placeholder="Amount"
+                  aria-describedby="buttonAdd"
+                  v-model="budgetAmount"
+                  ref="budgetAmount"
+                />
                 <!-- submit button for + -->
                 <div class="input-group-append">
                   <button
@@ -50,6 +51,22 @@
       </div> <!-- col-12 col-md-9 col-lg-7 -->
     </div> <!-- row justify-content center -->
 
+    <div class="row justify-content-center">
+      <span class="glyphicon glyphicon-menu-left">
+        <button @click="getLastMonthPurchases(dateReference)">
+          <font-awesome-icon icon="arrow-left" size="2x" />
+        </button>
+      </span>
+      <span style="margin-left:10px; margin-right:10px;">
+        <h3>{{ moment(dateReference).format("MMMM YYYY") }}</h3>
+      </span>
+      <span>
+        <button @click="getNextMonthPurchases(dateReference)">
+          <font-awesome-icon icon="arrow-right" size="2x" />
+        </button>
+      </span>
+    </div>
+
     <div class="budget-container">
       <h2>Your Budgets:</h2>
       <div v-for="budget in this.budgets" :key="budget.id">
@@ -61,20 +78,26 @@
 </template>
 
 <script>
+import moment from 'moment';
+
 export default {
   name: 'Budgets',
   props: ["user", "purchases", "categories", "budgets"],
   components: {
-
   },
   mounted() {
-    this.categoriesMap = this.getPurchasesByCategory();
+    this.purchasesFiltered = this.getCurrentMonthPurchases();
     this.currentBudgetsArray = this.getCurrentBudgetsArray();
+    this.categoriesMap = this.getPurchasesByCategory();
+
   },
   watch: {
     // update currentBudgetsArray whenever budgets are changed, in order to update enabled/disabled category selection
     budgets: function() {
       this.currentBudgetsArray = this.getCurrentBudgetsArray();
+    },
+    purchasesFiltered: function() {
+      this.categoriesMap = this.getPurchasesByCategory();
     }
   },
   data() {
@@ -83,6 +106,8 @@ export default {
       budgetAmount: null,
       categoriesMap: new Map(),
       currentBudgetsArray: [],
+      purchasesFiltered: [],
+      dateReference: new Date(),
     }
   },
   methods: {
@@ -91,20 +116,23 @@ export default {
       this.budgetAmount = null;
       this.budgetCategory = null;
     },
+    // key -> category
+    // value -> amount
+    // uses purchasesFiltered array when mapping values
     getPurchasesByCategory() {
       var categoriesArray = [];
       this.categories.forEach(item => categoriesArray.push(item.category));
-      var categoriesMap = new Map();
+      var map = new Map();
 
       categoriesArray.forEach(cat => {
-        categoriesMap.set(cat, 0);
+        map.set(cat, 0);
       });
 
-      this.purchases.forEach(purch => {
+      this.purchasesFiltered.forEach(purch => {
         var purchCat = purch.purchaseCategory;
-        categoriesMap.set(purchCat, Math.round(100*(categoriesMap.get(purchCat) + purch.purchaseAmount))/100);
+        map.set(purchCat, Math.round(100*(map.get(purchCat) + purch.purchaseAmount))/100);
       })
-      return categoriesMap;
+      return map;
     },
     getCurrentBudgetsArray() {
       var arr = [];
@@ -116,8 +144,53 @@ export default {
     computeVariant(amountSpent, budgetAmount) {
       if (amountSpent > budgetAmount) return "danger";
       else return "info";
-    }
-  },
+    },
+    getCurrentMonthPurchases() {
+      var date = new Date();
+      this.dateReference = date;
+      var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+      var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+      var results = this.purchases.filter(purch => {
+        let date = purch.createdAt.toDate();
+        return date >= firstDay && date <= lastDay;
+      })
+      // console.log(firstDay);
+      // console.log(lastDay);
+      return results;
+    },
+    getLastMonthPurchases(prevDate) {
+      // go back one month
+      var date = new Date(prevDate.getTime());
+      date.setMonth(date.getMonth() - 1);
+      this.dateReference = date;
+      var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+      var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+      var results = this.purchases.filter(purch => {
+        let date = purch.createdAt.toDate();
+        return date >= firstDay && date <= lastDay;
+      })
+      this.purchasesFiltered = results;
+    },
+    getNextMonthPurchases(prevDate) {
+      // go forward one month
+      var date = new Date(prevDate.getTime());
+      date.setMonth(date.getMonth() + 1);
+      this.dateReference = date;
+      var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+      var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+      var results = this.purchases.filter(purch => {
+        let date = purch.createdAt.toDate();
+        return date >= firstDay && date <= lastDay;
+      })
+      // console.log(firstDay);
+      // console.log(lastDay);
+      this.purchasesFiltered = results;
+    },
+    formatDate(date) {
+      return moment(date).format('MMM Do, YYYY');
+    },
+  }, // end methods
+
 }
 </script>
 
