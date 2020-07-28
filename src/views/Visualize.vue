@@ -64,6 +64,11 @@ export default {
       search: null,
       purchasesFiltered: this.purchases,
 
+      formatter: new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }),
+
       // DATE FILTERING
       end: new Date(),
       start: this.purchases[this.purchases.length-1].createdAt.toDate(),
@@ -88,13 +93,16 @@ export default {
   },
   methods: {
     fetchData: function() {
+      var categoriesMap = this.getPurchasesByCategory();
       this.chartDataPie = {
-        labels: this.categoriesToString(),
+        //labels: this.categoriesToString(),
+        labels: Array.from(categoriesMap.keys()),
         datasets: [
           {
             label: 'Purchases',
             backgroundColor: this.generateBgColorArray(),
-            data: this.getPurchasesByCategory()
+            //data: this.getPurchasesByCategory()
+            data: Array.from(categoriesMap.values())
           }
         ]
       }
@@ -135,12 +143,14 @@ export default {
         }
       }
       this.chartDataBar = {
-        labels: this.categoriesToString(),
+        //labels: this.categoriesToString(),
+        labels: Array.from(categoriesMap.keys()),
         datasets: [
           {
             label: "Purchases",
             backgroundColor: "green",
-            data: this.getPurchasesByCategory()
+            //data: this.getPurchasesByCategory()
+            data: Array.from(categoriesMap.values())
           }
         ]
       }
@@ -222,31 +232,19 @@ export default {
       return v;
     },
     getPurchasesByCategory() {
-      var result = this.groupBy(this.purchasesFiltered, 'purchaseCategory');
-      var totals = [];
-      for(var cat in result) {
-        // result[cat] to acces array of objects
-        // https://gist.github.com/benwells/0111163b3cccfad0804d994c70de7aa1
-        var catTotal = result[cat].reduce(function(prev, cur) {
-          return prev + cur.purchaseAmount;
-        }, 0);
-        totals.push(Number(catTotal).toFixed(2));
-      }
-      return totals;
-    },
-    daysToString() {
-      // var daysArray = [];
-      // this.purchasesFiltered.forEach(purch => {
-      //   var purchDate = purch.createdAt.toDate();
-      //   //purchDate = purchDate.toDateString();
-      //   purchDate = moment(purchDate).format('MM-DD-YY');
-      //   if (!daysArray.includes(purchDate)) daysArray.push(purchDate);
-      // })
+      var categoriesArray = [];
+      this.categories.forEach(item => categoriesArray.push(item.category));
+      var categoriesMap = new Map();
 
-      var end = this.purchasesFiltered[0].createdAt.toDate();
-      var start = this.purchasesFiltered[this.purchasesFiltered.length-1].createdAt.toDate();
-      //return daysArray;
-      return this.enumerateDaysBetweenDates(start, end).reverse();
+      categoriesArray.forEach(cat => {
+        categoriesMap.set(cat, 0);
+      });
+
+      this.purchasesFiltered.forEach(purch => {
+        var purchCat = purch.purchaseCategory;
+        categoriesMap.set(purchCat, Math.round(100*(categoriesMap.get(purchCat) + purch.purchaseAmount))/100);
+      })
+      return categoriesMap;
     },
     getPurchasesByDay() {
       // var purchMap = new Map();
@@ -273,7 +271,7 @@ export default {
       this.purchasesFiltered.forEach(purch => {
         var purchDate = purch.createdAt.toDate();
         purchDate = purchDate.toDateString();
-        purchMap.set(purchDate, purchMap.get(purchDate) + purch.purchaseAmount);
+        purchMap.set(purchDate, Math.round(100*(purchMap.get(purchDate) + purch.purchaseAmount))/100);
       })
 
       return purchMap;

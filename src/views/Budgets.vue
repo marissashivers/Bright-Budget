@@ -5,7 +5,7 @@
       <div class="col-12 col-md-9 col-lg-7">
         <h1
           class="font-weight-light text-center"
-        >Add a Budget</h1>
+        >Add a Montly Budget</h1>
         <div class="card bg-light">
           <div class="card-body text-center">
             <form class="formgroup">
@@ -38,7 +38,7 @@
                     type="submit"
                     class="btn btn-sm btn-info"
                     id="buttonAdd"
-                    @click.prevent = "handleAddPurchase"
+                    @click.prevent="handleAddBudget()"
                   >
                     +
                   </button>
@@ -51,6 +51,11 @@
     </div> <!-- row justify-content center -->
 
     <div class="budget-container">
+      <h2>Your Budgets:</h2>
+      <div v-for="budget in this.budgets" :key="budget.id">
+        <p>{{ budget.budgetAmount }}</p>
+        <p>{{ budget.budgetCategory }}</p>
+      </div>
       <b-progress height="2rem" :value="value" show-progress class="mb-2"></b-progress>
       <b-progress :value="value" show-progress class="mb-3"></b-progress>
     </div>
@@ -60,7 +65,7 @@
 <script>
 export default {
   name: 'Budgets',
-  props: ["user", "purchases", "categories"],
+  props: ["user", "purchases", "categories", "budgets"],
   components: {
 
   },
@@ -75,14 +80,19 @@ export default {
     }
   },
   methods: {
-
+    handleAddBudget() {
+      this.$emit("addBudget", this.budgetAmount, this.budgetCategory);
+      this.budgetAmount = null;
+      this.budgetCategory = null;
+    }
   },
 }
 </script>
 
 <style scoped>
   .budget-container {
-    padding-left: 50px;
-    padding-right: 50px;
+    margin-top: 50px;
+    margin-left: 200px;
+    margin-right: 200px;
   }
 </style>

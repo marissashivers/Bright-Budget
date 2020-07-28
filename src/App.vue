@@ -13,6 +13,7 @@
       :meetings="meetings"
       :purchases="purchases"
       :categories="categories"
+      :budgets="budgets"
       @logout="logout" 
       @addMeeting="addMeeting"
       @deleteMeeting="deleteMeeting"
@@ -20,6 +21,7 @@
       @savePurchase="savePurchase"
       @deletePurchase="deletePurchase"
       @addCategory="addCategory"
+      @addBudget="addBudget"
     />
 
   </div>
@@ -39,7 +41,8 @@ export default {
       user: null,
       meetings: [],
       purchases: [],
-      categories: []
+      categories: [],
+      budgets: []
     };
   },
   methods: {
@@ -101,6 +104,15 @@ export default {
       .collection("purchases")
       .doc(purchaseId)
       .delete();
+    },
+    addBudget: function(amount, category) {
+      db.collection("users")
+      .doc(this.user.uid)
+      .collection("budgets")
+      .add({
+        budgetAmount: Number(amount),
+        budgetCategory: category
+      });
     },
   },
   mounted() {
@@ -165,6 +177,22 @@ export default {
           // sort?
           this.categories = snapData;
         });
+        // budgets database
+        db.collection("users")
+          .doc(this.user.uid)
+          .collection("budgets")
+          .orderBy("budgetAmount")
+          .onSnapshot(snapshot => {
+            const snapData = [];
+            snapshot.forEach(doc => {
+              snapData.push({
+                id: doc.id,
+                budgetAmount: doc.data().budgetAmount,
+                budgetCategory: doc.data().budgetCategory
+              });
+            });
+            this.budgets = snapData;
+          })
       } // end if
     });
   }, // end mounted
