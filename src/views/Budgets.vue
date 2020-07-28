@@ -53,11 +53,10 @@
     <div class="budget-container">
       <h2>Your Budgets:</h2>
       <div v-for="budget in this.budgets" :key="budget.id">
-        <p>{{ budget.budgetAmount }}</p>
-        <p>{{ budget.budgetCategory }}</p>
+        <h4>{{ budget.budgetCategory }}</h4>
+        <h4 v-if="categoriesMap.get(budget.budgetCategory) > budget.budgetAmount">EXCEEDED!</h4>
+        <b-progress height="2rem" :value="categoriesMap.get(budget.budgetCategory)" :max="budget.budgetAmount" show-value class="mb-3"></b-progress>
       </div>
-      <b-progress height="2rem" :value="value" show-progress class="mb-2"></b-progress>
-      <b-progress :value="value" show-progress class="mb-3"></b-progress>
     </div>
   </div>
 </template>
@@ -70,13 +69,14 @@ export default {
 
   },
   mounted() {
-
+    this.categoriesMap = this.getPurchasesByCategory();
   },
   data() {
     return {
       value: 75,
       budgetCategory: null,
       budgetAmount: null,
+      categoriesMap: null,
     }
   },
   methods: {
@@ -84,7 +84,22 @@ export default {
       this.$emit("addBudget", this.budgetAmount, this.budgetCategory);
       this.budgetAmount = null;
       this.budgetCategory = null;
-    }
+    },
+    getPurchasesByCategory() {
+      var categoriesArray = [];
+      this.categories.forEach(item => categoriesArray.push(item.category));
+      var categoriesMap = new Map();
+
+      categoriesArray.forEach(cat => {
+        categoriesMap.set(cat, 0);
+      });
+
+      this.purchases.forEach(purch => {
+        var purchCat = purch.purchaseCategory;
+        categoriesMap.set(purchCat, Math.round(100*(categoriesMap.get(purchCat) + purch.purchaseAmount))/100);
+      })
+      return categoriesMap;
+    },
   },
 }
 </script>
