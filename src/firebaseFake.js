@@ -1,24 +1,30 @@
 // src/firebaseConfig.js
-import * as firebase from 'firebase';
+import firebase from 'firebase/app';
+require('firebase/firestore');
+require('firebase/auth');
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "",
-    authDomain: "",
-    databaseURL: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: "",
-    measurementId: ""
-};
+  };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-
-export default firebase;
+const firebaseApp = firebase.initializeApp(firebaseConfig);
 
 // Give ourselves easier access to database
-export const db = firebase.firestore();
-export const purchaseCollection = db.collection('purchases');
-// db.collection('COLLECTION_NAME');
+const db = firebaseApp.firestore();
+const purchaseCollection = db.collection('purchases');
+const categoryCollection = db.collection('categories');
+const usersCollection = db.collection('users');
+
+const auth = firebase.auth();
+
+export {
+  db,
+  purchaseCollection,
+  categoryCollection,
+  usersCollection,
+  auth,
+}
+
+// npm run build && firebase deploy
+
