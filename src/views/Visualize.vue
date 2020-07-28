@@ -260,7 +260,7 @@ export default {
       //   }
       // })
       // return Array.from(purchMap.values());
-      var end = this.purchasesFiltered[0].createdAt.toDate();
+      var end = new Date();
       var start = this.purchasesFiltered[this.purchasesFiltered.length-1].createdAt.toDate();
       var daysArray =  this.enumerateDaysBetweenDates(start, end);
 
@@ -273,6 +273,9 @@ export default {
         purchDate = purchDate.toDateString();
         purchMap.set(purchDate, Math.round(100*(purchMap.get(purchDate) + purch.purchaseAmount))/100);
       })
+      console.log(end);
+      console.log(start);
+      console.log(Array.from(purchMap.keys()));
 
       return purchMap;
     },

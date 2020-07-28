@@ -28,7 +28,7 @@
                   ref="budgetCategory"
                 >
                   <option value="null" disabled hidden>Category</option>
-                  <option v-for="item in categories" :key="item.id">
+                  <option v-for="item in categories" :key="item.id" :disabled="currentBudgetsArray.includes(item.category)">
                     {{ item.category }}
                   </option>
                 </select>
@@ -53,9 +53,8 @@
     <div class="budget-container">
       <h2>Your Budgets:</h2>
       <div v-for="budget in this.budgets" :key="budget.id">
-        <h4>{{ budget.budgetCategory }}</h4>
-        <h4 v-if="categoriesMap.get(budget.budgetCategory) > budget.budgetAmount">EXCEEDED!</h4>
-        <b-progress height="2rem" :value="categoriesMap.get(budget.budgetCategory)" :max="budget.budgetAmount" show-value class="mb-3"></b-progress>
+        <h4>{{ budget.budgetCategory }}: ${{ categoriesMap.get(budget.budgetCategory).toFixed(2) }} / ${{ budget.budgetAmount.toFixed(2) }} <span v-if="categoriesMap.get(budget.budgetCategory) > budget.budgetAmount">(EXCEEDED!)</span></h4>
+        <b-progress height="2rem" :value="categoriesMap.get(budget.budgetCategory)" :max="budget.budgetAmount" :variant="computeVariant(categoriesMap.get(budget.budgetCategory), budget.budgetAmount)" show-value class="mb-3"></b-progress>
       </div>
     </div>
   </div>
@@ -70,13 +69,20 @@ export default {
   },
   mounted() {
     this.categoriesMap = this.getPurchasesByCategory();
+    this.currentBudgetsArray = this.getCurrentBudgetsArray();
+  },
+  watch: {
+    // update currentBudgetsArray whenever budgets are changed, in order to update enabled/disabled category selection
+    budgets: function() {
+      this.currentBudgetsArray = this.getCurrentBudgetsArray();
+    }
   },
   data() {
     return {
-      value: 75,
       budgetCategory: null,
       budgetAmount: null,
-      categoriesMap: null,
+      categoriesMap: new Map(),
+      currentBudgetsArray: [],
     }
   },
   methods: {
@@ -100,6 +106,17 @@ export default {
       })
       return categoriesMap;
     },
+    getCurrentBudgetsArray() {
+      var arr = [];
+      this.budgets.forEach(item => {
+        arr.push(item.budgetCategory);
+      })
+      return arr;
+    },
+    computeVariant(amountSpent, budgetAmount) {
+      if (amountSpent > budgetAmount) return "danger";
+      else return "info";
+    }
   },
 }
 </script>
