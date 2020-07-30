@@ -51,6 +51,85 @@
       </div> <!-- col-12 col-md-9 col-lg-7 -->
     </div> <!-- row justify-content center -->
 
+    <!-- Display and edit budgets -->
+    <table class="table table-striped table-fit">
+      <thead>
+        <tr>
+          <td class="fit">Cateogry</td>
+          <td class="fit">Amount</td>
+          <td class="fit">Actions</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="item in budgets" :key="item.id" :class="{editing: item == editedBudget && editMode == true}" v-cloak>
+          <!-- budget category -->
+          <td class="fit">
+            <div class="view">
+              {{ item.budgetCategory }}
+            </div>
+            <div class="edit">
+              <select
+                name="purchaseCategory"
+                class="form-control"
+                v-model="item.budgetCategory"
+                aria-describedby="buttonAdd"
+                ref="budgetCategory"
+              >
+                <option value="null" disabled hidden>Category</option>
+                <option v-for="item in categories" :key="item.id">
+                  {{ item.category }}
+                </option>
+              </select>
+            </div>
+          </td>
+          <!-- budget amount -->
+          <td class="fit">
+            <div class="view">
+              ${{ Number(item.budgetAmount).toFixed(2) }}
+            </div>
+            <div class="edit">
+              <input
+                type="text"
+                class="form-control"
+                name="purchaseAmount"
+                placeholder="Amount"
+                aria-describedby="buttonAdd"
+                v-model="item.purchaseAmount"
+                ref="purchaseAmount"
+              />
+            </div>
+          </td>
+          <!-- actions -->
+          <td class="fit">
+            <section
+              class="btn-group align-self-center"
+              role="group"
+              aria-label="Budget Options"
+            >
+              <button 
+                class="btn btn-sm btn-outline-secondary view"
+                @click="editBudget(item)"
+              >
+                <font-awesome-icon icon="pencil-alt" />
+              </button>
+              <button
+                class="btn btn-sm btn-outline-secondary edit"
+                @click="handleSaveBudget(item)"
+              >
+                <font-awesome-icon icon="save"></font-awesome-icon>
+              </button>
+              <button 
+                class="btn btn-sm btn-outline-secondary" 
+                @click="handleDeleteBudget(item)"
+              >
+                <font-awesome-icon icon="trash" />
+              </button>
+            </section>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
     <div class="row justify-content-center">
       <span class="glyphicon glyphicon-menu-left">
         <button @click="getLastMonthPurchases(dateReference)">
@@ -108,6 +187,10 @@ export default {
       currentBudgetsArray: [],
       purchasesFiltered: [],
       dateReference: new Date(),
+      //editing
+      editedBudget: null,
+      editedBudgeDateDate: null,
+      editMode: false,
     }
   },
   methods: {
@@ -189,6 +272,20 @@ export default {
     formatDate(date) {
       return moment(date).format('MMM Do, YYYY');
     },
+    // editing and deleting
+    editBudget(purchase) {
+      this.editMode = true;
+      this.editedBudgeDate = purchase;
+      this.editedBudgeDateDate = purchase.createdAt.toDate();
+    },
+    handleSaveBudget(purchase) {
+      purchase.createdAt = this.editedBudgeDateDate;
+      this.editMode = false;
+      this.$emit("savePurchase", purchase);
+    },
+    handleDeleteBudget(purchase) {
+      this.$emit("deletePurchase", purchase.id)
+    },
   }, // end methods
 
 }
@@ -199,5 +296,28 @@ export default {
     margin-top: 50px;
     margin-left: 200px;
     margin-right: 200px;
+  }
+
+  [v-cloak] {
+    display: none;
+  }
+  .edit {
+    display: none;
+  }
+  .editing .edit {
+    display: block;
+  }
+  .editing .view {
+    display: none;
+  }
+  .table-fit,
+  .table td.fit, 
+  .table th.fit {
+    white-space: nowrap;
+    width: 50%;
+  }
+  .table-fit {
+    margin-left: auto;
+    margin-right: auto;
   }
 </style>
