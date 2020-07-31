@@ -48,11 +48,14 @@
             </form> <!-- FORM GROUP -->
           </div> <!-- card-body text-center" -->
         </div> <!-- card bg-light -->
+        <button class="btn btn-md btn-info" id="buttonManage" @click="showBudgets()">
+          {{ buttonManageText }}
+        </button>
       </div> <!-- col-12 col-md-9 col-lg-7 -->
     </div> <!-- row justify-content center -->
 
     <!-- Display and edit budgets -->
-    <table class="table table-striped table-fit">
+    <table class="table table-striped table-fit" v-if="buttonManageText=='Done'">
       <thead>
         <tr>
           <td class="fit">Cateogry</td>
@@ -69,7 +72,7 @@
             </div>
             <div class="edit">
               <select
-                name="purchaseCategory"
+                name="budgetCategory"
                 class="form-control"
                 v-model="item.budgetCategory"
                 aria-describedby="buttonAdd"
@@ -91,7 +94,7 @@
               <input
                 type="text"
                 class="form-control"
-                name="purchaseAmount"
+                name="budgetAmount"
                 placeholder="Amount"
                 aria-describedby="buttonAdd"
                 v-model="item.purchaseAmount"
@@ -188,6 +191,7 @@ export default {
       purchasesFiltered: [],
       dateReference: new Date(),
       //editing
+      buttonManageText: "Manage your budgets",
       editedBudget: null,
       editedBudgeDateDate: null,
       editMode: false,
@@ -275,8 +279,7 @@ export default {
     // editing and deleting
     editBudget(purchase) {
       this.editMode = true;
-      this.editedBudgeDate = purchase;
-      this.editedBudgeDateDate = purchase.createdAt.toDate();
+      this.editBudget = purchase;
     },
     handleSaveBudget(purchase) {
       purchase.createdAt = this.editedBudgeDateDate;
@@ -284,7 +287,11 @@ export default {
       this.$emit("savePurchase", purchase);
     },
     handleDeleteBudget(purchase) {
-      this.$emit("deletePurchase", purchase.id)
+      this.$emit("deleteBudget", purchase.id)
+    },
+    showBudgets() {
+      if (this.buttonManageText == "Done") this.buttonManageText = "Manage my budgets";
+      else this.buttonManageText = "Done";
     },
   }, // end methods
 
@@ -296,6 +303,10 @@ export default {
     margin-top: 50px;
     margin-left: 200px;
     margin-right: 200px;
+  }
+  #buttonManage {
+    margin: 10px auto;
+    display: block;
   }
 
   [v-cloak] {
