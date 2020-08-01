@@ -81,7 +81,11 @@ export default {
                 }, error => {
                     this.error = error.message;
             })
-        }
+            // this.$store.dispatch('login', {
+            //   email: this.email,
+            //   password: this.paddword
+            // })
+        },
     },
 }
 </script>

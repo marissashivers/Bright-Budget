@@ -1,20 +1,15 @@
 <template>
   <div>
-
     <!-- adding a purchase -->
     <div class="row justify-content-center">
       <div class="col-12 col-md-9 col-lg-7">
-        <h1
-          class="font-weight-light text-center"
-        >Add a Purchase/Category</h1>
+        <h1 class="font-weight-light text-center">Add a Purchase/Category</h1>
         <div class="card bg-light">
           <div class="card-body text-center">
             <form class="formgroup">
               <div class="input-group input-group-lg">
                 <!-- datepicker -->
-                <datepicker 
-                  v-model="createdAt" 
-                  class="form-control">
+                <datepicker v-model="createdAt" class="form-control">
                 </datepicker>
                 <input
                   type="text"
@@ -52,36 +47,43 @@
                     type="submit"
                     class="btn btn-sm btn-info"
                     id="buttonAdd"
-                    @click.prevent = "handleAddPurchase"
+                    @click.prevent="handleAddPurchase"
                   >
                     +
                   </button>
                 </div>
-              </div> <!-- input-group input-group-lg -->
-            </form> <!-- FORM GROUP -->
+              </div>
+              <!-- input-group input-group-lg -->
+            </form>
+            <!-- FORM GROUP -->
             <form class="formgroup" style="margin-top: 20px;">
               <div class="input-group input-group-lg">
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   class="form-control"
                   placeholder="New category"
                   v-model="addCategory"
                   ref="addCategory"
                 />
                 <div class="input-group-append">
-                  <button 
-                    type="submit" 
-                    class="btn btn-sm btn-info" 
+                  <button
+                    type="submit"
+                    class="btn btn-sm btn-info"
                     @click.prevent="handleAddCategory"
-                  >+
+                  >
+                    +
                   </button>
                 </div>
               </div>
             </form>
-          </div> <!-- card-body text-center" -->
-        </div> <!-- card bg-light -->
-      </div> <!-- col-12 col-md-9 col-lg-7 -->
-    </div> <!-- row justify-content center -->
+          </div>
+          <!-- card-body text-center" -->
+        </div>
+        <!-- card bg-light -->
+      </div>
+      <!-- col-12 col-md-9 col-lg-7 -->
+    </div>
+    <!-- row justify-content center -->
 
     <!-- purchase pagination testing -->
     <table class="table table-striped">
@@ -95,17 +97,20 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in displayedPurchases" :key="item.id" :class="{editing: item == editedPurchase && editMode == true}" v-cloak>
+        <tr
+          v-for="item in purchases"
+          :key="item.id"
+          :class="{ editing: item == editedPurchase && editMode == true }"
+          v-cloak
+        >
           <!-- date -->
           <td>
             <div class="view">
-                {{ formatDate(item.createdAt.toDate()) }}
+              {{ formatDate(item.createdAt.toDate()) }}
             </div>
             <div class="edit">
-                <datepicker 
-                  v-model="editedPurchaseDate" 
-                  class="form-control">
-                </datepicker>
+              <datepicker v-model="editedPurchaseDate" class="form-control">
+              </datepicker>
             </div>
           </td>
           <!-- purchase location -->
@@ -169,7 +174,7 @@
               role="group"
               aria-label="Purchase Options"
             >
-              <button 
+              <button
                 class="btn btn-sm btn-outline-secondary view"
                 @click="editPurchase(item)"
               >
@@ -181,8 +186,8 @@
               >
                 <font-awesome-icon icon="save"></font-awesome-icon>
               </button>
-              <button 
-                class="btn btn-sm btn-outline-secondary" 
+              <button
+                class="btn btn-sm btn-outline-secondary"
                 @click="handleDeletePurchase(item)"
               >
                 <font-awesome-icon icon="trash" />
@@ -193,85 +198,137 @@
       </tbody>
     </table>
 
-    <!-- Page Navigation -->
+    <!-- Page Navigation
     <nav aria-label="Page navigation">
       <ul class="pagination">
         <li class="page-item">
-          <button 
-            type="button" 
-            class="page-link" 
-            v-if="page != 1" 
+          <button
+            type="button"
+            class="page-link"
+            v-if="page != 1"
             @click="page--"
-          >Previous
+          >
+            Previous
           </button>
         </li>
         <li class="page-item">
-          <button 
-            type="button" 
-            class="page-link" 
-            v-for="pageNumber in pages.slice(page-1, page+5)"
+          <button
+            type="button"
+            class="page-link"
+            v-for="pageNumber in pages.slice(page - 1, page + 5)"
             :key="pageNumber"
             @click="page = pageNumber"
-          >{{ pageNumber }}
+          >
+            {{ pageNumber }}
           </button>
         </li>
         <li class="page-item">
-          <button 
-            type="button" 
-            @click="page++" 
-            v-if="page < pages.length" 
+          <button
+            type="button"
+            @click="page++"
+            v-if="page < pages.length"
             class="page-link"
-          >Next
+          >
+            Next
           </button>
         </li>
       </ul>
-    </nav>
-    
+    </nav> -->
+
+    <DisplayPurchases :key="componentKey" :purchases="this.purchases" :categories="this.categories" />
+
   </div>
 </template>
 
 <script>
-  import moment from 'moment';
-  import Datepicker from 'vuejs-datepicker';
-  
-  export default {
-    name: 'purchases',
-    components: {
-      Datepicker,
-    },
-    props: ["user", "purchases", "categories"],
-    data() {
-      return {
-        purchaseLocation: null,
-        purchaseAmount: null,
-        purchaseCategory: null,
-        createdAt: new Date(),
-        addCategory: null,
-        page: 1,
-        perPage: 10,
-        pages: [],
+import moment from "moment";
+import Datepicker from "vuejs-datepicker";
+import DisplayPurchases from "@/components/DisplayPurchases.vue";
 
-        editMode: false,
-        editedPurchase: null,
-        editedPurchaseDate: null,
-      }
+export default {
+  name: "Purchases",
+  components: {
+    Datepicker,
+    DisplayPurchases,
+  },
+  props: ["user", "purchases", "categories"],
+  watch: {
+  },
+  data() {
+    return {
+      purchaseLocation: null,
+      purchaseAmount: null,
+      purchaseCategory: null,
+      createdAt: new Date(),
+      addCategory: null,
+      page: 1,
+      perPage: 10,
+      pages: [],
+
+      editMode: false,
+      editedPurchase: null,
+      editedPurchaseDate: null,
+
+      componentKey: null,
+    };
+  },
+  computed: {
+    // rows() {
+    //   return this.purchases.length;
+    // },
+    // displayedPurchases() {
+    //   return this.paginate();
+    // },
+  },
+  created() {
+    // this.getPurchases();
+    // this.setPages();
+  },
+  methods: {
+    handleAddPurchase: function() {
+      this.$emit(
+        "addPurchase",
+        this.purchaseLocation,
+        this.purchaseAmount,
+        this.purchaseCategory,
+        this.createdAt
+      );
+      this.purchaseLocation = null;
+      this.purchaseAmount = null;
+      this.purchaseCategory = null;
+      //this.createdAt = this.createdAt;
     },
-    computed: {
-      rows() {
-        return this.purchases.length
-      },
-      displayedPurchases() {
-        return this.paginate();
-      }
+    handleSavePurchase(purchase) {
+      purchase.createdAt = this.editedPurchaseDate;
+      this.editMode = false;
+      this.$emit("savePurchase", purchase);
     },
-    watch: {
-      purchases() {
-        this.setPages();
-      }
+    handleDeletePurchase(purchase) {
+      this.$emit("deletePurchase", purchase.id);
     },
-    created() {
-      this.getPurchases();
-      this.setPages();
+    handleAddCategory: function() {
+      this.$emit("addCategory", this.addCategory);
+      this.addCategory = null;
+    },
+    // getPurchases() {
+    //   return this.purchases;
+    // },
+    // setPages() {
+    //   let numberofPages = Math.ceil(this.purchases.length / this.perPage);
+    //   this.pages = [];
+    //   for (let index = 1; index <= numberofPages; index++) {
+    //     this.pages.push(index);
+    //   }
+    // },
+    // paginate() {
+    //   let page = this.page;
+    //   let perPage = this.perPage;
+    //   let from = page * perPage - perPage;
+    //   let to = page * perPage;
+    //   return this.purchases.slice(from, to);
+    // },
+    formatDate(date) {
+      return moment(date).format("MMM Do, YYYY");
     },
     methods: {
       handleAddPurchase: function() {
@@ -319,14 +376,15 @@
         this.editedPurchaseDate = purchase.createdAt.toDate();
       },
     }
-  }
+  },
+};
 </script>
-
 
 <style scoped>
 button.page-link {
   display: inline-block;
 }
+
 button.page-link {
   font-size: 20px;
   color: #29b3ed;
@@ -336,12 +394,15 @@ button.page-link {
 [v-cloak] {
   display: none;
 }
+
 .edit {
   display: none;
 }
+
 .editing .edit {
   display: block;
 }
+
 .editing .view {
   display: none;
 }

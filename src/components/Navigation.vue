@@ -16,6 +16,9 @@
                     v-if="user"
                 >logout
                 </button>
+                <!-- <button class="nav-item nav-link btn btn-link"
+                @click="logout()" v-if="user"
+                >logout</button> -->
             </div>
         </div>
     </nav>
@@ -24,6 +27,11 @@
 <script>
 export default {
     name: "Navigation",
-    props: ["user"]
+    props: ["user"],
+    // methods: {
+    //     logout() {
+    //         this.$store.dispatch("logout");
+    //     }
+    // }
 }
 </script>
