@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { auth } from "../firebase"
+//import { auth } from "../firebase"
 
 export default {
     data: function() {
@@ -73,18 +73,20 @@ export default {
                 email: this.email,
                 password: this.password
             }
-            auth
-            .signInWithEmailAndPassword(info.email, info.password)
-            .then(
-                () => {
-                    this.$router.push("/")
-                }, error => {
-                    this.error = error.message;
-            })
-            // this.$store.dispatch('login', {
-            //   email: this.email,
-            //   password: this.paddword
+            // auth
+            // .signInWithEmailAndPassword(info.email, info.password)
+            // .then(
+            //     () => {
+            //         this.$router.push("/")
+            //     }, error => {
+            //         this.error = error.message;
             // })
+            this.$store.dispatch('signInAction', info)
+            .then(() => {
+              this.$router.push("/")
+            }, error => {
+              console.log(error.message);
+            });
         },
     },
 }
