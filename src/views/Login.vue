@@ -83,7 +83,8 @@ export default {
             // })
             this.$store.dispatch('signInAction', info)
             .then(() => {
-              this.$router.push("/")
+              this.$router.push({path: '/'});
+              console.log("here");
             }, error => {
               console.log(error.message);
             });

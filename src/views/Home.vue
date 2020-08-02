@@ -1,10 +1,10 @@
 <template>
   <div class="home">
     <div class="text-secondary text-center">
-      <div v-if="user" class="text-center">
+      <div v-if="userLoggedIn" class="text-center">
         Welcome back 
-        <span class="font-weight-bold text-info">{{ user.displayName }}</span>,
-        <a href="#" class="text-primary" role="button" @click="$emit('logout')">logout</a>
+        <span class="font-weight-bold text-info">{{ displayName }}</span>,
+        <a href="#" class="text-primary" role="button" @click="logout()">logout</a>
       </div>
     </div>
     <div class="container text-center">
@@ -26,17 +26,17 @@
           <router-link
             class="btn btn-outline-primary mr-2"
             to="/register"
-            v-if="!user"
+            v-if="!userLoggedIn"
           >Register</router-link>
           <router-link
             class="btn btn-outline-primary mr-2"
             to="/login"
-            v-if="!user"
+            v-if="!userLoggedIn"
           >Log In</router-link>
           <router-link
             class="btn btn-primary"
             to="/purchases"
-            v-if="user"
+            v-if="userLoggedIn"
           >Purchases</router-link>
         </div>
       </div>
@@ -63,14 +63,31 @@
 <script>
 export default {
   name: 'Home',
-  props: ["user"],
   components: {
   },
   computed: {
+    user() {
+      return this.$store.state.user;
+    },
+    displayName() {
+      return this.$store.getters.displayName;
+    },
+    userLoggedIn() {
+      return this.$store.getters.user;
+    }
   },
   mounted() {
   },
   methods: {
+    logout() {
+      this.$store.dispatch("signOutAction")
+      .then(() => {
+        this.$router.push({path: '/login'});
+        console.log("here");
+      }, error => {
+          console.log(error.message);
+      });
+    }
   }
 }
 </script>

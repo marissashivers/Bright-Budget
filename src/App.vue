@@ -2,14 +2,10 @@
   <div id="app">
 
     <!-- NAVBAR -->
-    <Navigation 
-      :user="user" 
-      @logout="logout"
-    />
+    <Navigation />
     <!-- pass props to router -->
     <router-view 
-      class="container" 
-      :user="user" 
+      class="container"  
       :meetings="meetings"
       :purchases="purchases"
       :categories="categories"

@@ -35,7 +35,13 @@ export default {
     },
     methods: {
         logout() {
-            this.$store.dispatch("signOutAction");
+            this.$store.dispatch("signOutAction")
+            .then(() => {
+                this.$router.push({path: '/login'});
+                console.log("here");
+            }, error => {
+                console.log(error.message);
+            });
         }
     }
 }

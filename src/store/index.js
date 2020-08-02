@@ -2,13 +2,14 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 //mport { db } from './firebase';
 import { auth } from '../firebase';
-import { router } from '../router/index'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
     user: null,
+    displayName: null,
+    purchases: [],
     status: null,
     error: null,
   },
@@ -19,6 +20,9 @@ export default new Vuex.Store({
     user(state) {
       return state.user;
     },
+    displayName(state) {
+      return state.displayName;
+    },
     error(state) {
       return state.error;
     }
@@ -26,6 +30,9 @@ export default new Vuex.Store({
   mutations: {
     setUser(state, payload) {
       state.user = payload;
+    },
+    setDisplayName(state, payload) {
+      state.displayName = payload;
     },
     removeUser(state) {
       state.user = null;
@@ -45,6 +52,7 @@ export default new Vuex.Store({
         // respones will have user
         // user will have uid and will be updated in state
         commit('setUser', response.user.uid)
+        commit('setDisplayName', response.user.displayName)
         commit('setStatus', 'success')
         commit('setError', null)
       })
@@ -57,29 +65,29 @@ export default new Vuex.Store({
       auth.signInWithEmailAndPassword(payload.email, payload.password)
       .then((response) => {
         commit('setUser', response.user.uid);
+        commit('setDisplayName', response.user.displayName);
         commit('setStatus', 'success');
         commit('setError', null);
-        console.log("here")
       })
       .catch((error) => {
         commit('setStatus', 'failure')
         commit('setError', error.message)
       })
-      router.replace('/');
     },
     signOutAction({ commit }) {
       auth.signOut()
       .then(() => {
         commit('setUser', null);
+        commit('setDisplayName', null);
         commit('setStatus', 'success');
         commit('setError', null);
-        router.push("/login");
+        this.$router.push({path: '/login'});
       })
       .catch((error) => {
         commit('setStatus', 'failure');
         commit('setError', error.message);
       })
-    }
+    },
   },
   modules: {
   }

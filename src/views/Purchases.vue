@@ -251,8 +251,13 @@ export default {
     Datepicker,
     DisplayPurchases,
   },
-  props: ["user", "purchases", "categories"],
+  props: ["purchases", "categories"],
   watch: {
+  },
+  computed: {
+    user() {
+      return this.$store.state.user;
+    }
   },
   data() {
     return {
@@ -271,14 +276,6 @@ export default {
 
       componentKey: null,
     };
-  },
-  computed: {
-    // rows() {
-    //   return this.purchases.length;
-    // },
-    // displayedPurchases() {
-    //   return this.paginate();
-    // },
   },
   created() {
     // this.getPurchases();
