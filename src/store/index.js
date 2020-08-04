@@ -117,7 +117,7 @@ export default new Vuex.Store({
           });
           console.log("purchases set from get purchases action");
           console.log(temps);
-          commit("setPurchases", temps);
+          commit("setPurchases", temps.reverse());
         });
       }
       else {

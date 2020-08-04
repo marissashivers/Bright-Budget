@@ -135,6 +135,7 @@
     </b-row>
 
     <!-- Main table element -->
+    <!-- TODO: fix date sorting -->
     <b-table
       show-empty
       small

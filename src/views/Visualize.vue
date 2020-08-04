@@ -48,7 +48,6 @@
 <script>
 // @ is an alias to /src
 //import Datepicker from 'vuejs-datepicker';
-import { purchaseCollection } from '../firebase';
 import moment from 'moment';
 //import BarChartComponent from "@/components/BarChart.vue";
 //import PieChartComponent from "@/components/PieChart.vue";
@@ -98,11 +97,6 @@ export default {
             // Line chart
             chartOptionsLine: null,
             chartDataLine: null,
-        }
-    },
-    firestore() {
-        return {
-            db: purchaseCollection.orderBy('createdAt', 'desc'),
         }
     },
     methods: {
@@ -206,6 +200,7 @@ export default {
                 let date = purch.createdAt.toDate();
                 return date >= this.start && date <= this.end;
             });
+            console.log(results);
             this.purchasesFiltered = results;
             // reset chart data
             this.fetchData();
