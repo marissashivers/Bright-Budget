@@ -86,7 +86,7 @@
     <!-- row justify-content center -->
 
     <!-- purchase pagination testing -->
-    <table class="table table-striped">
+    <!-- <table class="table table-striped">
       <thead>
         <tr>
           <td>Date</td>
@@ -103,7 +103,6 @@
           :class="{ editing: item == editedPurchase && editMode == true }"
           v-cloak
         >
-          <!-- date -->
           <td>
             <div class="view">
               {{ formatDate(item.createdAt.toDate()) }}
@@ -113,7 +112,6 @@
               </datepicker>
             </div>
           </td>
-          <!-- purchase location -->
           <td>
             <div class="view">
               {{ item.purchaseLocation }}
@@ -130,7 +128,6 @@
               />
             </div>
           </td>
-          <!-- purchase amount -->
           <td>
             <div class="view">
               ${{ Number(item.purchaseAmount).toFixed(2) }}
@@ -147,7 +144,6 @@
               />
             </div>
           </td>
-          <!-- purchase category -->
           <td>
             <div class="view">
               {{ item.purchaseCategory }}
@@ -167,7 +163,6 @@
               </select>
             </div>
           </td>
-          <!-- actions -->
           <td>
             <section
               class="btn-group align-self-center"
@@ -196,7 +191,7 @@
           </td>
         </tr>
       </tbody>
-    </table>
+    </table> -->
 
     <!-- Page Navigation
     <nav aria-label="Page navigation">
@@ -285,97 +280,50 @@ export default {
     // this.setPages();
   },
   methods: {
-    // handleAddPurchase: function() {
-    //   this.$emit(
-    //     "addPurchase",
-    //     this.purchaseLocation,
-    //     this.purchaseAmount,
-    //     this.purchaseCategory,
-    //     this.createdAt
-    //   );
-    //   this.purchaseLocation = null;
-    //   this.purchaseAmount = null;
-    //   this.purchaseCategory = null;
-    //   //this.createdAt = this.createdAt;
-    // },
-    // handleSavePurchase(purchase) {
-    //   purchase.createdAt = this.editedPurchaseDate;
-    //   this.editMode = false;
-    //   this.$emit("savePurchase", purchase);
-    // },
-    // handleDeletePurchase(purchase) {
-    //   this.$emit("deletePurchase", purchase.id);
-    // },
-    // handleAddCategory: function() {
-    //   this.$emit("addCategory", this.addCategory);
-    //   this.addCategory = null;
-    // },
-    // getPurchases() {
-    //   return this.purchases;
-    // },
-    // setPages() {
-    //   let numberofPages = Math.ceil(this.purchases.length / this.perPage);
-    //   this.pages = [];
-    //   for (let index = 1; index <= numberofPages; index++) {
-    //     this.pages.push(index);
-    //   }
-    // },
-    // paginate() {
-    //   let page = this.page;
-    //   let perPage = this.perPage;
-    //   let from = page * perPage - perPage;
-    //   let to = page * perPage;
-    //   return this.purchases.slice(from, to);
-    // },
-    formatDate(date) {
-      return moment(date).format("MMM Do, YYYY");
+    handleAddPurchase: function() {
+      this.$emit("addPurchase", this.purchaseLocation, this.purchaseAmount, this.purchaseCategory, this.createdAt);
+      this.purchaseLocation = null;
+      this.purchaseAmount = null;
+      this.purchaseCategory = null;
+      this.createdAt = new Date();
     },
-    methods: {
-      handleAddPurchase: function() {
-        this.$emit("addPurchase", this.purchaseLocation, this.purchaseAmount, this.purchaseCategory, this.createdAt);
-        this.purchaseLocation = null;
-        this.purchaseAmount = null;
-        this.purchaseCategory = null;
-        this.createdAt = new Date();
-      },
-      handleSavePurchase(purchase) {
-        purchase.createdAt = this.editedPurchaseDate;
-        this.editMode = false;
-        this.$emit("savePurchase", purchase);
-      },
-      handleDeletePurchase(purchase) {
-        this.$emit("deletePurchase", purchase.id)
-      },
-      handleAddCategory: function() {
-        this.$emit("addCategory", this.addCategory)
-        this.addCategory = null;
-      },
-      getPurchases() {
-        return this.purchases;
-      },
-      setPages() {
-        let numberofPages = Math.ceil(this.purchases.length / this.perPage);
-        this.pages = [];
-        for(let index = 1; index <= numberofPages; index++) {
-          this.pages.push(index);
-        }
-      },
-      paginate() {
-        let page = this.page;
-        let perPage = this.perPage;
-        let from = (page * perPage) - perPage;
-        let to = (page * perPage);
-        return this.purchases.slice(from, to);
-      },
-      formatDate(date) {
-        return moment(date).format('MMM Do, YYYY');
-      },
-      editPurchase(purchase) {
-        this.editMode = true;
-        this.editedPurchase = purchase;
-        this.editedPurchaseDate = purchase.createdAt.toDate();
-      },
-    }
+    handleSavePurchase(purchase) {
+      purchase.createdAt = this.editedPurchaseDate;
+      this.editMode = false;
+      this.$emit("savePurchase", purchase);
+    },
+    handleDeletePurchase(purchase) {
+      this.$emit("deletePurchase", purchase.id)
+    },
+    handleAddCategory: function() {
+      this.$emit("addCategory", this.addCategory)
+      this.addCategory = null;
+    },
+    getPurchases() {
+      return this.purchases;
+    },
+    setPages() {
+      let numberofPages = Math.ceil(this.purchases.length / this.perPage);
+      this.pages = [];
+      for(let index = 1; index <= numberofPages; index++) {
+        this.pages.push(index);
+      }
+    },
+    paginate() {
+      let page = this.page;
+      let perPage = this.perPage;
+      let from = (page * perPage) - perPage;
+      let to = (page * perPage);
+      return this.purchases.slice(from, to);
+    },
+    formatDate(date) {
+      return moment(date).format('MMM Do, YYYY');
+    },
+    editPurchase(purchase) {
+      this.editMode = true;
+      this.editedPurchase = purchase;
+      this.editedPurchaseDate = purchase.createdAt.toDate();
+    },
   },
 };
 </script>

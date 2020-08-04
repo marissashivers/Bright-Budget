@@ -106,7 +106,6 @@ export default new Vuex.Store({
         .orderBy("createdAt")
         .onSnapshot(snapshot => {
           const temps = [];
-          console.log("here in getter created temps");
           snapshot.forEach(doc => {
             temps.push({
               id: doc.id,
@@ -116,15 +115,33 @@ export default new Vuex.Store({
               purchaseCategory: doc.data().purchaseCategory
             });
           });
-          console.log(temps);
           console.log("purchases set from get purchases action");
-          //return temps;
+          console.log(temps);
           commit("setPurchases", temps);
         });
       }
       else {
         commit("setPurchases", ["null"]);
       }
+    },
+    deletePurchase({ commit }, purchaseObject) {
+      // deletePurchase: function(purchaseId) {
+      //   db.collection("users")
+      //   .doc(this.user.uid)
+      //   .collection("purchases")
+      //   .doc(purchaseId)
+      //   .delete();
+      // },
+      if (this.state.user) {
+        console.log("here");
+        console.log(purchaseObject);
+        db.collection("users")
+        .doc(this.state.user)
+        .collection("purchases")
+        .doc(purchaseObject.id)
+        .delete();
+      }
+      commit("setStatus", "success");
     }
   },
   modules: {

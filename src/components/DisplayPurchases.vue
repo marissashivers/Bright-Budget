@@ -1,8 +1,9 @@
 <template>
   <b-container fluid>
     <!-- User Interface controls -->
+    <!-- top row -->
     <b-row>
-      <b-col lg="6" class="my-1">
+      <b-col>
         <!-- SORT BY CATEGORY -->
         <b-form-group
           label="Sort"
@@ -36,7 +37,7 @@
         </b-form-group>
       </b-col>
 
-      <b-col lg="6" class="my-1">
+      <b-col>
         <!-- SORTING DIRECTION -->
         <b-form-group
           label="Initial sort"
@@ -55,7 +56,7 @@
         </b-form-group>
       </b-col>
 
-      <b-col lg="6" class="my-1">
+      <b-col>
         <!-- search/filter -->
         <b-form-group
           label="Filter"
@@ -80,8 +81,11 @@
           </b-input-group>
         </b-form-group>
       </b-col>
+    </b-row>
 
-      <b-col lg="6" class="my-1">
+    <!-- bottom row -->
+    <b-row>
+      <b-col>
         <b-form-group
           label="Filter On"
           label-cols-sm="3"
@@ -98,7 +102,7 @@
         </b-form-group>
       </b-col>
 
-      <b-col sm="5" md="6" class="my-1">
+      <b-col>
         <b-form-group
           label="Per page"
           label-cols-sm="6"
@@ -118,7 +122,7 @@
         </b-form-group>
       </b-col>
 
-      <b-col sm="7" md="6" class="my-1">
+      <b-col>
         <b-pagination
           v-model="currentPage"
           :total-rows="totalRows"
@@ -136,7 +140,7 @@
       small
       stacked="md"
       ref="table"
-      :items="items"
+      :items="purchases"
       :fields="fields"
       :current-page="currentPage"
       :per-page="perPage"
@@ -162,6 +166,31 @@
         <b-button size="sm" @click="row.toggleDetails">
           {{ row.detailsShowing ? "Hide" : "Show" }} Details
         </b-button>
+        <!-- added by me from old table -->
+        <section
+          class="btn-group align-self-center"
+          role="group"
+          aria-label="Purchase Options"
+        >
+          <button
+            class="btn btn-sm btn-outline-secondary view"
+            @click="editPurchase(item)"
+          >
+            <font-awesome-icon icon="pencil-alt" />
+          </button>
+          <button
+            class="btn btn-sm btn-outline-secondary edit"
+            @click="handleSavePurchase(item)"
+          >
+            <font-awesome-icon icon="save"></font-awesome-icon>
+          </button>
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            @click="handleDeletePurchase(row.item)"
+          >
+            <font-awesome-icon icon="trash" />
+          </button>
+        </section>
       </template>
 
       <template v-slot:row-details="row">
@@ -208,7 +237,6 @@ export default {
   watch: {
     purchases: function() {
       console.log("purchases changed");
-      this.$refs.table.refresh();
     }
   },
   data() {
@@ -250,11 +278,11 @@ export default {
       ],
       totalRows: 1,
       currentPage: 1,
-      perPage: 5,
+      perPage: 10,
       pageOptions: [5, 10, 15],
       sortBy: "",
       sortDesc: false,
-      sortDirection: "asc",
+      sortDirection: "desc",
       filter: null,
       filterOn: [],
       infoModal: {
@@ -265,10 +293,11 @@ export default {
     };
   },
   mounted() {
-    // Set the initial number of items
-    // this.totalRows = this.items.length;
+    //Set the initial number of items
+    this.totalRows = this.$store.getters.purchases.length;
   },
   methods: {
+    // @click="info(row.item, row.index, $event.target)"
     info(item, index, button) {
       this.infoModal.title = `Row index: ${index}`;
       this.infoModal.content = JSON.stringify(item, null, 2);
@@ -283,10 +312,15 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
+
     // added by me
     formatDate(date) {
-      return moment(date).format("MMM Do, YYYY");
+      return moment(date).format("MM-DD-YYYY");
     },
+    handleDeletePurchase(item) {
+      console.log(item);
+      this.$store.dispatch("deletePurchase", item);
+    }
   },
 };
 </script>

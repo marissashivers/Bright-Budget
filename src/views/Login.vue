@@ -84,12 +84,11 @@ export default {
             // })
             this.$store.dispatch('signInAction', info)
             .then(response => {
-              console.log(response);
+              console.log("Successfully signed in: " + response);
               this.$router.push({path: '/'});
               this.$store.dispatch("fetchPurchases");
-              console.log(this.$store.getters.purchases);
             }, error => {
-              console.log(error.message);
+              this.error = error.message;
             });
         },
     },
