@@ -87,6 +87,7 @@ export default {
               console.log("Successfully signed in: " + response);
               this.$router.push({path: '/'});
               this.$store.dispatch("fetchPurchases");
+              this.$store.dispatch("fetchCategories");
             }, error => {
               this.error = error.message;
             });

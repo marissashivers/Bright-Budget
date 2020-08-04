@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 //mport { db } from './firebase';
 import { db, auth } from '../firebase';
+import { filterLastMonth, filterLastThreeMonths, filterLastYear, 
+  getPurchasesByCategory } from './purchaseFilters.js'
 
 Vue.use(Vuex)
 
@@ -10,6 +12,7 @@ export default new Vuex.Store({
     user: null,
     displayName: null,
     purchases: null,
+    categories: null,
     status: null,
     error: null,
   },
@@ -28,6 +31,21 @@ export default new Vuex.Store({
     },
     purchases(state) {
       return state.purchases;
+    },
+    purchasesLastMonth(state) {
+      return filterLastMonth(state.purchases);
+    },
+    purchasesLastThreeMonths(state) {
+      return filterLastThreeMonths(state.purchases);
+    },
+    purchasesLastYear(state) {
+      return filterLastYear(state.purchases);
+    },
+    purchasesByCategory(state) {
+      return getPurchasesByCategory(state.purchases, state.categories);
+    },
+    categories(state) {
+      return state.categories;
     },
   },
   mutations: {
@@ -48,7 +66,10 @@ export default new Vuex.Store({
     },
     setPurchases(state, payload) {
       state.purchases = payload;
-    }
+    },
+    setCategories(state, payload) {
+      state.categories = payload;
+    },
   },
   actions: {
     signUpAction({ commit }, payload) {
@@ -142,7 +163,29 @@ export default new Vuex.Store({
         .delete();
       }
       commit("setStatus", "success");
-    }
+    },
+    fetchCategories({ commit }) {
+      if (this.state.user) {
+        db.collection("users")
+        .doc(this.state.user)
+        .collection("categories")
+        .orderBy("category")
+        .onSnapshot(snapshot => {
+          const temps = [];
+          snapshot.forEach(doc => {
+            temps.push({
+              id: doc.id,
+              category: doc.data().category
+            });
+          });
+          console.log(temps);
+          commit("setCategories", temps);
+        });
+      }
+      else {
+        commit("setCategories", ["null"]);
+      }
+    },
   },
   modules: {
   }
