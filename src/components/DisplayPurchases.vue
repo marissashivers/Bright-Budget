@@ -1,142 +1,114 @@
 <template>
-  <b-container fluid>
+  <b-container fluid class="contain">
     <!-- User Interface controls -->
-    <!-- top row -->
-    <b-row>
-      <b-col>
-        <!-- SORT BY CATEGORY -->
-        <b-form-group
-          label="Sort"
-          label-cols-sm="3"
-          label-align-sm="right"
-          label-size="sm"
-          label-for="sortBySelect"
-          class="mb-0"
-        >
-          <b-input-group size="sm">
-            <b-form-select
-              v-model="sortBy"
-              id="sortBySelect"
-              :options="sortOptions"
-              class="w-75"
-            >
-              <template v-slot:first>
-                <option value="">-- none --</option>
-              </template>
-            </b-form-select>
-            <b-form-select
-              v-model="sortDesc"
-              size="sm"
-              :disabled="!sortBy"
-              class="w-25"
-            >
-              <option :value="false">Asc</option>
-              <option :value="true">Desc</option>
-            </b-form-select>
-          </b-input-group>
-        </b-form-group>
-      </b-col>
-
-      <b-col>
-        <!-- SORTING DIRECTION -->
-        <b-form-group
-          label="Initial sort"
-          label-cols-sm="3"
-          label-align-sm="right"
-          label-size="sm"
-          label-for="initialSortSelect"
-          class="mb-0"
-        >
-          <b-form-select
-            v-model="sortDirection"
-            id="initialSortSelect"
-            size="sm"
-            :options="['asc', 'desc', 'last']"
-          ></b-form-select>
-        </b-form-group>
-      </b-col>
-
-      <b-col>
-        <!-- search/filter -->
-        <b-form-group
-          label="Filter"
-          label-cols-sm="3"
-          label-align-sm="right"
-          label-size="sm"
-          label-for="filterInput"
-          class="mb-0"
-        >
-          <b-input-group size="sm">
-            <b-form-input
-              v-model="filter"
-              type="search"
-              id="filterInput"
-              placeholder="Type to Search"
-            ></b-form-input>
-            <b-input-group-append>
-              <b-button :disabled="!filter" @click="filter = ''"
-                >Clear</b-button
+    <div class="ui">
+      <!-- top row -->
+      <b-row>
+        <b-col>
+          <!-- SORT BY CATEGORY -->
+          <b-form-group
+            label="Sort"
+            label-cols-sm="3"
+            label-align-sm="right"
+            label-size="sm"
+            label-for="sortBySelect"
+            class="mb-0"
+          >
+            <b-input-group size="sm">
+              <b-form-select
+                v-model="sortBy"
+                id="sortBySelect"
+                :options="sortOptions"
+                class="w-75"
               >
-            </b-input-group-append>
-          </b-input-group>
-        </b-form-group>
-      </b-col>
-    </b-row>
+                <template v-slot:first>
+                  <option value="">-- none --</option>
+                </template>
+              </b-form-select>
+              <b-form-select
+                v-model="sortDesc"
+                size="sm"
+                :disabled="!sortBy"
+                class="w-25"
+              >
+                <option :value="false">Asc</option>
+                <option :value="true">Desc</option>
+              </b-form-select>
+            </b-input-group>
+          </b-form-group>
+        </b-col>
 
-    <!-- bottom row -->
-    <b-row>
-      <b-col>
-        <b-form-group
-          label="Filter On"
-          label-cols-sm="3"
-          label-align-sm="right"
-          label-size="sm"
-          description="Leave all unchecked to filter on all data"
-          class="mb-0"
-        >
-          <b-form-checkbox-group v-model="filterOn" class="mt-1">
-            <b-form-checkbox value="name">Name</b-form-checkbox>
-            <b-form-checkbox value="age">Age</b-form-checkbox>
-            <b-form-checkbox value="isActive">Active</b-form-checkbox>
-          </b-form-checkbox-group>
-        </b-form-group>
-      </b-col>
+        <b-col>
+          <!-- SORTING DIRECTION -->
+          <b-form-group
+            label="Initial sort"
+            label-cols-sm="3"
+            label-align-sm="right"
+            label-size="sm"
+            label-for="initialSortSelect"
+            class="mb-0"
+          >
+            <b-form-select
+              v-model="sortDirection"
+              id="initialSortSelect"
+              size="sm"
+              :options="['asc', 'desc', 'last']"
+            ></b-form-select>
+          </b-form-group>
+        </b-col>
+      </b-row>
 
-      <b-col>
-        <b-form-group
-          label="Per page"
-          label-cols-sm="6"
-          label-cols-md="4"
-          label-cols-lg="3"
-          label-align-sm="right"
-          label-size="sm"
-          label-for="perPageSelect"
-          class="mb-0"
-        >
-          <b-form-select
-            v-model="perPage"
-            id="perPageSelect"
-            size="sm"
-            :options="pageOptions"
-          ></b-form-select>
-        </b-form-group>
-      </b-col>
+      <!-- bottom row -->
+      <b-row>
+        <b-col>
+          <b-form-group
+            label="Filter On"
+            label-cols-sm="3"
+            label-align-sm="right"
+            label-size="sm"
+            description="Leave all unchecked to filter on all data"
+            class="mb-0"
+          >
+            <b-form-checkbox-group v-model="filterOn" class="mt-1">
+              <b-form-checkbox value="createdAt">Date</b-form-checkbox>
+              <b-form-checkbox value="purchaseLocation">Location</b-form-checkbox>
+              <b-form-checkbox value="purchaseAmount">Amount</b-form-checkbox>
+              <b-form-checkbox value="purchaseCategory">Category</b-form-checkbox>
+            </b-form-checkbox-group>
+          </b-form-group>
+        </b-col>
+      </b-row>
 
-      <b-col>
-        <b-pagination
-          v-model="currentPage"
-          :total-rows="totalRows"
-          :per-page="perPage"
-          align="fill"
-          size="sm"
-          class="my-0"
-        ></b-pagination>
-      </b-col>
-    </b-row>
+      <b-row>
+        <b-col>
+          <!-- search/filter -->
+          <b-form-group
+            label-size="sm"
+            label-for="filterInput"
+            class="mb-0"
+          >
+            <b-input-group size="sm">
+              <b-form-input
+                v-model="filter"
+                type="search"
+                id="filterInput"
+                placeholder="Type to Search"
+              ></b-form-input>
+              <b-input-group-append>
+                <b-button :disabled="!filter" @click="filter = ''"
+                  >Clear</b-button
+                >
+              </b-input-group-append>
+            </b-input-group>
+          </b-form-group>
+        </b-col>
+      </b-row>
+    </div>
 
     <!-- Main table element -->
     <!-- TODO: fix date sorting -->
     <b-table
+      striped hover
       show-empty
       small
       stacked="md"
@@ -205,6 +177,8 @@
       </template>
     </b-table>
 
+    
+
     <!-- Info modal -->
     <b-modal
       :id="infoModal.id"
@@ -214,6 +188,39 @@
     >
       <pre>{{ infoModal.content }}</pre>
     </b-modal>
+
+    <!-- pagination -->
+    <b-row>
+      <b-col style="padding-top: 25px;">
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="totalRows"
+          :per-page="perPage"
+          align="fill"
+          size="sm"
+          class="my-0"
+        ></b-pagination>
+      </b-col>
+      <b-col lg="3">
+        <b-form-group
+          label="per page"
+          label-cols-sm="6"
+          label-cols-md="4"
+          label-cols-lg="3"
+          label-align-sm="right"
+          label-size="sm"
+          label-for="perPageSelect"
+          class="mb-0"
+        >
+          <b-form-select
+            v-model="perPage"
+            id="perPageSelect"
+            size="sm"
+            :options="pageOptions"
+          ></b-form-select>
+        </b-form-group>
+      </b-col>
+    </b-row>
   </b-container>
 </template>
 
@@ -325,3 +332,14 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+  .contain {
+    padding-left: 100px;
+    padding-right: 100px;
+  }
+  .ui {
+    padding-left: 150px;
+    padding-right: 150px;
+  }
+</style>

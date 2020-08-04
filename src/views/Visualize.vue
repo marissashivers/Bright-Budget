@@ -58,7 +58,6 @@ export default {
   },
   data() {
     return {
-      purchase: null,
       selectedDate: new Date(),
       search: null,
       purchasesFiltered: this.purchases,
@@ -73,16 +72,16 @@ export default {
       start: this.purchases[this.purchases.length-1].createdAt.toDate(),
 
       // Pie Chart
-      chartOptionsPie: null,
-      chartDataPie: null,
+      chartOptionsPie: [],
+      chartDataPie: [],
 
       // Bar chart
-      chartOptionsBar: null,
-      chartDataBar: null,
+      chartOptionsBar: [],
+      chartDataBar: [],
 
       // Line chart
-      chartOptionsLine: null,
-      chartDataLine: null,
+      chartOptionsLine: [],
+      chartDataLine: [],
     }
   },
   methods: {
