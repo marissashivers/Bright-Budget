@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 //mport { db } from './firebase';
-import { auth } from '../firebase';
+import { db, auth } from '../firebase';
 
 Vue.use(Vuex)
 
@@ -9,7 +9,7 @@ export default new Vuex.Store({
   state: {
     user: null,
     displayName: null,
-    purchases: [],
+    purchases: null,
     status: null,
     error: null,
   },
@@ -25,7 +25,10 @@ export default new Vuex.Store({
     },
     error(state) {
       return state.error;
-    }
+    },
+    purchases(state) {
+      return state.purchases;
+    },
   },
   mutations: {
     setUser(state, payload) {
@@ -43,6 +46,9 @@ export default new Vuex.Store({
     setError(state, payload) {
       state.error = payload;
     },
+    setPurchases(state, payload) {
+      state.purchases = payload;
+    }
   },
   actions: {
     signUpAction({ commit }, payload) {
@@ -62,16 +68,20 @@ export default new Vuex.Store({
       })
     },
     signInAction({ commit }, payload) {
-      auth.signInWithEmailAndPassword(payload.email, payload.password)
-      .then((response) => {
-        commit('setUser', response.user.uid);
-        commit('setDisplayName', response.user.displayName);
-        commit('setStatus', 'success');
-        commit('setError', null);
-      })
-      .catch((error) => {
-        commit('setStatus', 'failure')
-        commit('setError', error.message)
+      return new Promise((resolve, reject) => {
+        auth.signInWithEmailAndPassword(payload.email, payload.password)
+        .then((response) => {
+          commit('setUser', response.user.uid);
+          commit('setDisplayName', response.user.displayName);
+          commit('setStatus', 'success');
+          commit('setError', null);
+          resolve(response);
+        })
+        .catch((error) => {
+          commit('setStatus', 'failure')
+          commit('setError', error.message)
+          reject(error);
+        }) //
       })
     },
     signOutAction({ commit }) {
@@ -81,13 +91,41 @@ export default new Vuex.Store({
         commit('setDisplayName', null);
         commit('setStatus', 'success');
         commit('setError', null);
-        this.$router.push({path: '/login'});
       })
       .catch((error) => {
         commit('setStatus', 'failure');
         commit('setError', error.message);
       })
     },
+    fetchPurchases({ commit }) {
+      console.log("here in getter for purchases");
+      if (this.state.user) {
+        db.collection("users")
+        .doc(this.state.user)
+        .collection("purchases")
+        .orderBy("createdAt")
+        .onSnapshot(snapshot => {
+          const temps = [];
+          console.log("here in getter created temps");
+          snapshot.forEach(doc => {
+            temps.push({
+              id: doc.id,
+              purchaseLocation: doc.data().purchaseLocation,
+              purchaseAmount: doc.data().purchaseAmount,
+              createdAt: doc.data().createdAt,
+              purchaseCategory: doc.data().purchaseCategory
+            });
+          });
+          console.log(temps);
+          console.log("purchases set from get purchases action");
+          //return temps;
+          commit("setPurchases", temps);
+        });
+      }
+      else {
+        commit("setPurchases", ["null"]);
+      }
+    }
   },
   modules: {
   }

@@ -191,7 +191,20 @@
 import moment from "moment";
 export default {
   name: "DisplayPurchases",
-  props: ["purchases", "categories"],
+  props: ["categories"],
+  computed: {
+    purchases() {
+      return this.$store.getters.purchases;
+    },
+    sortOptions() {
+    // Create an options list from our fields
+    return this.fields
+      .filter((f) => f.sortable)
+      .map((f) => {
+        return { text: f.label, value: f.key };
+      });
+    },
+  },
   watch: {
     purchases: function() {
       console.log("purchases changed");
@@ -200,7 +213,7 @@ export default {
   },
   data() {
     return {
-      items: this.purchases,
+      items: this.$store.getters.purchases,
       fields: [
         {
           key: "createdAt",
@@ -251,19 +264,9 @@ export default {
       },
     };
   },
-  computed: {
-    sortOptions() {
-      // Create an options list from our fields
-      return this.fields
-        .filter((f) => f.sortable)
-        .map((f) => {
-          return { text: f.label, value: f.key };
-        });
-    },
-  },
   mounted() {
     // Set the initial number of items
-    this.totalRows = this.items.length;
+    // this.totalRows = this.items.length;
   },
   methods: {
     info(item, index, button) {

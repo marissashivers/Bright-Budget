@@ -251,13 +251,16 @@ export default {
     Datepicker,
     DisplayPurchases,
   },
-  props: ["purchases", "categories"],
+  props: ["categories"],
   watch: {
   },
   computed: {
     user() {
       return this.$store.state.user;
-    }
+    },
+    purchases() {
+      return this.$store.getters.purchases;
+    },
   },
   data() {
     return {
@@ -282,31 +285,31 @@ export default {
     // this.setPages();
   },
   methods: {
-    handleAddPurchase: function() {
-      this.$emit(
-        "addPurchase",
-        this.purchaseLocation,
-        this.purchaseAmount,
-        this.purchaseCategory,
-        this.createdAt
-      );
-      this.purchaseLocation = null;
-      this.purchaseAmount = null;
-      this.purchaseCategory = null;
-      //this.createdAt = this.createdAt;
-    },
-    handleSavePurchase(purchase) {
-      purchase.createdAt = this.editedPurchaseDate;
-      this.editMode = false;
-      this.$emit("savePurchase", purchase);
-    },
-    handleDeletePurchase(purchase) {
-      this.$emit("deletePurchase", purchase.id);
-    },
-    handleAddCategory: function() {
-      this.$emit("addCategory", this.addCategory);
-      this.addCategory = null;
-    },
+    // handleAddPurchase: function() {
+    //   this.$emit(
+    //     "addPurchase",
+    //     this.purchaseLocation,
+    //     this.purchaseAmount,
+    //     this.purchaseCategory,
+    //     this.createdAt
+    //   );
+    //   this.purchaseLocation = null;
+    //   this.purchaseAmount = null;
+    //   this.purchaseCategory = null;
+    //   //this.createdAt = this.createdAt;
+    // },
+    // handleSavePurchase(purchase) {
+    //   purchase.createdAt = this.editedPurchaseDate;
+    //   this.editMode = false;
+    //   this.$emit("savePurchase", purchase);
+    // },
+    // handleDeletePurchase(purchase) {
+    //   this.$emit("deletePurchase", purchase.id);
+    // },
+    // handleAddCategory: function() {
+    //   this.$emit("addCategory", this.addCategory);
+    //   this.addCategory = null;
+    // },
     // getPurchases() {
     //   return this.purchases;
     // },

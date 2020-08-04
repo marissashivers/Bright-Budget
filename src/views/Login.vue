@@ -60,6 +60,7 @@
 //import { auth } from "../firebase"
 
 export default {
+  name: 'Login',
     data: function() {
         return {
             email: '',
@@ -82,9 +83,11 @@ export default {
             //         this.error = error.message;
             // })
             this.$store.dispatch('signInAction', info)
-            .then(() => {
+            .then(response => {
+              console.log(response);
               this.$router.push({path: '/'});
-              console.log("here");
+              this.$store.dispatch("fetchPurchases");
+              console.log(this.$store.getters.purchases);
             }, error => {
               console.log(error.message);
             });

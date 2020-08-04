@@ -27,7 +27,6 @@
 <script>
 export default {
     name: "Navigation",
-    props: ["user"],
     computed: {
         userLoggedIn() {
             return this.$store.getters.user;
@@ -38,7 +37,6 @@ export default {
             this.$store.dispatch("signOutAction")
             .then(() => {
                 this.$router.push({path: '/login'});
-                console.log("here");
             }, error => {
                 console.log(error.message);
             });
