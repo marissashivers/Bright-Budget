@@ -9,6 +9,7 @@
       :meetings="meetings"
       :purchases="purchases"
       :categories="categories"
+      :budgets="budgets"
       @logout="logout" 
       @addMeeting="addMeeting"
       @deleteMeeting="deleteMeeting"
@@ -16,6 +17,8 @@
       @savePurchase="savePurchase"
       @deletePurchase="deletePurchase"
       @addCategory="addCategory"
+      @addBudget="addBudget"
+      @deleteBudget="deleteBudget"
     />
 
   </div>
@@ -35,7 +38,8 @@ export default {
       user: null,
       meetings: [],
       purchases: [],
-      categories: []
+      categories: [],
+      budgets: []
     };
   },
   methods: {
@@ -98,10 +102,27 @@ export default {
       .doc(purchaseId)
       .delete();
     },
+    addBudget: function(amount, category) {
+      db.collection("users")
+      .doc(this.user.uid)
+      .collection("budgets")
+      .add({
+        budgetAmount: Number(amount),
+        budgetCategory: category
+      });
+    },
+    deleteBudget: function(budgetId) {
+      db.collection("users")
+      .doc(this.user.uid)
+      .collection("budgets")
+      .doc(budgetId)
+      .delete();
+    },
   },
   mounted() {
     auth.onAuthStateChanged(user => {
       if (user) {
+        console.log("--> Accessing firebase database...");
         this.user = user;
         // reading dynamic snapshot for users collection
         db.collection("users")
@@ -125,9 +146,7 @@ export default {
             }
           });
         });
-      } // end if
-      // purchases database:
-      if (user) {
+        // purchases collection
         db.collection("users")
         .doc(this.user.uid)
         .collection("purchases")
@@ -146,9 +165,7 @@ export default {
           // Return purchase in order from most recent purchase.
           this.purchases = snapData.reverse();
         });
-      }// end if
-      // categories database:
-      if (user) {
+        // categories database
         db.collection("users")
         .doc(this.user.uid)
         .collection("categories")
@@ -163,8 +180,24 @@ export default {
           });
           // sort?
           this.categories = snapData;
-        })
-      }
+        });
+        // budgets database
+        db.collection("users")
+          .doc(this.user.uid)
+          .collection("budgets")
+          .orderBy("budgetAmount")
+          .onSnapshot(snapshot => {
+            const snapData = [];
+            snapshot.forEach(doc => {
+              snapData.push({
+                id: doc.id,
+                budgetAmount: doc.data().budgetAmount,
+                budgetCategory: doc.data().budgetCategory
+              });
+            });
+            this.budgets = snapData;
+          })
+      } // end if
     });
   }, // end mounted
 }
