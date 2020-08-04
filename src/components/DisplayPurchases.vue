@@ -186,7 +186,52 @@
       ok-only
       @hide="resetInfoModal"
     >
-      <pre>{{ infoModal.content }}</pre>
+      <!-- <pre>{{ infoModal.content }}</pre> -->
+      <b-form-group
+        label="Date"
+        label-for="date-input"
+        invalid-feedback="Date is required"
+      >
+        <datepicker v-model="createdAtEdit" class="form-control">
+        </datepicker>
+      </b-form-group>
+      <b-form-group
+        label="Location"
+        label-for="location-input"
+        invalid-feedback="Location is required"
+      >
+        <b-form-input
+          v-model="purchaseLocationEdit"
+          required
+        ></b-form-input>
+      </b-form-group>
+      <b-form-group
+        label="Amount"
+        label-for="amount-input"
+        invalid-feedback="Amount is required"
+      >
+        <b-form-input
+          v-model="purchaseAmountEdit"
+          required
+        ></b-form-input>
+      </b-form-group>
+      <b-form-group
+        label="Category"
+        label-for="category-input"
+        invalid-feedback="Category is required"
+      >
+        <select
+          class="form-control"
+          v-model="purchaseCategoryEdit"
+          aria-describedby="buttonAdd"
+          ref="purchaseCategory"
+        >
+          <option value="null" disabled hidden>Category</option>
+          <option v-for="item in categories" :key="item.id">
+            {{ item.category }}
+          </option>
+        </select>
+      </b-form-group>
     </b-modal>
 
     <!-- pagination -->
@@ -226,12 +271,18 @@
 
 <script>
 import moment from "moment";
+import Datepicker from "vuejs-datepicker";
 export default {
   name: "DisplayPurchases",
-  props: ["categories"],
+  components: {
+    Datepicker,
+  },
   computed: {
     purchases() {
       return this.$store.getters.purchases;
+    },
+    categories() {
+      return this.$store.getters.categories;
     },
     sortOptions() {
     // Create an options list from our fields
@@ -293,11 +344,17 @@ export default {
       sortDirection: "desc",
       filter: null,
       filterOn: [],
+      // info modal:
       infoModal: {
         id: "info-modal",
         title: "",
         content: "",
       },
+      // info modal edit information:
+      createdAtEdit: "",
+      purchaseLocationEdit: "",
+      purchaseAmountEdit: "",
+      purchaseCategoryEdit: "",
     };
   },
   mounted() {
@@ -306,9 +363,15 @@ export default {
   },
   methods: {
     // @click="info(row.item, row.index, $event.target)"
+    // TODO: make it so we can actually edit a purchase
     info(item, index, button) {
-      this.infoModal.title = `Row index: ${index}`;
-      this.infoModal.content = JSON.stringify(item, null, 2);
+      // set fields before edit
+      this.purchaseLocationEdit = item.purchaseLocation;
+      this.createdAtEdit = item.createdAt.toDate();
+      this.purchaseAmountEdit = item.purchaseAmount;
+      this.purchaseCategoryEdit = item.purchaseCategory;
+      this.infoModal.title = "Edit Purchase";
+      //this.infoModal.content = JSON.stringify(item, null, 2);
       this.$root.$emit("bv::show::modal", this.infoModal.id, button);
     },
     resetInfoModal() {
