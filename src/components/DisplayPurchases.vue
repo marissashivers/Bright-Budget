@@ -130,6 +130,7 @@
 
       <template v-slot:cell(actions)="row">
         <b-button
+          v-b-modal.info-modal
           size="sm"
           @click="info(row.item, row.index, $event.target)"
           class="mr-1"
@@ -147,7 +148,7 @@
         >
           <button
             class="btn btn-sm btn-outline-secondary view"
-            @click="editPurchase(item)"
+            @click="editPurchase(row.item)"
           >
             <font-awesome-icon icon="pencil-alt" />
           </button>
@@ -183,10 +184,10 @@
     <b-modal
       :id="infoModal.id"
       :title="infoModal.title"
+      size="sm"
       ok-only
       @hide="resetInfoModal"
     >
-      <!-- <pre>{{ infoModal.content }}</pre> -->
       <b-form-group
         label="Date"
         label-for="date-input"
@@ -232,6 +233,62 @@
           </option>
         </select>
       </b-form-group>
+    </b-modal>
+
+    <!-- edit information modal -->
+    <b-modal
+      id="bv-edit-modal"
+    >
+      <template v-slot:modal-title>
+        Edit Purchase
+      </template>
+      <b-form-group
+        label="Date"
+        label-for="date-input"
+        invalid-feedback="Date is required"
+      >
+        <datepicker v-model="createdAtEdit" class="form-control">
+        </datepicker>
+      </b-form-group>
+      <b-form-group
+        label="Location"
+        label-for="location-input"
+        invalid-feedback="Location is required"
+      >
+        <b-form-input
+          v-model="purchaseLocationEdit"
+          required
+        ></b-form-input>
+      </b-form-group>
+      <b-form-group
+        label="Amount"
+        label-for="amount-input"
+        invalid-feedback="Amount is required"
+      >
+        <b-form-input
+          v-model="purchaseAmountEdit"
+          required
+        ></b-form-input>
+      </b-form-group>
+      <b-form-group
+        label="Category"
+        label-for="category-input"
+        invalid-feedback="Category is required"
+      >
+        <select
+          class="form-control"
+          v-model="purchaseCategoryEdit"
+          aria-describedby="buttonAdd"
+          ref="purchaseCategory"
+        >
+          <option value="null" disabled hidden>Category</option>
+          <option v-for="item in categories" :key="item.id">
+            {{ item.category }}
+          </option>
+        </select>
+      </b-form-group>
+      <!-- <b-button class="mt-3" block @click="$bvModal.hide('bv-edit-modal')">Cancel</b-button>
+      <b-button class="mt-3" block @click="$bvModal.hide('bv-edit-modal')">Save</b-button> -->
     </b-modal>
 
     <!-- pagination -->
@@ -391,7 +448,16 @@ export default {
     handleDeletePurchase(item) {
       console.log(item);
       this.$store.dispatch("deletePurchase", item);
-    }
+    },
+    // purchase edits
+    editPurchase(item) {
+      this.purchaseLocationEdit = item.purchaseLocation;
+      this.createdAtEdit = item.createdAt.toDate();
+      this.purchaseAmountEdit = item.purchaseAmount;
+      this.purchaseCategoryEdit = item.purchaseCategory;
+      // show modal
+      this.$bvModal.show('bv-edit-modal');
+    },
   },
 };
 </script>
