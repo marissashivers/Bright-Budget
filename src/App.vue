@@ -22,6 +22,7 @@
       @deletePurchase="deletePurchase"
       @addCategory="addCategory"
       @addBudget="addBudget"
+      @deleteBudget="deleteBudget"
     />
 
   </div>
@@ -113,6 +114,13 @@ export default {
         budgetAmount: Number(amount),
         budgetCategory: category
       });
+    },
+    deleteBudget: function(budgetId) {
+      db.collection("users")
+      .doc(this.user.uid)
+      .collection("budgets")
+      .doc(budgetId)
+      .delete();
     },
   },
   mounted() {
