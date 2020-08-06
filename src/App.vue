@@ -4,6 +4,7 @@
     <!-- NAVBAR -->
     <Navigation />
     <!-- pass props to router -->
+    <!-- TODO: remove passing props to router, should be using Vuex store. -->
     <router-view 
       class="container"  
       :meetings="meetings"
@@ -49,21 +50,6 @@ export default {
         this.user = null;
         this.$router.push("login");
       })
-    },
-    addMeeting: function(payload) {
-      db.collection("users")
-      .doc(this.user.uid)
-      .collection("meetings").add({
-        name: payload,
-        createdAt: new Date()
-      });
-    },
-    deleteMeeting: function(payload) {
-      db.collection("users")
-      .doc(this.user.uid)
-      .collection("meetings")
-      .doc(payload)
-      .delete();
     },
     addPurchase: function(location, amount, category, date) {
       db.collection("users")

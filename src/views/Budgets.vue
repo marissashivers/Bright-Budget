@@ -55,6 +55,7 @@
     </div> <!-- row justify-content center -->
 
     <!-- Display and edit budgets -->
+    <!-- TODO: allow editing/deleting budgets. Maybe using modal for editing? -->
     <table class="table table-striped table-fit" v-if="buttonManageText=='Done'">
       <thead>
         <tr>

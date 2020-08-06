@@ -132,6 +132,7 @@
 </template>
 
 <script>
+// TODO: make it so users cannot access purchases/budgets pages without logging in, or make it redirect
 import moment from "moment";
 import Datepicker from "vuejs-datepicker";
 import DisplayPurchases from "@/components/DisplayPurchases.vue";
@@ -163,9 +164,6 @@ export default {
       purchaseCategory: null,
       createdAt: new Date(),
       addCategory: null,
-      page: 1,
-      perPage: 10,
-      pages: [],
 
       editMode: false,
       editedPurchase: null,
@@ -178,10 +176,9 @@ export default {
     };
   },
   created() {
-    // this.getPurchases();
-    // this.setPages();
   },
   methods: {
+    // TOOD: Migrate adding purchase to use Vuex store.
     handleAddPurchase: function() {
       this.$emit("addPurchase", this.purchaseLocation, this.purchaseAmount, this.purchaseCategory, this.createdAt);
       this.purchaseLocation = null;
@@ -189,31 +186,10 @@ export default {
       this.purchaseCategory = null;
       this.createdAt = new Date();
     },
-    handleSavePurchase(purchase) {
-      purchase.createdAt = this.editedPurchaseDate;
-      this.editMode = false;
-      this.$emit("savePurchase", purchase);
-    },
+    // TODO: Migrate adding caategory to use Vuex store.
     handleAddCategory: function() {
       this.$emit("addCategory", this.addCategory)
       this.addCategory = null;
-    },
-    getPurchases() {
-      return this.purchases;
-    },
-    setPages() {
-      let numberofPages = Math.ceil(this.purchases.length / this.perPage);
-      this.pages = [];
-      for(let index = 1; index <= numberofPages; index++) {
-        this.pages.push(index);
-      }
-    },
-    paginate() {
-      let page = this.page;
-      let perPage = this.perPage;
-      let from = (page * perPage) - perPage;
-      let to = (page * perPage);
-      return this.purchases.slice(from, to);
     },
     formatDate(date) {
       return moment(date).format('MMM Do, YYYY');

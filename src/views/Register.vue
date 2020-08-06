@@ -101,6 +101,7 @@ export default {
         }
     },
     methods: {
+      // TODO: migrate register function to use Vuex store.
         register: function() {
             const info = {
                 email: this.email,
