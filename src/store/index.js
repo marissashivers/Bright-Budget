@@ -132,13 +132,6 @@ export default new Vuex.Store({
       }
     },
     deletePurchase({ commit }, purchaseObject) {
-      // deletePurchase: function(purchaseId) {
-      //   db.collection("users")
-      //   .doc(this.user.uid)
-      //   .collection("purchases")
-      //   .doc(purchaseId)
-      //   .delete();
-      // },
       if (this.state.user) {
         console.log("here");
         console.log(purchaseObject);
@@ -147,6 +140,21 @@ export default new Vuex.Store({
         .collection("purchases")
         .doc(purchaseObject.id)
         .delete();
+      }
+      commit("setStatus", "success");
+    },
+    editAndSavePurchase({ commit }, purch) {
+      if (this.state.user) {
+        db.collection("users")
+        .doc(this.state.user)
+        .collection("purchases")
+        .doc(purch.id)
+        .update({
+          purchaseLocation: purch.purchaseLocation,
+          purchaseAmount: Number(purch.purchaseAmount),
+          createdAt: purch.createdAt,
+          purchaseCategory: purch.purchaseCategory
+        });
       }
       commit("setStatus", "success");
     },

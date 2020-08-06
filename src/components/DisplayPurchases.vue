@@ -129,14 +129,14 @@
       </template>
 
       <template v-slot:cell(actions)="row">
-        <b-button
+        <!-- <b-button
           v-b-modal.info-modal
           size="sm"
           @click="info(row.item, row.index, $event.target)"
           class="mr-1"
         >
           Info modal
-        </b-button>
+        </b-button> -->
         <b-button size="sm" @click="row.toggleDetails">
           {{ row.detailsShowing ? "Hide" : "Show" }} Details
         </b-button>
@@ -151,12 +151,6 @@
             @click="editPurchase(row.item)"
           >
             <font-awesome-icon icon="pencil-alt" />
-          </button>
-          <button
-            class="btn btn-sm btn-outline-secondary edit"
-            @click="handleSavePurchase(item)"
-          >
-            <font-awesome-icon icon="save"></font-awesome-icon>
           </button>
           <button
             class="btn btn-sm btn-outline-secondary"
@@ -287,6 +281,10 @@
           </option>
         </select>
       </b-form-group>
+      <template v-slot:modal-footer>
+        <button class="btn btn-secondary" @click="cancelSavePurchase()">Cancel</button>
+        <button class="btn btn-primary" @click="savePurchase(purchaseEditingCurrent)">Save Changes</button>
+      </template>
       <!-- <b-button class="mt-3" block @click="$bvModal.hide('bv-edit-modal')">Cancel</b-button>
       <b-button class="mt-3" block @click="$bvModal.hide('bv-edit-modal')">Save</b-button> -->
     </b-modal>
@@ -412,6 +410,7 @@ export default {
       purchaseLocationEdit: "",
       purchaseAmountEdit: "",
       purchaseCategoryEdit: "",
+      purchaseEditingCurrent: null,
     };
   },
   mounted() {
@@ -420,7 +419,6 @@ export default {
   },
   methods: {
     // @click="info(row.item, row.index, $event.target)"
-    // TODO: make it so we can actually edit a purchase
     info(item, index, button) {
       // set fields before edit
       this.purchaseLocationEdit = item.purchaseLocation;
@@ -441,6 +439,23 @@ export default {
       this.currentPage = 1;
     },
 
+    // MODAL ADDED BY ME
+    cancelSavePurchase() {
+      this.$bvModal.hide("bv-edit-modal")
+    },
+    savePurchase(oldPurchaseObject) {
+      // create copy of purchase object to modify
+      var purchaseEdited = Object.assign(oldPurchaseObject);
+      // logic to edit purchase and update it by emitting action in Vuex store
+      purchaseEdited.createdAt = this.createdAtEdit;
+      purchaseEdited.purchaseLocation = this.purchaseLocationEdit;
+      purchaseEdited.purchaseAmount = this.purchaseAmountEdit;
+      purchaseEdited.purchaseCategory = this.purchaseCategoryEdit;
+      this.$store.dispatch("editAndSavePurchase", purchaseEdited);
+      console.log("successfully updated purchase");
+      this.$bvModal.hide("bv-edit-modal")
+    },
+
     // added by me
     formatDate(date) {
       return moment(date).format("MM-DD-YYYY");
@@ -451,6 +466,7 @@ export default {
     },
     // purchase edits
     editPurchase(item) {
+      this.purchaseEditingCurrent = item;
       this.purchaseLocationEdit = item.purchaseLocation;
       this.createdAtEdit = item.createdAt.toDate();
       this.purchaseAmountEdit = item.purchaseAmount;

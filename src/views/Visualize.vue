@@ -3,9 +3,9 @@
     <div class="buttons">
       <button :disabled="currentPurchaseFilter=='lastMonth'" type="button" class="btn btn-outline-primary" @click="filterLastMonth()">Last Month</button>
       <button :disabled="currentPurchaseFilter=='lastThreeMonths'" type="button" class="btn btn-outline-primary" @click="filterLastThreeMonths()">Last 3 Months</button>
-      <button :disabled="currentPurchaseFilter==' lastYear'" type="button" class="btn btn-outline-primary" @click="filterLastYear()">Last 365 Days</button>
+      <button :disabled="currentPurchaseFilter=='lastYear'" type="button" class="btn btn-outline-primary" @click="filterLastYear()">Last 365 Days</button>
       <button :disabled="currentPurchaseFilter=='custom'" type="button" class="btn btn-outline-primary" @click="filterCustomDates()">Custom</button>
-      <form v-if="currentPurchaseFilter=='custom'" style="padding-left:70px; padding-right: 70px;">
+      <form v-if="currentPurchaseFilter=='custom'" style="padding-left:250px; padding-right: 250px;">
         <div class="form-row">
           <div class="col">
             <label>Start date</label>
@@ -53,8 +53,6 @@ import BarChart2 from "@/components/BarChart2.vue";
 import LineChart from "@/components/LineChart.vue";
 
 import { filterPurchasesByDate, getPurchasesByCategory } from './purchaseFilters.js';
-
-// TODO: Update it so the correct dates display when filtering
 
 export default {
   name: 'Visualize',
