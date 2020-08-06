@@ -1,36 +1,36 @@
 //import moment from 'moment';
 
 // filter by time
-export function filterLastMonth(purchases) {
-  var end = new Date();
-  var start = new Date();
-  start.setMonth(start.getMonth()-1);
+export function filterPurchasesByDate(purchases, start, end) {
+  // var end = new Date();
+  // var start = new Date();
+  // start.setMonth(start.getMonth()-1);
   var results = purchases.filter(purch => {
     let date = purch.createdAt.toDate();
     return date >= start && date <= end;
   });
   return results;
 }
-export function filterLastThreeMonths(purchases) {
-  var end = new Date();
-  var start = new Date();
-  start.setMonth(start.getMonth()-3);
-  var results = purchases.filter(purch => {
-    let date = purch.createdAt.toDate();
-    return date >= start && date <= end;
-  });
-  return results;
-}
-export function filterLastYear(purchases) {
-  var end = new Date();
-  var start = new Date();
-  start.setFullYear(start.getFullYear() - 1);
-  var results = purchases.filter(purch => {
-    let date = purch.createdAt.toDate();
-    return date >= start && date <= end;
-  });
-  return results;
-}
+// export function filterLastThreeMonths(purchases) {
+//   var end = new Date();
+//   var start = new Date();
+//   start.setMonth(start.getMonth()-3);
+//   var results = purchases.filter(purch => {
+//     let date = purch.createdAt.toDate();
+//     return date >= start && date <= end;
+//   });
+//   return results;
+// }
+// export function filterLastYear(purchases) {
+//   var end = new Date();
+//   var start = new Date();
+//   start.setFullYear(start.getFullYear() - 1);
+//   var results = purchases.filter(purch => {
+//     let date = purch.createdAt.toDate();
+//     return date >= start && date <= end;
+//   });
+//   return results;
+// }
 
 // these returns HashMap
 // export function getPurchasesByDay(purchases, start, end) {

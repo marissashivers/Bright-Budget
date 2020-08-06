@@ -2,8 +2,6 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 //mport { db } from './firebase';
 import { db, auth } from '../firebase';
-import { filterLastMonth, filterLastThreeMonths, filterLastYear, 
-  getPurchasesByCategory } from './purchaseFilters.js'
 
 Vue.use(Vuex)
 
@@ -11,8 +9,8 @@ export default new Vuex.Store({
   state: {
     user: null,
     displayName: null,
-    purchases: null,
-    categories: null,
+    purchases: [],
+    categories: [],
     status: null,
     error: null,
   },
@@ -31,18 +29,6 @@ export default new Vuex.Store({
     },
     purchases(state) {
       return state.purchases;
-    },
-    purchasesLastMonth(state) {
-      return filterLastMonth(state.purchases);
-    },
-    purchasesLastThreeMonths(state) {
-      return filterLastThreeMonths(state.purchases);
-    },
-    purchasesLastYear(state) {
-      return filterLastYear(state.purchases);
-    },
-    purchasesByCategory(state) {
-      return getPurchasesByCategory(state.purchases, state.categories);
     },
     categories(state) {
       return state.categories;
