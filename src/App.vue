@@ -205,7 +205,7 @@ export default {
 
 <style lang="scss">
 $theme-colors: (
-  primary: gray,
+  primary: #77199c,
 );
 @import "node_modules/bootstrap/scss/bootstrap";
 

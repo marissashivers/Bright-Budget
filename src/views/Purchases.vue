@@ -55,7 +55,7 @@
               </div>
               <!-- input-group input-group-lg -->
             </form>
-            <!-- FORM GROUP -->
+            <!-- FORM GROUP add a category -->
             <form class="formgroup" style="margin-top: 20px;">
               <div class="input-group input-group-lg">
                 <input
@@ -75,6 +75,47 @@
                   </button>
                 </div>
               </div>
+              <button
+                type="submit"
+                class="btn btn-sm btn-info mt-2"
+                @click.prevent="showCategories()"
+              > {{ categoryManageText }}
+              </button>
+              <!-- table to display categories -->
+              <table class="table table-striped table-fit table-sm" v-if="categoryManageText=='Done'">
+                <thead>
+                  <tr>
+                    <td class="fit">Cateogry</td>
+                    <td class="fit">Actions</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in categories" :key="item.id" v-cloak>
+                    <!-- category -->
+                    <td class="fit">
+                      <div class="view">
+                        {{ item.category }}
+                      </div>
+                    </td>
+                    <!-- actions -->
+                    <td class="fit">
+                      <section
+                        class="btn-group align-self-center"
+                        role="group"
+                        aria-label="Options"
+                      >
+                        <button 
+                          class="btn btn-sm btn-outline-secondary" 
+                          @click.prevent="handleDeleteCategory(item)"
+                        >
+                          <font-awesome-icon icon="trash" />
+                        </button>
+                      </section>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
             </form>
           </div>
           <!-- card-body text-center" -->
@@ -84,151 +125,6 @@
       <!-- col-12 col-md-9 col-lg-7 -->
     </div>
     <!-- row justify-content center -->
-
-    <!-- purchase pagination testing -->
-    <!-- <table class="table table-striped">
-      <thead>
-        <tr>
-          <td>Date</td>
-          <td>Location</td>
-          <td>Amount</td>
-          <td>Category</td>
-          <td>Actions</td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="item in purchases"
-          :key="item.id"
-          :class="{ editing: item == editedPurchase && editMode == true }"
-          v-cloak
-        >
-          <td>
-            <div class="view">
-              {{ formatDate(item.createdAt.toDate()) }}
-            </div>
-            <div class="edit">
-              <datepicker v-model="editedPurchaseDate" class="form-control">
-              </datepicker>
-            </div>
-          </td>
-          <td>
-            <div class="view">
-              {{ item.purchaseLocation }}
-            </div>
-            <div class="edit">
-              <input
-                type="text"
-                class="form-control"
-                name="purchaseLocation"
-                placeholder="Location"
-                aria-describedby="buttonAdd"
-                v-model="item.purchaseLocation"
-                ref="purchaseLocation"
-              />
-            </div>
-          </td>
-          <td>
-            <div class="view">
-              ${{ Number(item.purchaseAmount).toFixed(2) }}
-            </div>
-            <div class="edit">
-              <input
-                type="text"
-                class="form-control"
-                name="purchaseAmount"
-                placeholder="Amount"
-                aria-describedby="buttonAdd"
-                v-model="item.purchaseAmount"
-                ref="purchaseAmount"
-              />
-            </div>
-          </td>
-          <td>
-            <div class="view">
-              {{ item.purchaseCategory }}
-            </div>
-            <div class="edit">
-              <select
-                name="purchaseCategory"
-                class="form-control"
-                v-model="item.purchaseCategory"
-                aria-describedby="buttonAdd"
-                ref="purchaseCategory"
-              >
-                <option value="null" disabled hidden>Category</option>
-                <option v-for="item in categories" :key="item.id">
-                  {{ item.category }}
-                </option>
-              </select>
-            </div>
-          </td>
-          <td>
-            <section
-              class="btn-group align-self-center"
-              role="group"
-              aria-label="Purchase Options"
-            >
-              <button
-                class="btn btn-sm btn-outline-secondary view"
-                @click="editPurchase(item)"
-              >
-                <font-awesome-icon icon="pencil-alt" />
-              </button>
-              <button
-                class="btn btn-sm btn-outline-secondary edit"
-                @click="handleSavePurchase(item)"
-              >
-                <font-awesome-icon icon="save"></font-awesome-icon>
-              </button>
-              <button
-                class="btn btn-sm btn-outline-secondary"
-                @click="handleDeletePurchase(item)"
-              >
-                <font-awesome-icon icon="trash" />
-              </button>
-            </section>
-          </td>
-        </tr>
-      </tbody>
-    </table> -->
-
-    <!-- Page Navigation
-    <nav aria-label="Page navigation">
-      <ul class="pagination">
-        <li class="page-item">
-          <button
-            type="button"
-            class="page-link"
-            v-if="page != 1"
-            @click="page--"
-          >
-            Previous
-          </button>
-        </li>
-        <li class="page-item">
-          <button
-            type="button"
-            class="page-link"
-            v-for="pageNumber in pages.slice(page - 1, page + 5)"
-            :key="pageNumber"
-            @click="page = pageNumber"
-          >
-            {{ pageNumber }}
-          </button>
-        </li>
-        <li class="page-item">
-          <button
-            type="button"
-            @click="page++"
-            v-if="page < pages.length"
-            class="page-link"
-          >
-            Next
-          </button>
-        </li>
-      </ul>
-    </nav> -->
 
     <DisplayPurchases :key="componentKey" :purchases="this.purchases" :categories="this.categories" />
 
@@ -246,7 +142,7 @@ export default {
     Datepicker,
     DisplayPurchases,
   },
-  props: ["categories"],
+  //props: ["categories"],
   watch: {
   },
   computed: {
@@ -256,6 +152,9 @@ export default {
     purchases() {
       return this.$store.getters.purchases;
     },
+    categories() {
+      return this.$store.getters.categories;
+    }
   },
   data() {
     return {
@@ -273,6 +172,9 @@ export default {
       editedPurchaseDate: null,
 
       componentKey: null,
+
+      // edit categories
+      categoryManageText: "Manage categories"
     };
   },
   created() {
@@ -291,9 +193,6 @@ export default {
       purchase.createdAt = this.editedPurchaseDate;
       this.editMode = false;
       this.$emit("savePurchase", purchase);
-    },
-    handleDeletePurchase(purchase) {
-      this.$emit("deletePurchase", purchase.id)
     },
     handleAddCategory: function() {
       this.$emit("addCategory", this.addCategory)
@@ -323,6 +222,16 @@ export default {
       this.editMode = true;
       this.editedPurchase = purchase;
       this.editedPurchaseDate = purchase.createdAt.toDate();
+    },
+
+    // categories
+    showCategories() {
+      if (this.categoryManageText == "Done") this.categoryManageText = "Edit categories";
+      else this.categoryManageText = "Done";
+    },
+    handleDeleteCategory(item) {
+      console.log(item.id);
+      this.$store.dispatch("deleteCategory", item);
     },
   },
 };

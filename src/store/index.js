@@ -180,6 +180,17 @@ export default new Vuex.Store({
         commit("setCategories", ["null"]);
       }
     },
+    deleteCategory({ commit }, categoryObject) {
+      if (this.state.user) {
+        db.collection("users")
+        .doc(this.state.user)
+        .collection("categories")
+        .doc(categoryObject.id)
+        .delete();
+      }
+      console.log("category deleted");
+      commit("setStatus", "success");
+    },
   },
   modules: {
   }
