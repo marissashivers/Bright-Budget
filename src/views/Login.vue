@@ -88,6 +88,7 @@ export default {
               this.$router.push({path: '/'});
               this.$store.dispatch("fetchPurchases");
               this.$store.dispatch("fetchCategories");
+              this.$store.dispatch("fetchBudgets");
             }, error => {
               this.error = error.message;
             });

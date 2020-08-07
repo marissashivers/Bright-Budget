@@ -11,6 +11,7 @@ export default new Vuex.Store({
     displayName: null,
     purchases: [],
     categories: [],
+    budgets: [],
     status: null,
     error: null,
   },
@@ -33,6 +34,9 @@ export default new Vuex.Store({
     categories(state) {
       return state.categories;
     },
+    budgets(state) {
+      return state.budgets;
+    }
   },
   mutations: {
     setUser(state, payload) {
@@ -56,6 +60,9 @@ export default new Vuex.Store({
     setCategories(state, payload) {
       state.categories = payload;
     },
+    setBudgets(state, payload) {
+      state.budgets = payload;
+    }
   },
   actions: {
     signUpAction({ commit }, payload) {
@@ -82,6 +89,7 @@ export default new Vuex.Store({
           commit('setDisplayName', response.user.displayName);
           commit('setStatus', 'success');
           commit('setError', null);
+          console.log("signed in");
           resolve(response);
         })
         .catch((error) => {
@@ -98,6 +106,7 @@ export default new Vuex.Store({
         commit('setDisplayName', null);
         commit('setStatus', 'success');
         commit('setError', null);
+        console.log("signed out");
       })
       .catch((error) => {
         commit('setStatus', 'failure');
@@ -105,7 +114,6 @@ export default new Vuex.Store({
       })
     },
     fetchPurchases({ commit }) {
-      console.log("here in getter for purchases");
       if (this.state.user) {
         db.collection("users")
         .doc(this.state.user)
@@ -123,7 +131,6 @@ export default new Vuex.Store({
             });
           });
           console.log("purchases set from get purchases action");
-          console.log(temps);
           commit("setPurchases", temps.reverse());
         });
       }
@@ -133,15 +140,29 @@ export default new Vuex.Store({
     },
     deletePurchase({ commit }, purchaseObject) {
       if (this.state.user) {
-        console.log("here");
-        console.log(purchaseObject);
         db.collection("users")
         .doc(this.state.user)
         .collection("purchases")
         .doc(purchaseObject.id)
         .delete();
+        commit("setStatus", "success");
+        console.log("purchase deleted");
       }
-      commit("setStatus", "success");
+    },
+    addPurchase({ commit }, purchaseObject) {
+      if (this.state.user) {
+        db.collection("users")
+        .doc(this.state.user)
+        .collection("purchases")
+        .add({
+          purchaseLocation: purchaseObject.purchaseLocation,
+          purchaseAmount: Number(purchaseObject.purchaseAmount),
+          createdAt: purchaseObject.createdAt,
+          purchaseCategory: purchaseObject.purchaseCategory
+        });
+        commit("setStatus", "success");
+        console.log("purchase added");
+      }
     },
     editAndSavePurchase({ commit }, purch) {
       if (this.state.user) {
@@ -172,9 +193,9 @@ export default new Vuex.Store({
               category: doc.data().category
             });
           });
-          console.log(temps);
           commit("setCategories", temps);
         });
+        console.log("fetchCategories completed");
       }
       else {
         commit("setCategories", ["null"]);
@@ -191,6 +212,65 @@ export default new Vuex.Store({
       console.log("category deleted");
       commit("setStatus", "success");
     },
+    addCategory({ commit }, cat) {
+      if (this.state.user) {
+        db.collection("users")
+        .doc(this.state.user)
+        .collection("categories")
+        .add({
+          category: cat
+        });
+        console.log("category added");
+        commit("setStatus", "success");
+      }
+    },
+    fetchBudgets({ commit }) {
+      if (this.state.user) {
+        db.collection("users")
+        .doc(this.state.user)
+        .collection("budgets")
+        .orderBy("budgetCategory")
+        .onSnapshot(snapshot => {
+          const temps = [];
+          snapshot.forEach(doc => {
+            temps.push({
+              id: doc.id,
+              budgetCategory: doc.data().budgetCategory,
+              budgetAmount: doc.data().budgetAmount
+            });
+          });
+          commit("setBudgets", temps);
+        });
+        console.log("fetchBudgets completed");
+      }
+      else {
+        commit("setBudgets", ["null"]);
+      }
+    },
+    addBudget({ commit }, budgetObject) {
+      if (this.state.user) {
+        db.collection("users")
+        .doc(this.state.user)
+        .collection("budgets")
+        .add({
+          budgetAmount: Number(budgetObject.budgetAmount),
+          budgetCategory: budgetObject.budgetCategory
+        });
+        console.log("budget added");
+        commit("setStatus", "success");
+      }
+    },
+    deleteBudget({ commit }, budgetObject) {
+      if (this.state.user) {
+        db.collection("users")
+        .doc(this.state.user)
+        .collection("budgets")
+        .doc(budgetObject.id)
+        .delete();
+        console.log("budget deleted");
+        commit("setStatus", "success");
+      }
+    }
   },
   modules: {
   }

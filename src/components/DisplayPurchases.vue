@@ -332,7 +332,7 @@ export default {
   },
   watch: {
     purchases: function() {
-      console.log("purchases changed");
+      console.log("purchases changed. From watcher in DisplayPurchases");
     }
   },
   data() {
@@ -428,7 +428,7 @@ export default {
     savePurchase(oldPurchaseObject) {
       // create copy of purchase object to modify
       var purchaseEdited = Object.assign(oldPurchaseObject);
-      // logic to edit purchase and update it by emitting action in Vuex store
+      // logic to edit purchase and update it by performing action in Vuex store
       purchaseEdited.createdAt = this.createdAtEdit;
       purchaseEdited.purchaseLocation = this.purchaseLocationEdit;
       purchaseEdited.purchaseAmount = this.purchaseAmountEdit;
@@ -443,7 +443,6 @@ export default {
       return moment(date).format("MM-DD-YYYY");
     },
     handleDeletePurchase(item) {
-      console.log(item);
       this.$store.dispatch("deletePurchase", item);
     },
     // purchase edits

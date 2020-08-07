@@ -168,14 +168,21 @@ import moment from 'moment';
 
 export default {
   name: 'Budgets',
-  props: ["user", "purchases", "categories", "budgets"],
-  components: {
+  computed: {
+    purchases() {
+      return this.$store.getters.purchases;
+    },
+    categories() {
+      return this.$store.getters.categories;
+    },
+    budgets() {
+      return this.$store.getters.budgets;
+    },
   },
   mounted() {
     this.purchasesFiltered = this.getCurrentMonthPurchases();
     this.currentBudgetsArray = this.getCurrentBudgetsArray();
     this.categoriesMap = this.getPurchasesByCategory();
-
   },
   watch: {
     // update currentBudgetsArray whenever budgets are changed, in order to update enabled/disabled category selection
@@ -203,7 +210,12 @@ export default {
   },
   methods: {
     handleAddBudget() {
-      this.$emit("addBudget", this.budgetAmount, this.budgetCategory);
+      var budgetObject = {
+        "budgetAmount": this.budgetAmount,
+        "budgetCategory": this.budgetCategory
+      };
+      this.$store.dispatch("addBudget", budgetObject);
+      // reset form
       this.budgetAmount = null;
       this.budgetCategory = null;
     },
@@ -288,10 +300,9 @@ export default {
     handleSaveBudget(purchase) {
       purchase.createdAt = this.editedBudgeDateDate;
       this.editMode = false;
-      this.$emit("savePurchase", purchase);
     },
-    handleDeleteBudget(purchase) {
-      this.$emit("deleteBudget", purchase.id)
+    handleDeleteBudget(budgetObject) {
+      this.$store.dispatch("deleteBudget", budgetObject);
     },
     showBudgets() {
       if (this.buttonManageText == "Done") this.buttonManageText = "Manage my budgets";

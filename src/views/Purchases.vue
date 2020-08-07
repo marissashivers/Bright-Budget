@@ -173,17 +173,25 @@ export default {
   created() {
   },
   methods: {
-    // TOOD: Migrate adding purchase to use Vuex store.
+    // TODO: Migrate adding purchase to use Vuex store.
     handleAddPurchase: function() {
-      this.$emit("addPurchase", this.purchaseLocation, this.purchaseAmount, this.purchaseCategory, this.createdAt);
+      var purchaseObject = {
+        "purchaseLocation": this.purchaseLocation,
+        "purchaseAmount": this.purchaseAmount,
+        "purchaseCategory": this.purchaseCategory,
+        "createdAt": this.createdAt
+      };
+      this.$store.dispatch("addPurchase", purchaseObject);
+      // reset form
       this.purchaseLocation = null;
       this.purchaseAmount = null;
       this.purchaseCategory = null;
       this.createdAt = new Date();
     },
-    // TODO: Migrate adding caategory to use Vuex store.
     handleAddCategory: function() {
-      this.$emit("addCategory", this.addCategory)
+      // this.$emit("addCategory", this.addCategory)
+      // this.addCategory = null;
+      this.$store.dispatch("addCategory", this.addCategory);
       this.addCategory = null;
     },
     formatDate(date) {
@@ -201,7 +209,6 @@ export default {
       else this.categoryManageText = "Done";
     },
     handleDeleteCategory(item) {
-      console.log(item.id);
       this.$store.dispatch("deleteCategory", item);
     },
   },
