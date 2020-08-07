@@ -13,13 +13,7 @@
           <h4 class="display-4 text-primary mt-3 mb-2">Welcome to PurchaseViz</h4>
           <p class="lead">
             This simple app lets you input all your purchases, allows you to analyze information, and 
-            perform complex analysis on your purchases with a simple UI. It's a good example of a
-            Single Page Application which includes connection to a database and
-            routing. It's a practical way to learn
-            <a href="https://vuejs.org/">Vue.js</a>
-            with
-            <a href="https://firebase.google.com">Firebase</a>. A majority of this material is taken
-            from the LinkedIn learning course, "Vue.js: Full Stack Application with Firebase".
+            perform complex analysis on your purchases with a simple UI.
           </p>
 
           <!-- buttons -->
@@ -91,3 +85,5 @@ export default {
   }
 }
 </script>
+<style scoped>
+</style>

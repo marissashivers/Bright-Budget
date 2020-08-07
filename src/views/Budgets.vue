@@ -56,7 +56,10 @@
 
     <!-- Display and edit budgets -->
     <!-- TODO: allow editing/deleting budgets. Maybe using modal for editing? -->
-    <table class="table table-striped table-fit" v-if="buttonManageText=='Done'">
+    <table 
+      class="table table-striped table-sm table-fit" 
+      v-if="buttonManageText=='Done'"
+    >
       <thead>
         <tr>
           <td class="fit">Cateogry</td>

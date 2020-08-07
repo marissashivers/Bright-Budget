@@ -191,8 +191,9 @@ export default {
 
 <style lang="scss">
 $theme-colors: (
-  primary: #77199c,
+  primary: #352369,
+  info: #908aa1,
 );
+$font-family-base: 'Roboto', sans-serif;
 @import "node_modules/bootstrap/scss/bootstrap";
-
-</style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&family=Roboto&family=Source+Sans+Pro&display=swap');</style>

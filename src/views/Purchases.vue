@@ -85,8 +85,8 @@
               <table class="table table-striped table-fit table-sm" v-if="categoryManageText=='Done'">
                 <thead>
                   <tr>
-                    <td class="fit">Cateogry</td>
-                    <td class="fit">Actions</td>
+                    <td class="fit"><b>Category</b></td>
+                    <td class="fit"><b>Actions</b></td>
                   </tr>
                 </thead>
                 <tbody>
@@ -115,16 +115,11 @@
                   </tr>
                 </tbody>
               </table>
-
             </form>
           </div>
-          <!-- card-body text-center" -->
         </div>
-        <!-- card bg-light -->
       </div>
-      <!-- col-12 col-md-9 col-lg-7 -->
     </div>
-    <!-- row justify-content center -->
 
     <DisplayPurchases :key="componentKey" :purchases="this.purchases" :categories="this.categories" />
 
