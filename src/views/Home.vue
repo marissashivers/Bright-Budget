@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <!-- TODO: add screenshots to showcase app capabilities -->
     <div class="text-secondary text-center">
       <div v-if="userLoggedIn" class="text-center">
         Welcome back 
@@ -86,4 +87,7 @@ export default {
 }
 </script>
 <style scoped>
+  .home {
+    margin: 25px;
+  }
 </style>

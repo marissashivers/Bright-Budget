@@ -352,6 +352,7 @@ export default {
   .container {
     padding-left: 50px;
     padding-right: 50px;
+    margin: 25px;
   }
   .buttons {
     text-align: center;
