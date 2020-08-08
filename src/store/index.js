@@ -66,19 +66,25 @@ export default new Vuex.Store({
   },
   actions: {
     signUpAction({ commit }, payload) {
-      commit('setStatus', 'loading')
-      auth.createUserWithEmailAndPassword(payload.email, payload.password)
-      .then((response) => {
-        // respones will have user
-        // user will have uid and will be updated in state
-        commit('setUser', response.user.uid)
-        commit('setDisplayName', response.user.displayName)
-        commit('setStatus', 'success')
-        commit('setError', null)
-      })
-      .catch((error) => {
-        commit('setStatus', 'failure')
-        commit('setError', error.message)
+      return new Promise((resolve, reject) => {
+        commit('setStatus', 'loading')
+        auth.createUserWithEmailAndPassword(payload.email, payload.password)
+        .then((response) => {
+          // respones will have user
+          // user will have uid and will be updated in state
+          commit('setUser', response.user.uid)
+          commit('setDisplayName', response.user.displayName)
+          commit('setStatus', 'success')
+          commit('setError', null)
+          console.log("signed up");
+          resolve(response);
+        })
+        .catch((error) => {
+          commit('setStatus', 'failure')
+          commit('setError', error.message)
+          console.log("sign up failed...");
+          reject(error);
+        })
       })
     },
     signInAction({ commit }, payload) {

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="purchases">
     <!-- adding a purchase -->
     <div class="row justify-content-center">
       <div class="col-12 col-md-9 col-lg-7">
@@ -216,29 +216,7 @@ export default {
 </script>
 
 <style scoped>
-button.page-link {
-  display: inline-block;
-}
-
-button.page-link {
-  font-size: 20px;
-  color: #29b3ed;
-  font-weight: 500;
-}
-
-[v-cloak] {
-  display: none;
-}
-
-.edit {
-  display: none;
-}
-
-.editing .edit {
-  display: block;
-}
-
-.editing .view {
-  display: none;
+.purchases {
+  margin: 25px;
 }
 </style>

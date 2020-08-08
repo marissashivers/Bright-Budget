@@ -3,15 +3,15 @@
     <!-- TODO: add screenshots to showcase app capabilities -->
     <div class="text-secondary text-center">
       <div v-if="userLoggedIn" class="text-center">
-        Welcome back 
-        <span class="font-weight-bold text-info">{{ displayName }}</span>,
+        {{ greeting }}, 
+        <span class="font-weight-bold text-info">{{ displayName }}</span>! 
         <a href="#" class="text-primary" role="button" @click="logout()">logout</a>
       </div>
     </div>
     <div class="container text-center">
       <div class="row justify-content-center">
         <div class="col-10 col-md-10 col-lg-8 col-xl-7">
-          <h4 class="display-4 text-primary mt-3 mb-2">Welcome to PurchaseViz</h4>
+          <h4 class="display-4 text-primary mt-3 mb-2">Welcome <span v-if="userLoggedIn">back </span> to PurchaseViz</h4>
           <p class="lead">
             This simple app lets you input all your purchases, allows you to analyze information, and 
             perform complex analysis on your purchases with a simple UI.
@@ -36,6 +36,8 @@
         </div>
       </div>
     </div>
+    
+    <Carousel v-if="!userLoggedIn" />
 
 <!-- 
     <ul> Souces
@@ -48,7 +50,6 @@
       <li>Chart.js wrapper for Vue</li>
       <li>https://www.sitepoint.com/creating-beautiful-charts-vue-chart-js/</li>
       <li>HELPED WITH FIREBASE AUTH: https://stackoverflow.com/questions/56817919/import-firebase-firestore-returns-undefined</li>
-      <li>Custom Pagination: https://codepen.io/bilalo05/pen/oNgrKXo</li>
     </ul>
 -->
 
@@ -56,6 +57,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'Home',
   components: {
@@ -69,6 +71,19 @@ export default {
     },
     userLoggedIn() {
       return this.$store.getters.user;
+    },
+    greeting() {
+      var myDate = new Date();
+      var hrs = myDate.getHours();
+      if (hrs < 5) // 12:00am - 5:00am
+        return "You're up early"
+      if (hrs >= 5 && hrs < 12) // 5:00am - 12:00pm
+        return 'Good morning';
+      else if (hrs >= 12 && hrs <= 17) // 12:00pm to 5:00pm
+        return 'Good afternoon';
+      else if (hrs >= 17 && hrs <= 22) // 5:00pm to 10:00pm
+        return 'Good evening';
+      else return "You're up late";
     }
   },
   mounted() {

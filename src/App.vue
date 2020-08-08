@@ -7,6 +7,8 @@
     <router-view />
     <footer class="footer">
       <div class="container">
+        <span class="text-muted"><router-link to="/about">About this website</router-link></span>
+        <span class="text-muted"> | </span>
         <span class="text-muted">created by <a href="https://marissashivers.github.io" target="_blank">Marissa Shivers</a></span>
         <a href="https://github.com/marissashivers" target="_blank"><font-awesome-icon class="fa-lg customIcon" :icon="['fab', 'github']" /></a>
         <a href="https://www.linkedin.com/in/marissashivers" target="_blank"><font-awesome-icon class="fa-lg customIcon" :icon="['fab', 'linkedin']" /></a>

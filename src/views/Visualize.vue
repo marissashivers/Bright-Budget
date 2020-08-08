@@ -1,40 +1,49 @@
 <template>
   <div class="container">
     <div class="buttons">
+      <h1 class="font-weight-light text-center">Visualize your spending habits</h1>
       <button :disabled="currentPurchaseFilter=='lastMonth'" type="button" class="btn btn-outline-primary" @click="filterLastMonth()">Last Month</button>
       <button :disabled="currentPurchaseFilter=='lastThreeMonths'" type="button" class="btn btn-outline-primary" @click="filterLastThreeMonths()">Last 3 Months</button>
       <button :disabled="currentPurchaseFilter=='lastYear'" type="button" class="btn btn-outline-primary" @click="filterLastYear()">Last 365 Days</button>
       <button :disabled="currentPurchaseFilter=='custom'" type="button" class="btn btn-outline-primary" @click="filterCustomDates()">Custom</button>
-      <form v-if="currentPurchaseFilter=='custom'" style="padding-left:250px; padding-right: 250px;">
-        <div class="form-row">
-          <div class="col">
-            <label>Start date</label>
-            <datepicker v-model="customStart" class="form-control" />
+      <b-card v-if="currentPurchaseFilter=='custom'" bg-variant="light" style="margin-left:250px; margin-right: 250px;">
+        <form>
+          <div class="form-row">
+            <div class="col">
+              <label>Start date</label>
+              <datepicker v-model="customStart" class="form-control" />
+            </div>
+            <div class="col">
+              <label>End date</label>
+              <datepicker v-model="customEnd" class="form-control" />
+            </div>
           </div>
-          <div class="col">
-            <label>End date</label>
-            <datepicker v-model="customEnd" class="form-control" />
-          </div>
-        </div>
-        <button class="btn btn-primary" @click="customDateCancel()">Cancel</button>
-        <button class="btn btn-primary" @click="customDateOk()">OK</button>
-      </form>
+          <button class="btn btn-primary" @click="customDateCancel()">Cancel</button>
+          <button class="btn btn-primary" @click="customDateOk()">OK</button>
+        </form>
+      </b-card>
     </div>
 
-    <h3 style="text-align:center;">Dates displayed: {{ formatDate(this.startDateDisplay) }} to {{ formatDate(this.endDateDisplay) }}</h3>
+    <h3 class="font-weight-light text-center" style="text-align:center;">Dates displayed: {{ formatDate(this.startDateDisplay) }} to {{ formatDate(this.endDateDisplay) }}</h3>
 
     <!-- Bootstrap Grid System -->
     <div class="row">
       <div class="col-sm">
-        <LineChart :data="this.chartDataLine" :options="this.chartOptionsLine"></LineChart>
+        <b-card border-variant="primary" bg-variant="light">
+          <LineChart :data="this.chartDataLine" :options="this.chartOptionsLine"></LineChart>
+        </b-card>
       </div>
     </div>
     <div class="row">
       <div class="col-sm">
-        <BarChart2 :data="this.chartDataBar" :options="this.chartOptionsBar"></BarChart2>
+        <b-card border-variant="primary" bg-variant="light">
+          <BarChart2 :data="this.chartDataBar" :options="this.chartOptionsBar"></BarChart2>
+        </b-card>
       </div>
       <div class="col-sm">
-        <PieChart2 :data="this.chartDataPie" :options="this.chartOptionsPie"></PieChart2>
+        <b-card border-variant="primary" bg-variant="light">
+          <PieChart2 :data="this.chartDataPie" :options="this.chartOptionsPie"></PieChart2>
+        </b-card>
       </div>
     </div>
   </div>
@@ -276,6 +285,7 @@ export default {
       return v;
     },
     getPurchasesByDay(purchasesToMap) {
+      // TODO: fix this section so it works with just one purchase / just one day
       var end = this.endDateDisplay;
       var start = purchasesToMap[purchasesToMap.length-1].createdAt.toDate();
       var daysArray =  this.enumerateDaysBetweenDates(start, end);
@@ -289,10 +299,6 @@ export default {
         purchDate = purchDate.toDateString();
         purchMap.set(purchDate, Math.round(100*(purchMap.get(purchDate) + purch.purchaseAmount))/100);
       })
-      // console.log(end);
-      // console.log(start);
-      // console.log(Array.from(purchMap.keys()));
-
       return purchMap;
     },
     getPurchasesByMonth() {
@@ -367,8 +373,8 @@ export default {
     padding: 10px;
     font-size: 30px;
     /* https://www.cssmatic.com/box-shadow */
-    -webkit-box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
+    /* -webkit-box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
     -moz-box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
-    box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
+    box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2); */
   }
 </style>

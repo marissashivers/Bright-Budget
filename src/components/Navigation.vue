@@ -1,6 +1,9 @@
 <template>
     <nav class="site-nav navbar navbar-expand bg-primary navbar-dark">
         <div class="container-fluid">
+            <span style="color:white; padding: 0 10px;">
+                <font-awesome-icon class="fa-lg" icon="dollar-sign" />
+            </span>
             <router-link class="navbar-brand" to="/">PurchaseViz</router-link>
             <div class="navbar-nav ml-auto">
                 <router-link class="nav-item nav-link" to="/purchases" v-if="userLoggedIn">purchases</router-link>

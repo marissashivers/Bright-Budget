@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="budgets">
     <div class="row justify-content-center">
       <div class="col-12 col-md-9 col-lg-7">
         <h1
@@ -46,95 +46,91 @@
               </div> <!-- input-group input-group-lg -->
             </form> <!-- FORM GROUP -->
           </div> <!-- card-body text-center" -->
-        </div> <!-- card bg-light -->
         <button class="btn btn-md btn-info" id="buttonManage" @click="showBudgets()">
           {{ buttonManageText }}
         </button>
+        <!-- Display and edit budgets -->
+        <!-- TODO: allow editing/deleting budgets. Maybe using modal for editing? -->
+        <table class="table table-striped table-sm table-fit" v-if="buttonManageText=='Done'">
+          <thead>
+            <tr>
+              <td class="fit">Cateogry</td>
+              <td class="fit">Amount</td>
+              <td class="fit">Actions</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in budgets" :key="item.id" :class="{editing: item == editedBudget && editMode == true}" v-cloak>
+              <!-- budget category -->
+              <td class="fit">
+                <div class="view">
+                  {{ item.budgetCategory }}
+                </div>
+                <div class="edit">
+                  <select
+                    name="budgetCategory"
+                    class="form-control"
+                    v-model="item.budgetCategory"
+                    aria-describedby="buttonAdd"
+                    ref="budgetCategory"
+                  >
+                    <option value="null" disabled hidden>Category</option>
+                    <option v-for="item in categories" :key="item.id">
+                      {{ item.category }}
+                    </option>
+                  </select>
+                </div>
+              </td>
+              <!-- budget amount -->
+              <td class="fit">
+                <div class="view">
+                  ${{ Number(item.budgetAmount).toFixed(2) }}
+                </div>
+                <div class="edit">
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="budgetAmount"
+                    placeholder="Amount"
+                    aria-describedby="buttonAdd"
+                    v-model="item.purchaseAmount"
+                    ref="purchaseAmount"
+                  />
+                </div>
+              </td>
+              <!-- actions -->
+              <td class="fit">
+                <section
+                  class="btn-group align-self-center"
+                  role="group"
+                  aria-label="Budget Options"
+                >
+                  <button 
+                    class="btn btn-sm btn-outline-secondary view"
+                    @click="editBudget(item)"
+                  >
+                    <font-awesome-icon icon="pencil-alt" />
+                  </button>
+                  <button
+                    class="btn btn-sm btn-outline-secondary edit"
+                    @click="handleSaveBudget(item)"
+                  >
+                    <font-awesome-icon icon="save"></font-awesome-icon>
+                  </button>
+                  <button 
+                    class="btn btn-sm btn-outline-secondary" 
+                    @click="handleDeleteBudget(item)"
+                  >
+                    <font-awesome-icon icon="trash" />
+                  </button>
+                </section>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        </div> <!-- card bg-light -->
       </div> <!-- col-12 col-md-9 col-lg-7 -->
     </div> <!-- row justify-content center -->
-
-    <!-- Display and edit budgets -->
-    <!-- TODO: allow editing/deleting budgets. Maybe using modal for editing? -->
-    <table 
-      class="table table-striped table-sm table-fit" 
-      v-if="buttonManageText=='Done'"
-    >
-      <thead>
-        <tr>
-          <td class="fit">Cateogry</td>
-          <td class="fit">Amount</td>
-          <td class="fit">Actions</td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="item in budgets" :key="item.id" :class="{editing: item == editedBudget && editMode == true}" v-cloak>
-          <!-- budget category -->
-          <td class="fit">
-            <div class="view">
-              {{ item.budgetCategory }}
-            </div>
-            <div class="edit">
-              <select
-                name="budgetCategory"
-                class="form-control"
-                v-model="item.budgetCategory"
-                aria-describedby="buttonAdd"
-                ref="budgetCategory"
-              >
-                <option value="null" disabled hidden>Category</option>
-                <option v-for="item in categories" :key="item.id">
-                  {{ item.category }}
-                </option>
-              </select>
-            </div>
-          </td>
-          <!-- budget amount -->
-          <td class="fit">
-            <div class="view">
-              ${{ Number(item.budgetAmount).toFixed(2) }}
-            </div>
-            <div class="edit">
-              <input
-                type="text"
-                class="form-control"
-                name="budgetAmount"
-                placeholder="Amount"
-                aria-describedby="buttonAdd"
-                v-model="item.purchaseAmount"
-                ref="purchaseAmount"
-              />
-            </div>
-          </td>
-          <!-- actions -->
-          <td class="fit">
-            <section
-              class="btn-group align-self-center"
-              role="group"
-              aria-label="Budget Options"
-            >
-              <button 
-                class="btn btn-sm btn-outline-secondary view"
-                @click="editBudget(item)"
-              >
-                <font-awesome-icon icon="pencil-alt" />
-              </button>
-              <button
-                class="btn btn-sm btn-outline-secondary edit"
-                @click="handleSaveBudget(item)"
-              >
-                <font-awesome-icon icon="save"></font-awesome-icon>
-              </button>
-              <button 
-                class="btn btn-sm btn-outline-secondary" 
-                @click="handleDeleteBudget(item)"
-              >
-                <font-awesome-icon icon="trash" />
-              </button>
-            </section>
-          </td>
-        </tr>
-      </tbody>
-    </table>
 
     <div class="row justify-content-center">
       <span class="glyphicon glyphicon-menu-left">
@@ -153,11 +149,15 @@
     </div>
 
     <div class="budget-container">
-      <h2>Your Budgets:</h2>
-      <div v-for="budget in this.budgets" :key="budget.id">
-        <h4>{{ budget.budgetCategory }}: ${{ categoriesMap.get(budget.budgetCategory).toFixed(2) }} / ${{ budget.budgetAmount.toFixed(2) }} <span v-if="categoriesMap.get(budget.budgetCategory) > budget.budgetAmount">(EXCEEDED!)</span></h4>
-        <b-progress height="2rem" :value="categoriesMap.get(budget.budgetCategory)" :max="budget.budgetAmount" :variant="computeVariant(categoriesMap.get(budget.budgetCategory), budget.budgetAmount)" show-value class="mb-3"></b-progress>
-      </div>
+      <b-card bg-variant="light">
+        <template v-slot:header>
+          <h4 class="mb-0">Your Budgets:</h4>
+        </template>
+        <div v-for="budget in this.budgets" :key="budget.id">
+          <h4>{{ budget.budgetCategory }}: ${{ categoriesMap.get(budget.budgetCategory).toFixed(2) }} / ${{ budget.budgetAmount.toFixed(2) }} <span v-if="categoriesMap.get(budget.budgetCategory) > budget.budgetAmount">(EXCEEDED!)</span></h4>
+          <b-progress height="2rem" :value="categoriesMap.get(budget.budgetCategory)" :max="budget.budgetAmount" :variant="computeVariant(categoriesMap.get(budget.budgetCategory), budget.budgetAmount)" show-value class="mb-3"></b-progress>
+        </div>
+      </b-card>
     </div>
   </div>
 </template>
@@ -313,6 +313,9 @@ export default {
 </script>
 
 <style scoped>
+.budgets {
+  margin: 25px;
+}
   .budget-container {
     margin-top: 50px;
     margin-left: 200px;
@@ -321,19 +324,6 @@ export default {
   #buttonManage {
     margin: 10px auto;
     display: block;
-  }
-
-  [v-cloak] {
-    display: none;
-  }
-  .edit {
-    display: none;
-  }
-  .editing .edit {
-    display: block;
-  }
-  .editing .view {
-    display: none;
   }
   .table-fit,
   .table td.fit, 

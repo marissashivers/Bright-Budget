@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import { auth } from '../firebase';
+//import { auth } from '../firebase';
 
 export default {
     data: function() {
@@ -97,7 +97,8 @@ export default {
             displayName: null,
             email: null,
             passOne: null,
-            passTwo: null
+            passTwo: null,
+            error: null,
         }
     },
     methods: {
@@ -109,22 +110,34 @@ export default {
                 displayName: this.displayName
             }
             if(!this.error) {
-                auth
-                .createUserWithEmailAndPassword(info.email, info.password)
-                .then(
-                    userCredentials => {
-                        return userCredentials.user
-                        .updateProfile({
-                            displayName: info.displayName
-                        })
-                        .then(() => {
-                            this.$router.replace('purchases')
-                        });
-                    },
-                    error => {
-                    this.error = error.message;
-                    }
-                );
+              // auth
+              // .createUserWithEmailAndPassword(info.email, info.password)
+              // .then(
+              //   userCredentials => {
+              //     return userCredentials.user
+              //     .updateProfile({
+              //       displayName: info.displayName
+              //     })
+              //     .then(() => {
+              //       this.$router.replace('purchases')
+              //     });
+              //   },
+              //   error => {
+              //     this.error = error.message;
+              //   }
+              // );
+              this.$store.dispatch("signUpAction", info)
+              .then(response => {
+                this.error = null;
+                console.log("Successfully registered: " + response);
+                this.$router.push({path: '/'});
+                this.$store.dispatch("fetchPurchases");
+                this.$store.dispatch("fetchCategories");
+                this.$store.dispatch("fetchBudgets");
+              }, error => {
+                console.log(error);
+                this.error = error.message
+              })
             }
         }
     },

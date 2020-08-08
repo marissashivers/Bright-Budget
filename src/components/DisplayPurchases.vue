@@ -121,9 +121,9 @@
         >
           Info modal
         </b-button> -->
-        <b-button size="sm" @click="row.toggleDetails">
+        <!-- <b-button size="sm" @click="row.toggleDetails">
           {{ row.detailsShowing ? "Hide" : "Show" }} Details
-        </b-button>
+        </b-button> -->
         <!-- added by me from old table -->
         <section
           class="btn-group align-self-center"
