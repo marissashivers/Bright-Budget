@@ -57,7 +57,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'Home',
   components: {
@@ -101,6 +100,7 @@ export default {
   }
 }
 </script>
+
 <style scoped>
   .home {
     margin: 25px;

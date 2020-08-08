@@ -18,8 +18,8 @@
                   ref="budgetCategory"
                 >
                   <option value="null" disabled hidden>Category</option>
-                  <option v-for="item in categories" :key="item.id" :disabled="currentBudgetsArray.includes(item.category)">
-                    {{ item.category }} <span v-if="currentBudgetsArray.includes(item.category)">(already exists)</span>
+                  <option v-for="item in categories" :key="item.id" :disabled="budgets.includes(item.category)">
+                    {{ item.category }} <span v-if="budgets.includes(item.category)">(already exists)</span>
                   </option>
                 </select>
                 <!-- budget amount -->
@@ -66,36 +66,11 @@
                 <div class="view">
                   {{ item.budgetCategory }}
                 </div>
-                <div class="edit">
-                  <select
-                    name="budgetCategory"
-                    class="form-control"
-                    v-model="item.budgetCategory"
-                    aria-describedby="buttonAdd"
-                    ref="budgetCategory"
-                  >
-                    <option value="null" disabled hidden>Category</option>
-                    <option v-for="item in categories" :key="item.id">
-                      {{ item.category }}
-                    </option>
-                  </select>
-                </div>
               </td>
               <!-- budget amount -->
               <td class="fit">
                 <div class="view">
                   ${{ Number(item.budgetAmount).toFixed(2) }}
-                </div>
-                <div class="edit">
-                  <input
-                    type="text"
-                    class="form-control"
-                    name="budgetAmount"
-                    placeholder="Amount"
-                    aria-describedby="buttonAdd"
-                    v-model="item.purchaseAmount"
-                    ref="purchaseAmount"
-                  />
                 </div>
               </td>
               <!-- actions -->
@@ -107,15 +82,9 @@
                 >
                   <button 
                     class="btn btn-sm btn-outline-secondary view"
-                    @click="editBudget(item)"
+                    @click="handleEditBudget(item)"
                   >
                     <font-awesome-icon icon="pencil-alt" />
-                  </button>
-                  <button
-                    class="btn btn-sm btn-outline-secondary edit"
-                    @click="handleSaveBudget(item)"
-                  >
-                    <font-awesome-icon icon="save"></font-awesome-icon>
                   </button>
                   <button 
                     class="btn btn-sm btn-outline-secondary" 
@@ -131,6 +100,46 @@
         </div> <!-- card bg-light -->
       </div> <!-- col-12 col-md-9 col-lg-7 -->
     </div> <!-- row justify-content center -->
+
+    <!-- EDIT PURCHASE MODAL -->
+    <b-modal id="bv-modal-edit">
+      <template v-slot:modal-title>
+        Edit budget
+      </template>
+      <div class="d-block text-center">
+      </div>
+      <template v-slot:modal-footer>
+        <button class="btn btn-secondary" @click="$bvModal.hide('bv-modal-edit')">Cancel</button>
+        <button class="btn btn-primary" @click="handleSaveBudget(currentlyEditingBudget)">Save Changes</button>
+      </template>
+      <b-form-group
+        label="Amount"
+        label-for="amount-input"
+        invalid-feedback="Amount is required"
+      >
+        <b-form-input
+          v-model="editBudgetAmount"
+          required
+        ></b-form-input>
+      </b-form-group>
+      <b-form-group
+        label="Category"
+        label-for="category-input"
+        invalid-feedback="Category is required"
+      >
+        <select
+          class="form-control"
+          v-model="editBudgetCategory"
+          aria-describedby="buttonAdd"
+          ref="budgetCategory"
+        >
+          <option value="null" disabled hidden>Category</option>
+          <option v-for="item in categories" :key="item.id">
+            {{ item.category }}
+          </option>
+        </select>
+      </b-form-group>
+    </b-modal>
 
     <div class="row justify-content-center">
       <span class="glyphicon glyphicon-menu-left">
@@ -154,7 +163,7 @@
           <h4 class="mb-0">Your Budgets:</h4>
         </template>
         <div v-for="budget in this.budgets" :key="budget.id">
-          <h4>{{ budget.budgetCategory }}: ${{ categoriesMap.get(budget.budgetCategory).toFixed(2) }} / ${{ budget.budgetAmount.toFixed(2) }} <span v-if="categoriesMap.get(budget.budgetCategory) > budget.budgetAmount">(EXCEEDED!)</span></h4>
+          <h4>{{ budget.budgetCategory }}: ${{ categoriesMap.get(budget.budgetCategory).toFixed(2) }} / ${{ Number(budget.budgetAmount).toFixed(2) }} <span v-if="categoriesMap.get(budget.budgetCategory) > budget.budgetAmount">(EXCEEDED!)</span></h4>
           <b-progress height="2rem" :value="categoriesMap.get(budget.budgetCategory)" :max="budget.budgetAmount" :variant="computeVariant(categoriesMap.get(budget.budgetCategory), budget.budgetAmount)" show-value class="mb-3"></b-progress>
         </div>
       </b-card>
@@ -180,14 +189,14 @@ export default {
   },
   mounted() {
     this.purchasesFiltered = this.getCurrentMonthPurchases();
-    this.currentBudgetsArray = this.getCurrentBudgetsArray();
+    //this.currentBudgetsArray = this.getCurrentBudgetsArray();
     this.categoriesMap = this.getPurchasesByCategory();
   },
   watch: {
     // update currentBudgetsArray whenever budgets are changed, in order to update enabled/disabled category selection
-    budgets: function() {
-      this.currentBudgetsArray = this.getCurrentBudgetsArray();
-    },
+    // budgets: function() {
+    //   this.currentBudgetsArray = this.getCurrentBudgetsArray();
+    // },
     purchasesFiltered: function() {
       this.categoriesMap = this.getPurchasesByCategory();
     }
@@ -205,6 +214,9 @@ export default {
       editedBudget: null,
       editedBudgeDateDate: null,
       editMode: false,
+      currentlyEditingBudget: null,
+      editBudgetAmount: 0,
+      editBudgetCategory: "",
     }
   },
   methods: {
@@ -236,13 +248,13 @@ export default {
       })
       return map;
     },
-    getCurrentBudgetsArray() {
-      var arr = [];
-      this.budgets.forEach(item => {
-        arr.push(item.budgetCategory);
-      })
-      return arr;
-    },
+    // getCurrentBudgetsArray() {
+    //   var arr = [];
+    //   this.budgets.forEach(item => {
+    //     arr.push(item.budgetCategory);
+    //   })
+    //   return arr;
+    // },
     computeVariant(amountSpent, budgetAmount) {
       if (amountSpent > budgetAmount) return "danger";
       else return "info";
@@ -292,14 +304,6 @@ export default {
       return moment(date).format('MMM Do, YYYY');
     },
     // editing and deleting
-    editBudget(purchase) {
-      this.editMode = true;
-      this.editBudget = purchase;
-    },
-    handleSaveBudget(purchase) {
-      purchase.createdAt = this.editedBudgeDateDate;
-      this.editMode = false;
-    },
     handleDeleteBudget(budgetObject) {
       this.$store.dispatch("deleteBudget", budgetObject);
     },
@@ -307,6 +311,19 @@ export default {
       if (this.buttonManageText == "Done") this.buttonManageText = "Manage my budgets";
       else this.buttonManageText = "Done";
     },
+    handleEditBudget(budget) {
+      this.$bvModal.show('bv-modal-edit');
+      this.currentlyEditingBudget = budget;
+      this.editBudgetAmount = budget.budgetAmount;
+      this.editBudgetCategory = budget.budgetCategory;
+    },
+    handleSaveBudget(budget) {
+      budget.budgetCategory = this.editBudgetCategory;
+      budget.budgetAmount = Number(this.editBudgetAmount);
+      this.$store.dispatch("editAndSaveBudget", budget);
+      this.$bvModal.hide('bv-modal-edit');
+    },
+
   }, // end methods
 
 }

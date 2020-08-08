@@ -182,8 +182,8 @@ export default new Vuex.Store({
           createdAt: purch.createdAt,
           purchaseCategory: purch.purchaseCategory
         });
+        commit("setStatus", "success");
       }
-      commit("setStatus", "success");
     },
     fetchCategories({ commit }) {
       if (this.state.user) {
@@ -274,6 +274,20 @@ export default new Vuex.Store({
         .doc(budgetObject.id)
         .delete();
         console.log("budget deleted");
+        commit("setStatus", "success");
+      }
+    },
+    editAndSaveBudget({ commit }, budgetObject) {
+      if (this.state.user) {
+        db.collection("users")
+        .doc(this.state.user)
+        .collection("budgets")
+        .doc(budgetObject.id)
+        .update({
+          budgetAmount: budgetObject.budgetAmount,
+          budgetCategory: budgetObject.budgetCategory
+        });
+        console.log("budget edited and saved");
         commit("setStatus", "success");
       }
     }

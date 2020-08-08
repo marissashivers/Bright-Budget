@@ -31,6 +31,15 @@ export default {
 };
 </script>
 
+<style>
+/* If the screen size is 600px wide or less, set the font-size of <div> to 30px */
+@media screen and (max-width: 600px) {
+  .main-container {
+    font-size: 3vw;
+  }
+}
+</style>
+
 <style scoped>
   * {
     box-sizing: border-box;
