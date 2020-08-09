@@ -1,14 +1,17 @@
 <template>
-  <b-container class="container">
+  <b-container class="container" style="padding:25px;">
     <!-- User Interface controls -->
     <div class="row justify-content-center">
       <div class="col-12 col-md-9 col-lg-7">
-        <b-card bg-variant="light" header="Filters">
+        <b-card no-body bg-variant="light" header="Filters">
           <template v-slot:header>
-            <b-button pill block variant v-b-toggle.collapse-3 class="m-1">Filters</b-button>
+            Filters
+            <div v-b-toggle.collapse-3 class="sm float-right">
+              <font-awesome-icon class="fa-xs" icon="window-minimize" />
+            </div>
           </template>
           <b-collapse visible id="collapse-3">
-            <div class="card-body text-center">
+            <div class="text-center" style="margin:25px;">
               <b-form-group
                 class="mb-0"
               >
@@ -63,7 +66,7 @@
                     placeholder="Type to Search"
                   ></b-form-input>
                   <b-input-group-append>
-                    <b-button :disabled="!filter" @click="filter = ''"
+                    <b-button :disabled="!filter" @click.prevent="filter = ''"
                       >Clear</b-button
                     >
                   </b-input-group-append>
@@ -118,13 +121,13 @@
         >
           <button
             class="btn btn-sm btn-outline-secondary view"
-            @click="editPurchase(row.item)"
+            @click.prevent="editPurchase(row.item)"
           >
             <font-awesome-icon icon="pencil-alt" />
           </button>
           <button
             class="btn btn-sm btn-outline-secondary"
-            @click="handleDeletePurchase(row.item)"
+            @click.prevent="handleDeletePurchase(row.item)"
           >
             <font-awesome-icon icon="trash" />
           </button>
@@ -250,8 +253,8 @@
         </select>
       </b-form-group>
       <template v-slot:modal-footer>
-        <button class="btn btn-secondary" @click="cancelSavePurchase()">Cancel</button>
-        <button class="btn btn-primary" @click="savePurchase(purchaseEditingCurrent)">Save Changes</button>
+        <button class="btn btn-secondary" @click.prevent="cancelSavePurchase()">Cancel</button>
+        <button class="btn btn-primary" @click.prevent="savePurchase(purchaseEditingCurrent)">Save Changes</button>
       </template>
       <!-- <b-button class="mt-3" block @click="$bvModal.hide('bv-edit-modal')">Cancel</b-button>
       <b-button class="mt-3" block @click="$bvModal.hide('bv-edit-modal')">Save</b-button> -->

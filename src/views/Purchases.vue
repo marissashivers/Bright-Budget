@@ -7,7 +7,7 @@
         <div class="card bg-light">
           <div class="card-body text-center">
             <form class="formgroup">
-              <div class="input-group input-group-lg">
+              <div class="input-group">
                 <!-- datepicker -->
                 <datepicker v-model="createdAt" class="form-control">
                 </datepicker>
@@ -48,6 +48,7 @@
                     class="btn btn-sm btn-info"
                     id="buttonAdd"
                     @click.prevent="handleAddPurchase"
+                    style="padding: 0 15px"
                   >
                     +
                   </button>
@@ -57,7 +58,7 @@
             </form>
             <!-- FORM GROUP add a category -->
             <form class="formgroup" style="margin-top: 20px;">
-              <div class="input-group input-group-lg">
+              <div class="input-group">
                 <input
                   type="text"
                   class="form-control"
@@ -70,6 +71,7 @@
                     type="submit"
                     class="btn btn-sm btn-info"
                     @click.prevent="handleAddCategory"
+                    style="padding: 0 15px"
                   >
                     +
                   </button>
@@ -205,7 +207,7 @@ export default {
 
     // categories
     showCategories() {
-      if (this.categoryManageText == "Done") this.categoryManageText = "Edit categories";
+      if (this.categoryManageText == "Done") this.categoryManageText = "Manage categories";
       else this.categoryManageText = "Done";
     },
     handleDeleteCategory(item) {
