@@ -32,7 +32,7 @@ export default {
         logout() {
             this.$store.dispatch("signOutAction")
             .then(() => {
-                this.$router.push({path: '/login'});
+                this.$router.push({path: '/'});
             }, error => {
                 console.log(error.message);
             });
