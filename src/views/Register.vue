@@ -56,6 +56,7 @@
                       placeholder="Password"
                       v-model="passOne"
                     />
+                    <small id="emailHelp" class="form-text text-muted">Your password should be at least six characters long.</small>
                   </section>
                   <section class="col-sm-6 form-group">
                     <input
