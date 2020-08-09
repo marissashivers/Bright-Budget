@@ -4,87 +4,73 @@
     <div class="row justify-content-center">
       <div class="col-12 col-md-9 col-lg-7">
         <b-card bg-variant="light" header="Filters">
-          <div class="card-body text-center">
-            <b-form-group
-              class="mb-0"
-            >
-              <b-input-group size="md" prepend="Sort">
-                <b-form-select
-                  v-model="sortBy"
-                  id="sortBySelect"
-                  :options="sortOptions"
-                >
-                  <template v-slot:first>
-                    <option value="">-- none --</option>
-                  </template>
-                </b-form-select>
-                <b-input-group-append>
+          <template v-slot:header>
+            <b-button pill block variant v-b-toggle.collapse-3 class="m-1">Filters</b-button>
+          </template>
+          <b-collapse visible id="collapse-3">
+            <div class="card-body text-center">
+              <b-form-group
+                class="mb-0"
+              >
+                <b-input-group size="md" prepend="Sort">
                   <b-form-select
-                    v-model="sortDesc"
-                    size="md"
-                    :disabled="!sortBy"
+                    v-model="sortBy"
+                    id="sortBySelect"
+                    :options="sortOptions"
                   >
-                    <option :value="false">Asc</option>
-                    <option :value="true">Desc</option>
+                    <template v-slot:first>
+                      <option value="">-- none --</option>
+                    </template>
                   </b-form-select>
-                </b-input-group-append>
-              </b-input-group>
-            </b-form-group>
-              <!-- <b-col>
-                <b-form-group
-                  label="Initial sort"
-                  label-cols-sm="3"
-                  label-align-sm="right"
-                  label-size="sm"
-                  label-for="initialSortSelect"
-                  class="mb-0"
-                >
-                  <b-form-select
-                    v-model="sortDirection"
-                    id="initialSortSelect"
-                    size="sm"
-                    :options="['asc', 'desc', 'last']"
-                  ></b-form-select>
-                </b-form-group>
-              </b-col> -->
-          <b-form-group
-            label="Filter On"
-            label-cols-sm="3"
-            label-align-sm="right"
-            label-size="md"
-            description="Leave all unchecked to filter on all data"
-            class="mb-0"
-          >
-            <b-form-checkbox-group v-model="filterOn" class="mt-0">
-              <b-form-checkbox value="createdAt">Date</b-form-checkbox>
-              <b-form-checkbox value="purchaseLocation">Location</b-form-checkbox>
-              <b-form-checkbox value="purchaseAmount">Amount</b-form-checkbox>
-              <b-form-checkbox value="purchaseCategory">Category</b-form-checkbox>
-            </b-form-checkbox-group>
-          </b-form-group>
-          <!-- search/filter -->
-          <b-form-group
-            label-size="md"
-            label-for="filterInput"
-            class="mb-0"
-          >
-            <b-input-group size="md">
-              <b-form-input
-                v-model="filter"
-                type="search"
-                id="filterInput"
-                placeholder="Type to Search"
-              ></b-form-input>
-              <b-input-group-append>
-                <b-button :disabled="!filter" @click="filter = ''"
-                  >Clear</b-button
-                >
-              </b-input-group-append>
-            </b-input-group>
-          </b-form-group>
-          </div>
-
-
+                  <b-input-group-append>
+                    <b-form-select
+                      v-model="sortDesc"
+                      size="md"
+                      :disabled="!sortBy"
+                    >
+                      <option :value="false">Asc</option>
+                      <option :value="true">Desc</option>
+                    </b-form-select>
+                  </b-input-group-append>
+                </b-input-group>
+              </b-form-group>
+              <b-form-group
+                label="Filter On"
+                label-cols-sm="3"
+                label-align-sm="right"
+                label-size="md"
+                description="Leave all unchecked to filter on all data"
+                class="mb-0"
+              >
+                <b-form-checkbox-group v-model="filterOn" class="mt-0">
+                  <b-form-checkbox value="createdAt">Date</b-form-checkbox>
+                  <b-form-checkbox value="purchaseLocation">Location</b-form-checkbox>
+                  <b-form-checkbox value="purchaseAmount">Amount</b-form-checkbox>
+                  <b-form-checkbox value="purchaseCategory">Category</b-form-checkbox>
+                </b-form-checkbox-group>
+              </b-form-group>
+              <!-- search/filter -->
+              <b-form-group
+                label-size="md"
+                label-for="filterInput"
+                class="mb-0"
+              >
+                <b-input-group size="md">
+                  <b-form-input
+                    v-model="filter"
+                    type="search"
+                    id="filterInput"
+                    placeholder="Type to Search"
+                  ></b-form-input>
+                  <b-input-group-append>
+                    <b-button :disabled="!filter" @click="filter = ''"
+                      >Clear</b-button
+                    >
+                  </b-input-group-append>
+                </b-input-group>
+              </b-form-group>
+            </div>
+          </b-collapse>
         </b-card>
       </div>
     </div>

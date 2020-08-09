@@ -186,7 +186,7 @@ export default {
       this.purchaseLocation = null;
       this.purchaseAmount = null;
       this.purchaseCategory = null;
-      this.createdAt = new Date();
+      this.createdAt = purchaseObject.createdAt;
     },
     handleAddCategory: function() {
       // this.$emit("addCategory", this.addCategory)
