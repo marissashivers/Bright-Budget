@@ -11,10 +11,13 @@
     <div class="container text-center">
       <div class="row justify-content-center">
         <div class="col-10 col-md-10 col-lg-8 col-xl-7">
-          <h4 class="display-4 text-primary mt-3 mb-2">Welcome <span v-if="userLoggedIn">back </span> to PurchaseViz</h4>
+          <h4 class="display-4 text-primary mt-3 mb-2">Welcome <span v-if="userLoggedIn">back </span> to WhereIsMyMoney</h4>
           <p class="lead">
             This simple app lets you input all your purchases, allows you to analyze information, and 
             perform complex analysis on your purchases with a simple UI.
+          </p>
+          <p class="lead">
+            Your money - in your control. Track what you spend, where you spend it, and see how you spend.
           </p>
 
           <!-- buttons -->
