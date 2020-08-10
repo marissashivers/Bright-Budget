@@ -1,4 +1,4 @@
-# PurchaseViz
+# WhereIsMyMoney
 Personal project to get experienced with web development. Uses Vue.js, Firebase Authentication and Cloud Firestore.
 
 ## About

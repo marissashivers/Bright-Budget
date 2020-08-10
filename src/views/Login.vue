@@ -57,9 +57,10 @@
 </template>
 
 <script>
-import { auth } from "../firebase"
+//import { auth } from "../firebase"
 
 export default {
+  name: 'Login',
     data: function() {
         return {
             email: '',
@@ -73,15 +74,25 @@ export default {
                 email: this.email,
                 password: this.password
             }
-            auth
-            .signInWithEmailAndPassword(info.email, info.password)
-            .then(
-                () => {
-                    this.$router.push("/")
-                }, error => {
-                    this.error = error.message;
-            })
-        }
+            // auth
+            // .signInWithEmailAndPassword(info.email, info.password)
+            // .then(
+            //     () => {
+            //         this.$router.push("/")
+            //     }, error => {
+            //         this.error = error.message;
+            // })
+            this.$store.dispatch('signInAction', info)
+            .then(response => {
+              console.log("Successfully signed in: " + response);
+              this.$router.push({path: '/'});
+              this.$store.dispatch("fetchPurchases");
+              this.$store.dispatch("fetchCategories");
+              this.$store.dispatch("fetchBudgets");
+            }, error => {
+              this.error = error.message;
+            });
+        },
     },
 }
 </script>

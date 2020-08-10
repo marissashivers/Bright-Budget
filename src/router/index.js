@@ -7,7 +7,7 @@ Vue.use(VueRouter)
 const routes = [{
         path: '/',
         name: 'Home',
-        component: Home
+        component: Home,
     },
     {
         path: '/purchases',
@@ -16,7 +16,7 @@ const routes = [{
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
         component: () =>
-            import ( /* webpackChunkName: "about" */ '../views/Purchases.vue')
+            import ('../views/Purchases.vue')
     },
     {
         path: '/visualize',
@@ -36,16 +36,15 @@ const routes = [{
         component: () =>
             import ('../views/Register.vue')
     },
-    // {
-    //     path: "/meetings",
-    //     name: 'Meetings',
-    //     component: () =>
-    //         import ('../views/Meetings.vue')
-    // },
     {
         path: "/budgets",
         name: "Budgets",
         component: () => import('../views/Budgets.vue')
+    },
+    {
+        path: "/about",
+        name: "About",
+        component: () => import('../views/About.vue')
     },
     {
         path: "/old",

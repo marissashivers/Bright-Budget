@@ -1,216 +1,95 @@
 <template>
-  <div id="app">
-
+  <div class="main-container">
     <!-- NAVBAR -->
-    <Navigation 
-      :user="user" 
-      @logout="logout"
-    />
+    <Navigation />
     <!-- pass props to router -->
-    <router-view 
-      class="container" 
-      :user="user" 
-      :meetings="meetings"
-      :purchases="purchases"
-      :categories="categories"
-      :budgets="budgets"
-      @logout="logout" 
-      @addMeeting="addMeeting"
-      @deleteMeeting="deleteMeeting"
-      @addPurchase="addPurchase"
-      @savePurchase="savePurchase"
-      @deletePurchase="deletePurchase"
-      @addCategory="addCategory"
-      @addBudget="addBudget"
-      @deleteBudget="deleteBudget"
-    />
-
+    <!-- TODO: remove passing props to router, should be using Vuex store. -->
+    <router-view />
+    <footer class="footer">
+      <div class="container">
+        <span class="text-muted"><router-link to="/about">About this website</router-link></span>
+        <span class="text-muted"> | </span>
+        <span class="text-muted">created by <a href="https://marissashivers.github.io" target="_blank">Marissa Shivers</a></span>
+        <a href="https://github.com/marissashivers" target="_blank"><font-awesome-icon class="fa-lg customIcon" :icon="['fab', 'github']" /></a>
+        <a href="https://www.linkedin.com/in/marissashivers" target="_blank"><font-awesome-icon class="fa-lg customIcon" :icon="['fab', 'linkedin']" /></a>
+      </div>
+    </footer>
   </div>
 </template>
 
 <script>
 import Navigation from "@/components/Navigation.vue";
-import { auth, db } from './firebase';
+//import { auth } from './firebase';
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     Navigation,
   },
-  data: function() {
-    return {
-      user: null,
-      meetings: [],
-      purchases: [],
-      categories: [],
-      budgets: []
-    };
-  },
-  methods: {
-    logout: function() {
-      auth.signOut()
-      .then( () => {
-        this.user = null;
-        this.$router.push("login");
-      })
-    },
-    addMeeting: function(payload) {
-      db.collection("users")
-      .doc(this.user.uid)
-      .collection("meetings").add({
-        name: payload,
-        createdAt: new Date()
-      });
-    },
-    deleteMeeting: function(payload) {
-      db.collection("users")
-      .doc(this.user.uid)
-      .collection("meetings")
-      .doc(payload)
-      .delete();
-    },
-    addPurchase: function(location, amount, category, date) {
-      db.collection("users")
-      .doc(this.user.uid)
-      .collection("purchases").add({
-        purchaseLocation: location,
-        purchaseAmount: Number(amount),
-        createdAt: date,
-        purchaseCategory: category
-      });
-    },
-    savePurchase: function(purchaseToEdit) {
-      db.collection("users")
-      .doc(this.user.uid)
-      .collection("purchases")
-      .doc(purchaseToEdit.id)
-      .update({
-        purchaseLocation: purchaseToEdit.purchaseLocation,
-        purchaseAmount: Number(purchaseToEdit.purchaseAmount),
-        createdAt: purchaseToEdit.createdAt,
-        purchaseCategory: purchaseToEdit.purchaseCategory
-      });      
-    },
-    addCategory: function(payload) {
-      db.collection("users")
-      .doc(this.user.uid)
-      .collection("categories")
-      .add({
-        category: payload
-      });
-    },
-    deletePurchase: function(purchaseId) {
-      db.collection("users")
-      .doc(this.user.uid)
-      .collection("purchases")
-      .doc(purchaseId)
-      .delete();
-    },
-    addBudget: function(amount, category) {
-      db.collection("users")
-      .doc(this.user.uid)
-      .collection("budgets")
-      .add({
-        budgetAmount: Number(amount),
-        budgetCategory: category
-      });
-    },
-    deleteBudget: function(budgetId) {
-      db.collection("users")
-      .doc(this.user.uid)
-      .collection("budgets")
-      .doc(budgetId)
-      .delete();
-    },
-  },
-  mounted() {
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        console.log("--> Accessing firebase database...");
-        this.user = user;
-        // reading dynamic snapshot for users collection
-        db.collection("users")
-        .doc(this.user.uid)
-        .collection("meetings")
-        .orderBy("name")
-        .onSnapshot(snapshot => {
-          const snapData = [];
-          snapshot.forEach(doc => {
-            snapData.push({
-              id: doc.id,
-              name: doc.data().name
-            });
-          });
-          // sort the old fashion way
-          this.meetings = snapData.sort((a, b) => {
-            if (a.name.toLowerCase() < b.name.toLowerCase()) {
-              return -1;
-            } else {
-              return 1;
-            }
-          });
-        });
-        // purchases collection
-        db.collection("users")
-        .doc(this.user.uid)
-        .collection("purchases")
-        .orderBy("createdAt")
-        .onSnapshot(snapshot => {
-          const snapData = [];
-          snapshot.forEach(doc => {
-            snapData.push({
-              id: doc.id,
-              purchaseLocation: doc.data().purchaseLocation,
-              purchaseAmount: doc.data().purchaseAmount,
-              createdAt: doc.data().createdAt,
-              purchaseCategory: doc.data().purchaseCategory
-            });
-          });
-          // Return purchase in order from most recent purchase.
-          this.purchases = snapData.reverse();
-        });
-        // categories database
-        db.collection("users")
-        .doc(this.user.uid)
-        .collection("categories")
-        .orderBy("category")
-        .onSnapshot(snapshot => {
-          const snapData = [];
-          snapshot.forEach(doc => {
-            snapData.push( {
-              id: doc.id,
-              category: doc.data().category
-            });
-          });
-          // sort?
-          this.categories = snapData;
-        });
-        // budgets database
-        db.collection("users")
-          .doc(this.user.uid)
-          .collection("budgets")
-          .orderBy("budgetAmount")
-          .onSnapshot(snapshot => {
-            const snapData = [];
-            snapshot.forEach(doc => {
-              snapData.push({
-                id: doc.id,
-                budgetAmount: doc.data().budgetAmount,
-                budgetCategory: doc.data().budgetCategory
-              });
-            });
-            this.budgets = snapData;
-          })
-      } // end if
-    });
-  }, // end mounted
-}
+  methods: {},
+  mounted() {},
+};
 </script>
+
+<style>
+/* If the screen size is 600px wide or less, set the font-size of <div> to 30px */
+@media screen and (max-width: 600px) {
+  .main-container {
+    font-size: 3vw;
+  }
+}
+</style>
+
+<style scoped>
+  * {
+    box-sizing: border-box;
+  }
+  *:before,
+  *:after {
+    box-sizing: border-box;
+  }
+  html,
+  body {
+    height: 100%;
+    position: relative;
+  }
+  .main-container {
+    min-height: 100vh; /* will cover the 100% of viewport */
+    overflow: hidden;
+    display: block;
+    position: relative;
+    padding-bottom: 100px; /* height of your footer */
+  }
+  footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+  .footer {
+    padding-left: 60px;
+    padding-right: 60px;
+    background-color: gainsboro;
+    line-height: 60px;
+  }
+  .text-muted {
+    color: #6c757d !important;
+  }
+  .container {
+    width: auto;
+    padding: 0 15px;
+    text-align: right;
+  }
+  .customIcon {
+    margin-left: 10px;
+  }
+</style>
 
 <style lang="scss">
 $theme-colors: (
-  primary: gray,
+  primary: #352369,
+  info: #908aa1,
 );
+$font-family-base: "Roboto", sans-serif;
 @import "node_modules/bootstrap/scss/bootstrap";
-
+@import url("https://fonts.googleapis.com/css2?family=Montserrat&family=Roboto&family=Source+Sans+Pro&display=swap");
 </style>

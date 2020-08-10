@@ -1,26 +1,49 @@
 <template>
   <div class="container">
     <div class="buttons">
-      <button type="button" class="btn btn-outline-primary" @click="filterLastMonth()">Last Month</button>
-      <button type="button" class="btn btn-outline-primary" @click="filterLastThreeMonths()">Last 3 Months</button>
-      <button type="button" class="btn btn-outline-primary" @click="filterLastYear()">Last 365 Days</button>
-      <button type="button" class="btn btn-outline-primary">Custom</button>
+      <h1 class="font-weight-light text-center">Visualize your spending habits</h1>
+      <button :disabled="currentPurchaseFilter=='lastMonth'" type="button" class="btn btn-outline-primary" @click="filterLastMonth()">Last Month</button>
+      <button :disabled="currentPurchaseFilter=='lastThreeMonths'" type="button" class="btn btn-outline-primary" @click="filterLastThreeMonths()">Last 3 Months</button>
+      <button :disabled="currentPurchaseFilter=='lastYear'" type="button" class="btn btn-outline-primary" @click="filterLastYear()">Last 365 Days</button>
+      <button :disabled="currentPurchaseFilter=='custom'" type="button" class="btn btn-outline-primary" @click="filterCustomDates()">Custom</button>
+      <b-card v-if="currentPurchaseFilter=='custom'" bg-variant="light" style="margin-left:250px; margin-right: 250px;">
+        <form>
+          <div class="form-row">
+            <div class="col">
+              <label>Start date</label>
+              <datepicker v-model="customStart" class="form-control" />
+            </div>
+            <div class="col">
+              <label>End date</label>
+              <datepicker v-model="customEnd" class="form-control" />
+            </div>
+          </div>
+          <button class="btn btn-primary" @click="customDateCancel()">Cancel</button>
+          <button class="btn btn-primary" @click="customDateOk()">OK</button>
+        </form>
+      </b-card>
     </div>
 
-    <h3 style="text-align:center;">Dates displayed: {{ formatDate(this.start) }} to {{ formatDate(this.end) }}</h3>
+    <h3 class="font-weight-light text-center" style="text-align:center;">Dates displayed: {{ formatDate(this.startDateDisplay) }} to {{ formatDate(this.endDateDisplay) }}</h3>
 
     <!-- Bootstrap Grid System -->
     <div class="row">
       <div class="col-sm">
-        <LineChart :data="this.chartDataLine" :options="this.chartOptionsLine"></LineChart>
+        <b-card border-variant="primary" bg-variant="light">
+          <LineChart :data="this.chartDataLine" :options="this.chartOptionsLine"></LineChart>
+        </b-card>
       </div>
     </div>
     <div class="row">
       <div class="col-sm">
-        <BarChart2 :data="this.chartDataBar" :options="this.chartOptionsBar"></BarChart2>
+        <b-card border-variant="primary" bg-variant="light">
+          <BarChart2 :data="this.chartDataBar" :options="this.chartOptionsBar"></BarChart2>
+        </b-card>
       </div>
       <div class="col-sm">
-        <PieChart2 :data="this.chartDataPie" :options="this.chartOptionsPie"></PieChart2>
+        <b-card border-variant="primary" bg-variant="light">
+          <PieChart2 :data="this.chartDataPie" :options="this.chartOptionsPie"></PieChart2>
+        </b-card>
       </div>
     </div>
   </div>
@@ -29,21 +52,25 @@
 <script>
 // @ is an alias to /src
 //import Datepicker from 'vuejs-datepicker';
-import { purchaseCollection } from '../firebase';
 import moment from 'moment';
+import { mapGetters } from 'vuex';
+import Datepicker from "vuejs-datepicker";
 //import BarChartComponent from "@/components/BarChart.vue";
 //import PieChartComponent from "@/components/PieChart.vue";
 import PieChart2 from "@/components/PieChart2.vue";
 import BarChart2 from "@/components/BarChart2.vue";
 import LineChart from "@/components/LineChart.vue";
 
+import { filterPurchasesByDate, getPurchasesByCategory } from './purchaseFilters.js';
+
 export default {
   name: 'Visualize',
   inheritAttrs: false,
-  props: ["user", "purchases", "categories"],
+  //props: ["user"],
   components: {
     //BarChartComponent,
     //PieChartComponent,
+    Datepicker,
     PieChart2,
     BarChart2,
     LineChart,
@@ -52,48 +79,62 @@ export default {
     this.fetchData();
   },
   mounted() {
+    this.purchasesFiltered = this.purchases;
+    this.fetchData();
     this.filterLastMonth();
   },
   computed: {
-    // PIE CHART TESTING
+    ...mapGetters([
+      'purchases',
+      'categories',
+    ]),
+  },
+  watch: {
+    purchasesFiltered() {
+      this.fetchData();
+    }
   },
   data() {
     return {
-      purchase: null,
       selectedDate: new Date(),
       search: null,
-      purchasesFiltered: this.purchases,
-
       formatter: new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD'
       }),
 
-      // DATE FILTERING
-      end: new Date(),
-      start: this.purchases[this.purchases.length-1].createdAt.toDate(),
+      purchasesFiltered: ['null'],
+      currentPurchaseFilter: 'lastMonth',
+
+      startDateDisplay: new Date(),
+      endDateDisplay: new Date(),
+
+      customStart: new Date(),
+      customEnd: new Date(),
+
+      // // DATE FILTERING
+      // end: new Date(),
+      // start: this.purchases[this.purchases.length-1].createdAt.toDate(),
 
       // Pie Chart
-      chartOptionsPie: null,
-      chartDataPie: null,
+      chartOptionsPie: [],
+      chartDataPie: [],
 
       // Bar chart
-      chartOptionsBar: null,
-      chartDataBar: null,
+      chartOptionsBar: [],
+      chartDataBar: [],
 
       // Line chart
-      chartOptionsLine: null,
-      chartDataLine: null,
-    }
-  },
-  firestore() {
-    return {
-      db: purchaseCollection.orderBy('createdAt', 'desc'),
+      chartOptionsLine: [],
+      chartDataLine: [],
+
+      
+
     }
   },
   methods: {
-    fetchData: function() {
-      var categoriesMap = this.getPurchasesByCategory();
+    fetchData() {
+      var categoriesMap = getPurchasesByCategory(this.purchasesFiltered, this.categories);
       this.chartDataPie = {
         //labels: this.categoriesToString(),
         labels: Array.from(categoriesMap.keys()),
@@ -174,14 +215,14 @@ export default {
           }]
         },
       }
-      var purchMap = this.getPurchasesByDay()
+      var purchasesMap = this.getPurchasesByDay(this.purchasesFiltered);
       this.chartDataLine = {
-        labels: Array.from(purchMap.keys()).reverse(),
+        labels: Array.from(purchasesMap.keys()).reverse(),
         datasets: [
           {
             label: "Dollars spent",
             backgroundColor: "#59ff85",
-            data: Array.from(purchMap.values()).reverse(),
+            data: Array.from(purchasesMap.values()).reverse(),
           },
         ]
       }
@@ -190,39 +231,51 @@ export default {
       return moment(date).format('MMM Do, YYYY');
     },
     filterLastMonth() {
-      this.end = new Date();
-      this.start = new Date();
-      this.start.setMonth(this.start.getMonth()-1);
-      var results = this.purchases.filter(purch => {
-        let date = purch.createdAt.toDate();
-        return date >= this.start && date <= this.end;
-      });
-      this.purchasesFiltered = results;
-      // reset chart data
-      this.fetchData();
+      var end = new Date();
+      var start = new Date();
+      start.setMonth(start.getMonth()-1);
+      this.startDateDisplay = start;
+      this.endDateDisplay = end;
+      this.currentPurchaseFilter = 'lastMonth';
+      this.purchasesFiltered = filterPurchasesByDate(this.purchases, start, end);
+      var map = this.getPurchasesByDay(this.purchasesFiltered);
+      this.fetchData(map);
     },
     filterLastThreeMonths() {
-      this.end = new Date();
-      this.start = new Date();
-      this.start.setMonth(this.start.getMonth()-3);
-      var results = this.purchases.filter(purch => {
-        let date = purch.createdAt.toDate();
-        return date >= this.start && date <= this.end;
-      });
-      this.purchasesFiltered = results;
-      // reset chart data
-      this.fetchData();
+      var end = new Date();
+      var start = new Date();
+      start.setMonth(start.getMonth()-3);
+      this.startDateDisplay = start;
+      this.endDateDisplay = end;
+      this.currentPurchaseFilter = 'lastThreeMonths';
+      this.purchasesFiltered = filterPurchasesByDate(this.purchases, start, end);
+      var map = this.getPurchasesByDay(this.purchasesFiltered);
+      this.fetchData(map);
     },
     filterLastYear() {
-      this.end = new Date();
-      this.start = new Date();
-      this.start.setFullYear(this.start.getFullYear() - 1);
-      var results = this.purchases.filter(purch => {
-        let date = purch.createdAt.toDate();
-        return date >= this.start && date <= this.end;
-      });
-      this.purchasesFiltered = results;
-      this.fetchData();
+      var end = new Date();
+      var start = new Date();
+      start.setFullYear(start.getFullYear() - 1);
+      this.startDateDisplay = start;
+      this.endDateDisplay = end;
+      this.currentPurchaseFilter = 'lastYear';
+      this.purchasesFiltered = filterPurchasesByDate(this.purchases, start, end);
+      var map = this.getPurchasesByDay(this.purchasesFiltered);
+      this.fetchData(map);
+    },
+    filterCustomDates() {
+      this.currentPurchaseFilter = 'custom';
+    },
+    customDateCancel() {
+      this.currentPurchaseFilter = '_';
+    },
+    customDateOk() {
+      this.startDateDisplay = this.customStart;
+      this.endDateDisplay = this.customEnd;
+      this.currentPurchaseFilter = '_'
+      this.purchasesFiltered = filterPurchasesByDate(this.purchases, this.customStart, this.customEnd);
+      var map = this.getPurchasesByDay(this.purchasesFiltered);
+      this.fetchData(map);
     },
 
     // PIE CHART EXPERIMENTATION
@@ -231,68 +284,24 @@ export default {
       this.categories.forEach(item => v.push(item.category))
       return v;
     },
-    getPurchasesByCategory() {
-      var categoriesArray = [];
-      this.categories.forEach(item => categoriesArray.push(item.category));
-      var categoriesMap = new Map();
-
-      categoriesArray.forEach(cat => {
-        categoriesMap.set(cat, 0);
-      });
-
-      this.purchasesFiltered.forEach(purch => {
-        var purchCat = purch.purchaseCategory;
-        categoriesMap.set(purchCat, Math.round(100*(categoriesMap.get(purchCat) + purch.purchaseAmount))/100);
-      })
-      return categoriesMap;
-    },
-    getPurchasesByDay() {
-      // var purchMap = new Map();
-      // this.purchasesFiltered.forEach(purch => {
-      //   var purchDate = purch.createdAt.toDate();
-      //   purchDate = purchDate.toDateString();
-      //   if (!purchMap.has(purchDate)) {
-      //     purchMap.set(purchDate, purch.purchaseAmount);
-      //   }
-      //   else {
-      //     //purchMap[purchDate] += purch.purchaseAmount;
-      //     purchMap.set(purchDate, purchMap.get(purchDate) + purch.purchaseAmount);
-      //   }
-      // })
-      // return Array.from(purchMap.values());
-      var end = new Date();
-      var start = this.purchasesFiltered[this.purchasesFiltered.length-1].createdAt.toDate();
+    getPurchasesByDay(purchasesToMap) {
+      // TODO: fix this section so it works with just one purchase / just one day
+      var end = this.endDateDisplay;
+      var start = purchasesToMap[purchasesToMap.length-1].createdAt.toDate();
       var daysArray =  this.enumerateDaysBetweenDates(start, end);
 
       var purchMap = new Map();
       daysArray.forEach(day => {
         purchMap.set(day, 0);
       });
-      this.purchasesFiltered.forEach(purch => {
+      purchasesToMap.forEach(purch => {
         var purchDate = purch.createdAt.toDate();
         purchDate = purchDate.toDateString();
         purchMap.set(purchDate, Math.round(100*(purchMap.get(purchDate) + purch.purchaseAmount))/100);
       })
-      console.log(end);
-      console.log(start);
-      console.log(Array.from(purchMap.keys()));
-
       return purchMap;
     },
     getPurchasesByMonth() {
-    },
-    groupBy(array, key) {
-      const result = {};
-      this.categoriesToString().forEach(ca => {
-        result[ca] = [];
-      })
-      array.forEach(item => {
-        if(!result[item[key]]) {
-          result[item[key]] = [];
-        }
-        result[item[key]].push(item);
-      });
-      return result;
     },
     // helper functions
     generateBgColorArray() {
@@ -340,7 +349,7 @@ export default {
       today = today.toDateString();
       dates.push(today);
       return dates;
-    }
+    },
   },
 }
 </script>
@@ -349,6 +358,7 @@ export default {
   .container {
     padding-left: 50px;
     padding-right: 50px;
+    margin: 25px;
   }
   .buttons {
     text-align: center;
@@ -363,8 +373,8 @@ export default {
     padding: 10px;
     font-size: 30px;
     /* https://www.cssmatic.com/box-shadow */
-    -webkit-box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
+    /* -webkit-box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
     -moz-box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
-    box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
+    box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2); */
   }
 </style>
