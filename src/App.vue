@@ -6,7 +6,7 @@
     <!-- TODO: remove passing props to router, should be using Vuex store. -->
     <router-view />
     <footer class="footer">
-      <div class="container">
+      <div class="footer-container">
         <span class="text-muted"><router-link to="/about">About this website</router-link></span>
         <span class="text-muted"> | </span>
         <span class="text-muted">created by <a href="https://marissashivers.github.io" target="_blank">Marissa Shivers</a></span>
@@ -32,28 +32,23 @@ export default {
 </script>
 
 <style>
-/* If the screen size is 600px wide or less, set the font-size of <div> to 30px */
-@media screen and (max-width: 600px) {
-  .main-container {
-    font-size: 3vw;
-  }
-}
 </style>
 
 <style scoped>
-  * {
+  /* * {
     box-sizing: border-box;
   }
   *:before,
   *:after {
     box-sizing: border-box;
-  }
-  html,
+  } */
+  /* html,
   body {
     height: 100%;
     position: relative;
-  }
+  } */
   .main-container {
+    /* for footer */
     min-height: 100vh; /* will cover the 100% of viewport */
     overflow: hidden;
     display: block;
@@ -74,7 +69,7 @@ export default {
   .text-muted {
     color: #6c757d !important;
   }
-  .container {
+  .footer-container {
     width: auto;
     padding: 0 15px;
     text-align: right;

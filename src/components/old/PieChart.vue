@@ -94,7 +94,7 @@ export default {
 
 <style scoped>
 .small {
-    max-width: 600px;
+    /* max-width: 600px; */
     margin: 25px auto;
 }
 </style>
