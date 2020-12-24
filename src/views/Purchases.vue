@@ -129,6 +129,7 @@
 </template>
 
 <script>
+import { auth } from '../firebase';
 // TODO: make it so users cannot access purchases/budgets pages without logging in, or make it redirect
 import moment from "moment";
 import Datepicker from "vuejs-datepicker";
@@ -207,6 +208,7 @@ export default {
 
     // categories
     showCategories() {
+      console.log("currentuser" + auth.currentUser);
       if (this.categoryManageText == "Done") this.categoryManageText = "Manage categories";
       else this.categoryManageText = "Done";
     },

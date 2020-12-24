@@ -2,7 +2,7 @@
     <div class="about">
         <h1 class="font-weight-light text-center">About this app</h1>
         <p class="lead">
-            WhereIsMyMoney is an application I made to familiarize myself with web development, as well as build something that I wanted to use every day. This app draws inspiration from an app I use a lot - Mint. I wanted to build something similar to Mint in functionality, but simpler and entirely on my own.
+            PurchaseViz is an application I made to familiarize myself with web development, as well as build something that I wanted to use every day. This app draws inspiration from an app I use a lot - Mint. I wanted to build something similar to Mint in functionality, but simpler and entirely on my own.
         </p>
         <p class="lead">
             The main goals I had for this project were to build something that I would actually use, something that was simple to look at, and something that I enjoyed using. I also wanted it to be highly customizable from a user's perspective. To achieve this, I allow users to enter in custom categories for their purchases, as well as set their own budgets for each category.

@@ -1,5 +1,6 @@
 // Where you configure the initialization of the Vue instance
 import './firebase'
+import { auth } from './firebase';
 
 import Vue from 'vue'
 import App from './App.vue'
@@ -45,5 +46,20 @@ new Vue({
     store,
     vuetify,
     Datepicker,
+    created() {
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                this.$store.state.user = auth.currentUser.uid;
+                this.$store.state.displayName = auth.currentUser.displayName;
+                console.log("set user in created in main.js");
+                this.$store.dispatch("fetchPurchases");
+                this.$store.dispatch("fetchCategories");
+                this.$store.dispatch("fetchBudgets");
+                console.log("fetched categories");
+            } else {
+                this.$store.state.user = null;
+            }
+        })
+    },
     render: h => h(App)
 }).$mount('#app')

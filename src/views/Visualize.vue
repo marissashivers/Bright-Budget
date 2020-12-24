@@ -1,12 +1,12 @@
 <template>
   <div class="container">
-    <div class="buttons">
+    <div class="buttons-container">
       <h1 class="font-weight-light text-center">Visualize your spending habits</h1>
       <button :disabled="currentPurchaseFilter=='lastMonth'" type="button" class="btn btn-outline-primary" @click="filterLastMonth()">Last Month</button>
       <button :disabled="currentPurchaseFilter=='lastThreeMonths'" type="button" class="btn btn-outline-primary" @click="filterLastThreeMonths()">Last 3 Months</button>
       <button :disabled="currentPurchaseFilter=='lastYear'" type="button" class="btn btn-outline-primary" @click="filterLastYear()">Last 365 Days</button>
       <button :disabled="currentPurchaseFilter=='custom'" type="button" class="btn btn-outline-primary" @click="filterCustomDates()">Custom</button>
-      <b-card v-if="currentPurchaseFilter=='custom'" bg-variant="light" style="margin-left:250px; margin-right: 250px;">
+      <b-card v-if="currentPurchaseFilter=='custom'" bg-variant="light" class="custom-container">
         <form>
           <div class="form-row">
             <div class="col">
@@ -27,23 +27,26 @@
     <h3 class="font-weight-light text-center" style="text-align:center;">Dates displayed: {{ formatDate(this.startDateDisplay) }} to {{ formatDate(this.endDateDisplay) }}</h3>
 
     <!-- Bootstrap Grid System -->
-    <div class="row">
-      <div class="col-sm">
-        <b-card border-variant="primary" bg-variant="light">
-          <LineChart :data="this.chartDataLine" :options="this.chartOptionsLine"></LineChart>
-        </b-card>
+    <!-- Visualization containers -->
+    <div class="viz-container">
+      <div class="row">
+        <div class="col-sm">
+          <b-card border-variant="primary" bg-variant="light">
+            <LineChart :data="this.chartDataLine" :options="this.chartOptionsLine"></LineChart>
+          </b-card>
+        </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-sm">
-        <b-card border-variant="primary" bg-variant="light">
-          <BarChart2 :data="this.chartDataBar" :options="this.chartOptionsBar"></BarChart2>
-        </b-card>
-      </div>
-      <div class="col-sm">
-        <b-card border-variant="primary" bg-variant="light">
-          <PieChart2 :data="this.chartDataPie" :options="this.chartOptionsPie"></PieChart2>
-        </b-card>
+      <div class="row">
+        <div class="col-sm">
+          <b-card border-variant="primary" bg-variant="light">
+            <BarChart2 :data="this.chartDataBar" :options="this.chartOptionsBar"></BarChart2>
+          </b-card>
+        </div>
+        <div class="col-sm">
+          <b-card border-variant="primary" bg-variant="light">
+            <PieChart2 :data="this.chartDataPie" :options="this.chartOptionsPie"></PieChart2>
+          </b-card>
+        </div>
       </div>
     </div>
   </div>
@@ -355,26 +358,31 @@ export default {
 </script>
 
 <style scoped>
+  button {
+    margin-right: 15px;
+  }
   .container {
     padding-left: 50px;
     padding-right: 50px;
     margin: 25px;
   }
-  .buttons {
+  .buttons-container {
     text-align: center;
     display: block;
     margin-left: auto;
     margin-right: auto;
     padding-bottom: 20px;
   }
+  .custom-container {
+    margin: 20px 250px;
+  }
+  .viz-container {
+    text-align: center;
+  }
   .col-sm {
     background-color: white;
     margin: 10px;
     padding: 10px;
     font-size: 30px;
-    /* https://www.cssmatic.com/box-shadow */
-    /* -webkit-box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
-    -moz-box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2);
-    box-shadow: 2px 2px 17px 2px rgba(0,0,0,0.2); */
   }
 </style>

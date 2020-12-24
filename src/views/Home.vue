@@ -11,7 +11,7 @@
     <div class="container text-center">
       <div class="row justify-content-center">
         <div class="col-10 col-md-10 col-lg-8 col-xl-7">
-          <h4 class="display-4 text-primary mt-3 mb-2">Welcome <span v-if="userLoggedIn">back </span> <span v-if="!userLoggedIn">to WhereIsMyMoney</span></h4>
+          <h4 class="display-4 text-primary mt-3 mb-2">Welcome <span v-if="userLoggedIn">back </span> <span v-if="!userLoggedIn">to PurchaseViz</span></h4>
           <p class="lead" v-if="!userLoggedIn">
             This simple app lets you input all your purchases, allows you to analyze information, and 
             perform complex analysis on your purchases with a simple UI.
@@ -39,8 +39,6 @@
         </div>
       </div>
     </div>
-    
-    <Carousel v-if="!userLoggedIn" />
 
 <!-- 
     <ul> Souces

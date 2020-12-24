@@ -38,6 +38,9 @@ export default new Vuex.Store({
       return state.budgets;
     }
   },
+  // ****************************
+  // Mutations
+  // ****************************
   mutations: {
     setUser(state, payload) {
       state.user = payload;
@@ -64,6 +67,9 @@ export default new Vuex.Store({
       state.budgets = payload;
     }
   },
+  // ****************************
+  // Actions
+  // ****************************
   actions: {
     signUpAction({ commit }, payload) {
       return new Promise((resolve, reject) => {

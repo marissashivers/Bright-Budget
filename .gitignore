@@ -20,6 +20,8 @@ yarn-error.log*
 *.sln
 *.sw?
 
-# Added by me - firebase credentials
+# Added by me
+.firebase
+# firebase credentials
 # Example is in firebaseFake.js
 firebase.js
