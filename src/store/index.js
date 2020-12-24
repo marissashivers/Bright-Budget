@@ -7,7 +7,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user: null,
+    user: null, // uid
     displayName: null,
     purchases: [],
     categories: [],
@@ -106,17 +106,33 @@ export default new Vuex.Store({
       })
     },
     signOutAction({ commit }) {
-      auth.signOut()
-      .then(() => {
-        commit('setUser', null);
-        commit('setDisplayName', null);
-        commit('setStatus', 'success');
-        commit('setError', null);
-        console.log("signed out");
+      return new Promise((resolve, reject) => {
+        auth.signOut()
+        .then(() => {
+          commit('setUser', null);
+          commit('setDisplayName', null);
+          commit('setStatus', 'success');
+          commit('setError', null);
+          console.log("signed out");
+          resolve();
+        })
+        .catch((error) => {
+          commit('setStatus', 'failure');
+          commit('setError', error.message);
+          reject(error);
+        })
       })
-      .catch((error) => {
-        commit('setStatus', 'failure');
-        commit('setError', error.message);
+    },
+    checkUserStatus({ commit }) {
+      return new Promise((resolve, reject) => {
+        auth.onAuthStateChanged((user) => {
+          if (user) {
+            commit("setUser", user.uid);
+            resolve(user.uid);
+          } else {
+            reject('User is not logged in');
+          }
+        })
       })
     },
     fetchPurchases({ commit }) {
