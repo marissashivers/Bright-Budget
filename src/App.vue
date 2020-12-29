@@ -19,6 +19,7 @@
 
 <script>
 import Navigation from "@/components/Navigation.vue";
+// import firebase from "firebase/app";
 //import { auth } from './firebase';
 
 export default {

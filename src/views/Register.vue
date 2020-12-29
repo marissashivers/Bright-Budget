@@ -86,7 +86,9 @@
       or
       <router-link to="/login">login</router-link>
     </p>
+
   </div>
+
 </template>
 
 <script>
@@ -111,22 +113,6 @@ export default {
                 displayName: this.displayName
             }
             if(!this.error) {
-              // auth
-              // .createUserWithEmailAndPassword(info.email, info.password)
-              // .then(
-              //   userCredentials => {
-              //     return userCredentials.user
-              //     .updateProfile({
-              //       displayName: info.displayName
-              //     })
-              //     .then(() => {
-              //       this.$router.replace('purchases')
-              //     });
-              //   },
-              //   error => {
-              //     this.error = error.message;
-              //   }
-              // );
               this.$store.dispatch("signUpAction", info)
               .then(response => {
                 this.error = null;

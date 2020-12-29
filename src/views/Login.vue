@@ -74,14 +74,6 @@ export default {
                 email: this.email,
                 password: this.password
             }
-            // auth
-            // .signInWithEmailAndPassword(info.email, info.password)
-            // .then(
-            //     () => {
-            //         this.$router.push("/")
-            //     }, error => {
-            //         this.error = error.message;
-            // })
             this.$store.dispatch('signInAction', info)
             .then(response => {
               console.log("Successfully signed in: " + response);
@@ -90,6 +82,10 @@ export default {
               this.$store.dispatch("fetchCategories");
               this.$store.dispatch("fetchBudgets");
             }, error => {
+              var errorCode = error.code
+              var errorMessage = error.message
+              console.log(errorCode)
+              console.log(errorMessage)
               this.error = error.message;
             });
         },

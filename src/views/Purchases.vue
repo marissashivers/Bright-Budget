@@ -125,6 +125,13 @@
 
     <DisplayPurchases :key="componentKey" :purchases="this.purchases" :categories="this.categories" />
 
+    <b-form inline>
+      <b-form-group>
+        <b-form-input>
+        </b-form-input>
+      </b-form-group>
+    </b-form>
+
   </div>
 </template>
 
