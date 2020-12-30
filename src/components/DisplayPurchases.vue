@@ -298,7 +298,7 @@
 <script>
 import moment from "moment";
 import Datepicker from "vuejs-datepicker";
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 export default {
   name: "DisplayPurchases",
   components: {
@@ -380,6 +380,7 @@ export default {
     this.totalRows = this.getPurchases.length;
   },
   methods: {
+    ...mapActions(['deletePurchaseAction']),
     // @click="info(row.item, row.index, $event.target)"
     info(item, index, button) {
       // set fields before edit
@@ -423,7 +424,7 @@ export default {
       return moment(date).format("MM-DD-YYYY");
     },
     handleDeletePurchase(item) {
-      this.$store.dispatch("deletePurchase", item);
+      this.deletePurchaseAction(item.id);
     },
     // purchase edits
     editPurchase(item) {

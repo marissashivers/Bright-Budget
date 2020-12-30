@@ -34,10 +34,14 @@ export default {
     ...mapGetters(['getUser', 'isUserAuth'])
   },
   methods: {
-    ...mapActions(["authAction"])
+    ...mapActions(["authAction", "fetchCategories", "fetchPurchases"])
   },
   mounted() {
     this.authAction();
+    if (this.isUserAuth) {
+      this.fetchCategories();
+      this.fetchPurchases();
+    }
   },
 };
 </script>
