@@ -178,16 +178,9 @@ export default {
   created() {
   },
   methods: {
-    ...mapActions(['addCategoryAction', 'addPurchaseAction']),
+    ...mapActions(['addCategoryAction', 'addPurchaseAction', 'deleteCategoryAction']),
     // TODO: Migrate adding purchase to use Vuex store.
     handleAddPurchase: function() {
-      // var purchaseObject = {
-      //   "purchaseLocation": this.purchaseLocation,
-      //   "purchaseAmount": this.purchaseAmount,
-      //   "purchaseCategory": this.purchaseCategory,
-      //   "createdAt": this.createdAt
-      // };
-      //this.$store.dispatch("addPurchase", purchaseObject);
       this.addPurchaseAction( {
         "purchaseLocation": this.purchaseLocation,
         "purchaseAmount": this.purchaseAmount,
@@ -198,7 +191,7 @@ export default {
       this.purchaseLocation = null;
       this.purchaseAmount = null;
       this.purchaseCategory = null;
-      this.createdAt = null;
+      this.createdAt = new Date();
     },
     formatDate(date) {
       return moment(date).format('MMM Do, YYYY');
@@ -211,11 +204,22 @@ export default {
 
     // categories
     handleDeleteCategory(item) {
-      this.$store.dispatch("deleteCategory", item);
+      console.log(item.id);
+      this.deleteCategoryAction(item.id);
     },
-    addCategoryVuex() {
+    handleAddCategory() {
       this.addCategoryAction({ category: this.addCategory });
       console.log("category added: " + this.addCategory);
+      this.addCategory = "";
+    },
+    showCategories() {
+      //console.log(this.categoryManageText)
+      if (this.categoryManageText == "Manage categories") {
+        this.categoryManageText = "Done";
+      }
+      else if (this.categoryManageText == "Done") {
+        this.categoryManageText = "Manage categories";
+      }
     },
   },
 };

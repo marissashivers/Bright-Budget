@@ -37,17 +37,17 @@ const actions = {
     signInAction({ commit, dispatch }, payload) {
         var auth = firebase.auth();
 
-        var promise = auth.signInWithEmailAndPassword(payload.email, payload.password);
-        promise.catch(error => {
-            console.log(`GOT ERROR: ` + error.code);
-            commit("setError", error.message);
-        });
-        promise.then(function() {
+        return auth.signInWithEmailAndPassword(payload.email, payload.password)
+        .then(() => {
             var user = auth.currentUser;
             commit("setUser", user);
             dispatch("fetchCategories");
             dispatch("fetchPurchases");
         })
+        .catch(error => {
+            console.log(`GOT ERROR: ` + error.code);
+            commit("setError", error.message);
+        });
     },
     signOutAction({commit}) {
         firebase
@@ -55,6 +55,8 @@ const actions = {
             .signOut()
             .then(() => {
                 commit("setUser", null);
+                commit("setCategories", []);
+                commit("setPurchases", []);
             })
             .catch(error => {
                 commit("setError", error.message);
@@ -63,24 +65,40 @@ const actions = {
     // ****************************
     // CATEGORIES
     // ****************************
-    fetchCategories({ commit, getters }) {
+    async fetchCategories({ commit, getters }) {
         var db = firebase.firestore();
         var user = getters.getUser;
 
-        db.collection('users').doc(user.uid).collection('categories').get().then(querySnapshot =>{
-            if (querySnapshot.empty) {
-                console.log('empty');
-            } 
-            else {
-                var categories = [];
-                querySnapshot.forEach(doc => {
-                    categories.push(doc.data());
-                });
-
-                commit("setCategories", categories);
-                console.log("fetchCategories from actions invoked");
-            }
+        var querySnapshot = await db.collection('users')
+            .doc(user.uid)
+            .collection('categories')
+            .orderBy('category')
+            .get();
+        
+        var categories = [];
+        querySnapshot.forEach(doc => {
+            categories.push({
+                id: doc.id,
+                category: doc.data().category
+            });
         });
+        console.log("fetchCategories from actions invoked -- Firebase");
+        commit("setCategories", categories);
+
+        // db.collection('users').doc(user.uid).collection('categories').orderBy('category').onSnapshot((querySnapshot) => {
+        //     if (querySnapshot.empty) {
+        //         console.log('empty');
+        //     } 
+        //     else {
+        //         var categories = [];
+        //         querySnapshot.forEach(doc => {
+        //             categories.push(doc.data());
+        //         });
+
+        //         commit("setCategories", categories);
+        //         console.log("fetchCategories from actions invoked -- Firebase");
+        //     }
+        // });
     },
     addCategoryAction({ getters, dispatch }, payload) {
         var db = firebase.firestore();
@@ -90,33 +108,43 @@ const actions = {
         });
         dispatch('fetchCategories');
     },
+    deleteCategoryAction({ getters, dispatch }, payload) {
+        var db = firebase.firestore();
+        var user = getters.getUser;
+        db.collection('users').doc(user.uid).collection('categories').doc(payload).delete().then(function() {
+            console.log('Document successfully deleted');
+        }).catch(error => {
+            console.log("Error occurred while deleting document");
+            console.log(error.code);
+            console.log(error.message);
+        });
+        dispatch('fetchCategories');
+    },
     // ****************************
     // PURCHASES
     // ****************************
-    fetchPurchases({ commit, getters }) {
+    async fetchPurchases({ commit, getters }) {
         var db = firebase.firestore();
         var user = getters.getUser;
 
-        db.collection('users').doc(user.uid).collection('purchases').orderBy('createdAt').onSnapshot((querySnapshot) => {
-            if (querySnapshot.empty) {
-                console.log('empty');
-            }
-            else {
-                var purchases = [];
-                querySnapshot.forEach(doc => {
-                    purchases.push({
-                        id: doc.id,
-                        createdAt: doc.data().createdAt,
-                        purchaseAmount: doc.data().purchaseAmount,
-                        purchaseLocation: doc.data().purchaseLocation,
-                        purchaseCategory: doc.data().purchaseCategory
-                    });
-                });
-
-                commit("setPurchases", purchases);
-                console.log("fetPurchases from actions invoked");
-            }
+        var querySnapshot = await db.collection('users')
+            .doc(user.uid)
+            .collection('purchases')
+            .orderBy('createdAt')
+            .get();
+        
+        var purchases = [];
+        querySnapshot.forEach(doc => {
+            purchases.push({
+                id: doc.id,
+                createdAt: doc.data().createdAt,
+                purchaseAmount: doc.data().purchaseAmount,
+                purchaseLocation: doc.data().purchaseLocation,
+                purchaseCategory: doc.data().purchaseCategory
+            });
         });
+        console.log("fetchPurchases from actions invoked -- Firebase");
+        commit("setPurchases", purchases);
     },
     addPurchaseAction({ getters, dispatch }, payload) {
         var db = firebase.firestore();
@@ -128,6 +156,8 @@ const actions = {
             purchaseCategory: payload.purchaseCategory
         })
         .then(docRef => {
+            // TODO: add ID to purchase object in Vuex store so we can easily edit/delete purchases.
+            // Already done for categories.
             console.log(docRef.id);
         });
         dispatch('fetchPurchases');
