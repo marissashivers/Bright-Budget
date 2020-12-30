@@ -5,6 +5,15 @@
     <!-- pass props to router -->
     <!-- TODO: remove passing props to router, should be using Vuex store. -->
     <router-view />
+
+  <section v-if="isUserAuth" class="section">
+    <div class="columns">
+      <div class="column is-half is-offset-one-quarter">
+        Welcome {{ getUser.email }}
+      </div>
+    </div>
+  </section>
+
     <footer class="footer">
       <div class="footer-container">
         <span class="text-muted"><router-link to="/about">About this website</router-link></span>
@@ -19,13 +28,15 @@
 
 <script>
 import Navigation from "@/components/Navigation.vue";
-// import firebase from "firebase/app";
-//import { auth } from './firebase';
+import {mapGetters} from 'vuex';
 
 export default {
   name: "App",
   components: {
     Navigation,
+  },
+  computed: {
+    ...mapGetters(['getUser', 'isUserAuth'])
   },
   methods: {},
   mounted() {},
@@ -36,18 +47,6 @@ export default {
 </style>
 
 <style scoped>
-  /* * {
-    box-sizing: border-box;
-  }
-  *:before,
-  *:after {
-    box-sizing: border-box;
-  } */
-  /* html,
-  body {
-    height: 100%;
-    position: relative;
-  } */
   .main-container {
     /* for footer */
     min-height: 100vh; /* will cover the 100% of viewport */

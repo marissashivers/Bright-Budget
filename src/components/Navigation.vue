@@ -6,36 +6,61 @@
             </span>
             <router-link class="navbar-brand" to="/">PurchaseViz</router-link>
             <div class="navbar-nav ml-auto">
-                <router-link class="nav-item nav-link" to="/purchases" v-if="userLoggedIn">purchases</router-link>
-                <router-link class="nav-item nav-link" to="/visualize" v-if="userLoggedIn">visualize</router-link>
-                <router-link class="nav-item nav-link" to="/budgets" v-if="userLoggedIn">budgets</router-link>
-                <router-link class="nav-item nav-link" to="/login" v-if="!userLoggedIn">login</router-link>
-                <router-link class="nav-item nav-link" to="/register" v-if="!userLoggedIn">register</router-link>
+                <!-- links to show if user is NOT logged in -->
+                <template v-if="!isUserAuth">
+                    <router-link 
+                        class="nav-item nav-link"
+                        v-for="item of navItems"
+                        :key="item.name"
+                        :to="item.to"
+                    >
+                        {{ item.name }}
+                    </router-link>
+                </template>
 
-                <button class="nav-item nav-link btn btn-link"
-                @click="logout()" v-if="userLoggedIn"
-                >logout</button>
+                <!-- links to show if user IS logged in -->
+                <template v-if="isUserAuth">
+                    <router-link 
+                        class="nav-item nav-link"
+                        v-for="item of navItemsLoggedIn"
+                        :key="item.name"
+                        :to="item.to"
+                    >
+                        {{ item.name }}
+                    </router-link>
+                    <div class="nav-item nav-link" @click="signOut">
+                        Logout
+                    </div>
+                </template>
             </div>
         </div>
     </nav>
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
 export default {
+    data() {
+        return {
+            navItems: [
+                { name: "Login", to: "/login" },
+                { name: "Register", to: "/register"}
+            ],
+            navItemsLoggedIn: [
+                { name: "Purchases", to: "/purchases" },
+                { name: "Visualize", to: "/visualize" },
+                { name: "Budgets", to: "/budgets" },
+            ]
+        };
+    },
     name: "Navigation",
     computed: {
-        userLoggedIn() {
-            return this.$store.getters.user;
-        }
+        ...mapGetters(["getUser", "isUserAuth"])
     },
     methods: {
-        logout() {
-            this.$store.dispatch("signOutAction")
-            .then(() => {
-                this.$router.push({path: '/'});
-            }, error => {
-                console.log(error.message);
-            });
+        ...mapActions(["signOutAction"]),
+        signOut() {
+            this.signOutAction();
         }
     }
 }

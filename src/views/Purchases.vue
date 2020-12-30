@@ -136,7 +136,7 @@
 </template>
 
 <script>
-import { auth } from '../firebase';
+import { auth } from '@/plugins/firebase';
 // TODO: make it so users cannot access purchases/budgets pages without logging in, or make it redirect
 import moment from "moment";
 import Datepicker from "vuejs-datepicker";
