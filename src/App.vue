@@ -2,17 +2,12 @@
   <div class="main-container">
     <!-- NAVBAR -->
     <Navigation />
+    <section v-if="isUserAuth">
+          Welcome {{ getUser.email }}
+    </section>
     <!-- pass props to router -->
     <!-- TODO: remove passing props to router, should be using Vuex store. -->
     <router-view />
-
-  <section v-if="isUserAuth" class="section">
-    <div class="columns">
-      <div class="column is-half is-offset-one-quarter">
-        Welcome {{ getUser.email }}
-      </div>
-    </div>
-  </section>
 
     <footer class="footer">
       <div class="footer-container">
@@ -28,7 +23,7 @@
 
 <script>
 import Navigation from "@/components/Navigation.vue";
-import {mapGetters} from 'vuex';
+import {mapActions, mapGetters} from 'vuex';
 
 export default {
   name: "App",
@@ -38,8 +33,12 @@ export default {
   computed: {
     ...mapGetters(['getUser', 'isUserAuth'])
   },
-  methods: {},
-  mounted() {},
+  methods: {
+    ...mapActions(["authAction"])
+  },
+  mounted() {
+    this.authAction();
+  },
 };
 </script>
 
