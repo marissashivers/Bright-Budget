@@ -82,15 +82,12 @@ export default {
     this.fetchData();
   },
   mounted() {
-    this.purchasesFiltered = this.purchases;
+    this.purchasesFiltered = this.getPurchases;
     this.fetchData();
     this.filterLastMonth();
   },
   computed: {
-    ...mapGetters([
-      'purchases',
-      'categories',
-    ]),
+    ...mapGetters(['getUser', 'getCategories', 'getPurchases', 'isUserAuth']),
   },
   watch: {
     purchasesFiltered() {
@@ -137,7 +134,7 @@ export default {
   },
   methods: {
     fetchData() {
-      var categoriesMap = getPurchasesByCategory(this.purchasesFiltered, this.categories);
+      var categoriesMap = getPurchasesByCategory(this.purchasesFiltered, this.getCategories);
       this.chartDataPie = {
         //labels: this.categoriesToString(),
         labels: Array.from(categoriesMap.keys()),
@@ -240,7 +237,7 @@ export default {
       this.startDateDisplay = start;
       this.endDateDisplay = end;
       this.currentPurchaseFilter = 'lastMonth';
-      this.purchasesFiltered = filterPurchasesByDate(this.purchases, start, end);
+      this.purchasesFiltered = filterPurchasesByDate(this.getPurchases, start, end);
       var map = this.getPurchasesByDay(this.purchasesFiltered);
       this.fetchData(map);
     },
@@ -251,7 +248,7 @@ export default {
       this.startDateDisplay = start;
       this.endDateDisplay = end;
       this.currentPurchaseFilter = 'lastThreeMonths';
-      this.purchasesFiltered = filterPurchasesByDate(this.purchases, start, end);
+      this.purchasesFiltered = filterPurchasesByDate(this.getPurchases, start, end);
       var map = this.getPurchasesByDay(this.purchasesFiltered);
       this.fetchData(map);
     },
@@ -262,7 +259,7 @@ export default {
       this.startDateDisplay = start;
       this.endDateDisplay = end;
       this.currentPurchaseFilter = 'lastYear';
-      this.purchasesFiltered = filterPurchasesByDate(this.purchases, start, end);
+      this.purchasesFiltered = filterPurchasesByDate(this.getPurchases, start, end);
       var map = this.getPurchasesByDay(this.purchasesFiltered);
       this.fetchData(map);
     },
@@ -276,7 +273,7 @@ export default {
       this.startDateDisplay = this.customStart;
       this.endDateDisplay = this.customEnd;
       this.currentPurchaseFilter = '_'
-      this.purchasesFiltered = filterPurchasesByDate(this.purchases, this.customStart, this.customEnd);
+      this.purchasesFiltered = filterPurchasesByDate(this.getPurchases, this.customStart, this.customEnd);
       var map = this.getPurchasesByDay(this.purchasesFiltered);
       this.fetchData(map);
     },
@@ -284,7 +281,7 @@ export default {
     // PIE CHART EXPERIMENTATION
     categoriesToString() {
       var v = [];
-      this.categories.forEach(item => v.push(item.category))
+      this.getCategories.forEach(item => v.push(item.category))
       return v;
     },
     getPurchasesByDay(purchasesToMap) {
