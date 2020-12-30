@@ -29,7 +29,7 @@
                         {{ item.name }}
                     </router-link>
                     <div class="nav-item nav-link" @click="signOut">
-                        Logout
+                        logout
                     </div>
                 </template>
             </div>
@@ -43,13 +43,13 @@ export default {
     data() {
         return {
             navItems: [
-                { name: "Login", to: "/login" },
-                { name: "Register", to: "/register"}
+                { name: "login", to: "/login" },
+                { name: "register", to: "/register"}
             ],
             navItemsLoggedIn: [
-                { name: "Purchases", to: "/purchases" },
-                { name: "Visualize", to: "/visualize" },
-                { name: "Budgets", to: "/budgets" },
+                { name: "purchases", to: "/purchases" },
+                { name: "visualize", to: "/visualize" },
+                { name: "budgets", to: "/budgets" },
             ]
         };
     },

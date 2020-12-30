@@ -5,6 +5,12 @@ const getters = {
     isUserAuth(state) {
         return !!state.user;
     },
+    getCategories(state) {
+        return state.categories;
+    },
+    getPurchases(state) {
+        return state.purchases;
+    },
     getError(state) {
         return state.error;
     }

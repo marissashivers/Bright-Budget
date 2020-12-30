@@ -86,7 +86,7 @@
       small
       stacked="md"
       ref="table"
-      :items="purchases"
+      :items="this.getPurchases"
       :fields="fields"
       :current-page="currentPage"
       :per-page="perPage"
@@ -193,7 +193,7 @@
           ref="purchaseCategory"
         >
           <option value="null" disabled hidden>Category</option>
-          <option v-for="item in categories" :key="item.id">
+          <option v-for="item in this.getCategories" :key="item.id">
             {{ item.category }}
           </option>
         </select>
@@ -247,7 +247,7 @@
           ref="purchaseCategory"
         >
           <option value="null" disabled hidden>Category</option>
-          <option v-for="item in categories" :key="item.id">
+          <option v-for="item in this.getCategories" :key="item.id">
             {{ item.category }}
           </option>
         </select>
@@ -298,18 +298,14 @@
 <script>
 import moment from "moment";
 import Datepicker from "vuejs-datepicker";
+import { mapGetters } from 'vuex';
 export default {
   name: "DisplayPurchases",
   components: {
     Datepicker,
   },
   computed: {
-    purchases() {
-      return this.$store.getters.purchases;
-    },
-    categories() {
-      return this.$store.getters.categories;
-    },
+    ...mapGetters(['getUser', 'getCategories', 'getPurchases', 'isUserAuth']),
     sortOptions() {
     // Create an options list from our fields
     return this.fields
@@ -319,14 +315,9 @@ export default {
       });
     },
   },
-  watch: {
-    purchases: function() {
-      console.log("purchases changed. From watcher in DisplayPurchases");
-    }
-  },
   data() {
     return {
-      items: this.$store.getters.purchases,
+      items: this.getPurchases,
       fields: [
         {
           key: "createdAt",
@@ -386,7 +377,7 @@ export default {
   },
   mounted() {
     //Set the initial number of items
-    this.totalRows = this.$store.getters.purchases.length;
+    this.totalRows = this.getPurchases.length;
   },
   methods: {
     // @click="info(row.item, row.index, $event.target)"

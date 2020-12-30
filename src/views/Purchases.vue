@@ -37,7 +37,7 @@
                   ref="purchaseCategory"
                 >
                   <option value="null" disabled hidden>Category</option>
-                  <option v-for="item in categories" :key="item.id">
+                  <option v-for="item in this.getCategories" :key="item.id">
                     {{ item.category }}
                   </option>
                 </select>
@@ -92,7 +92,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="item in categories" :key="item.id" v-cloak>
+                  <tr v-for="item in this.getCategories" :key="item.id" v-cloak>
                     <!-- category -->
                     <td class="fit">
                       <div class="view">
@@ -123,20 +123,24 @@
       </div>
     </div>
 
-    <DisplayPurchases :key="componentKey" :purchases="this.purchases" :categories="this.categories" />
+    <DisplayPurchases :key="componentKey" :purchases="this.getPurchases" :categories="this.getCategories" />
 
     <b-form inline>
       <b-form-group>
-        <b-form-input>
-        </b-form-input>
+        <b-form-input v-model="addCategory" placeholder="test add category" />
       </b-form-group>
+      <b-button @click.prevent="addCategoryVuex()">Add</b-button>
     </b-form>
+
+    <ul v-for="item in this.getCategories" :key="item.id">
+      <li>{{ item.category }}</li>
+    </ul>
 
   </div>
 </template>
 
 <script>
-import { auth } from '@/plugins/firebase';
+import { mapGetters, mapActions } from 'vuex';
 // TODO: make it so users cannot access purchases/budgets pages without logging in, or make it redirect
 import moment from "moment";
 import Datepicker from "vuejs-datepicker";
@@ -148,19 +152,10 @@ export default {
     Datepicker,
     DisplayPurchases,
   },
-  //props: ["categories"],
   watch: {
   },
   computed: {
-    user() {
-      return this.$store.state.user;
-    },
-    purchases() {
-      return this.$store.getters.purchases;
-    },
-    categories() {
-      return this.$store.getters.categories;
-    }
+    ...mapGetters(['getUser', 'getCategories', 'getPurchases', 'isUserAuth']),
   },
   data() {
     return {
@@ -183,26 +178,27 @@ export default {
   created() {
   },
   methods: {
+    ...mapActions(['addCategoryAction', 'addPurchaseAction']),
     // TODO: Migrate adding purchase to use Vuex store.
     handleAddPurchase: function() {
-      var purchaseObject = {
+      // var purchaseObject = {
+      //   "purchaseLocation": this.purchaseLocation,
+      //   "purchaseAmount": this.purchaseAmount,
+      //   "purchaseCategory": this.purchaseCategory,
+      //   "createdAt": this.createdAt
+      // };
+      //this.$store.dispatch("addPurchase", purchaseObject);
+      this.addPurchaseAction( {
         "purchaseLocation": this.purchaseLocation,
         "purchaseAmount": this.purchaseAmount,
         "purchaseCategory": this.purchaseCategory,
         "createdAt": this.createdAt
-      };
-      this.$store.dispatch("addPurchase", purchaseObject);
+      })
       // reset form
       this.purchaseLocation = null;
       this.purchaseAmount = null;
       this.purchaseCategory = null;
-      this.createdAt = purchaseObject.createdAt;
-    },
-    handleAddCategory: function() {
-      // this.$emit("addCategory", this.addCategory)
-      // this.addCategory = null;
-      this.$store.dispatch("addCategory", this.addCategory);
-      this.addCategory = null;
+      this.createdAt = null;
     },
     formatDate(date) {
       return moment(date).format('MMM Do, YYYY');
@@ -214,13 +210,12 @@ export default {
     },
 
     // categories
-    showCategories() {
-      console.log("currentuser" + auth.currentUser);
-      if (this.categoryManageText == "Done") this.categoryManageText = "Manage categories";
-      else this.categoryManageText = "Done";
-    },
     handleDeleteCategory(item) {
       this.$store.dispatch("deleteCategory", item);
+    },
+    addCategoryVuex() {
+      this.addCategoryAction({ category: this.addCategory });
+      console.log("category added: " + this.addCategory);
     },
   },
 };

@@ -9,6 +9,8 @@ Vue.use(Vuex);
 const initialState = () => {
   return { 
     user: null, 
+    purchases: [],
+    categories: [],
     error: null 
   };
 };

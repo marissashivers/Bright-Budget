@@ -1,14 +1,13 @@
 <template>
-      <div>
-
-    <!-- New Testing Stuff -->
+  <div>
     <b-container>
       <b-card title="Log In">
-        <div v-if="validationErrors.length">
+        <div v-if="validationErrors.length || getError">
           <b-alert variant="danger" show>
               Please resolve the following error(s) before proceeding:
               <ul style="margin-top:0.3em; margin-left:1em">
                 <li v-for="(error, index) in validationErrors" :key="`error-${index}`" v-html="error" />
+                <li>{{ getError }}</li>
               </ul>
           </b-alert>
         </div>
@@ -49,7 +48,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 export default {
   data: function() {
     return {
@@ -57,10 +56,11 @@ export default {
         password: null,
         passwordRepeat: null,
         validationErrors: [],
-        passOne: null,
-        passTwo: null,
-        error: null,
+        firebaseError: null
     }
+  },
+  computed: {
+    ...mapGetters(['getError']),
   },
   methods: {
     ...mapActions(["signUpAction"]),
