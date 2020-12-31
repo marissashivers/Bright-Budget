@@ -161,7 +161,7 @@ const actions = {
         .then(docRef => {
             // TODO: add ID to purchase object in Vuex store so we can easily edit/delete purchases.
             // Already done for categories.
-            console.log(docRef.id);
+            console.log("Purchase added with ID: " + docRef.id);
         });
         dispatch('fetchPurchases');
     },

@@ -2,10 +2,11 @@
   <div class="container">
     <div class="buttons-container">
       <h1 class="font-weight-light text-center">Visualize your spending habits</h1>
-      <button :disabled="currentPurchaseFilter=='lastMonth'" type="button" class="btn btn-outline-primary" @click="filterLastMonth()">Last Month</button>
-      <button :disabled="currentPurchaseFilter=='lastThreeMonths'" type="button" class="btn btn-outline-primary" @click="filterLastThreeMonths()">Last 3 Months</button>
-      <button :disabled="currentPurchaseFilter=='lastYear'" type="button" class="btn btn-outline-primary" @click="filterLastYear()">Last 365 Days</button>
+      <button :disabled="currentPurchaseFilter=='lastMonth'" type="button" class="btn btn-outline-primary" @click="filterPresetButtonHandle(1)">Last Month</button>
+      <button :disabled="currentPurchaseFilter=='lastThreeMonths'" type="button" class="btn btn-outline-primary" @click="filterPresetButtonHandle(3)">Last 3 Months</button>
+      <button :disabled="currentPurchaseFilter=='lastYear'" type="button" class="btn btn-outline-primary" @click="filterPresetButtonHandle(12)">Last 365 Days</button>
       <button :disabled="currentPurchaseFilter=='custom'" type="button" class="btn btn-outline-primary" @click="filterCustomDates()">Custom</button>
+      <!-- Custom date filter -- only display if user clicked "custom" -->
       <b-card v-if="currentPurchaseFilter=='custom'" bg-variant="light" class="custom-container">
         <form>
           <div class="form-row">
@@ -24,44 +25,44 @@
       </b-card>
     </div>
 
-    <h3 class="font-weight-light text-center" style="text-align:center;">Dates displayed: {{ formatDate(this.startDateDisplay) }} to {{ formatDate(this.endDateDisplay) }}</h3>
+    <h4 class="font-weight-light text-center" style="text-align:center;">Dates displayed: {{ formatDate(this.startDateDisplay) }} to {{ formatDate(this.endDateDisplay) }}</h4>
 
-    <!-- Bootstrap Grid System -->
-    <!-- Visualization containers -->
-    <div class="viz-container">
-      <div class="row">
-        <div class="col-sm">
-          <b-card border-variant="primary" bg-variant="light">
+    <!-- BOOTSTRAP VUE GRID SYSTEM -->
+    <b-container>
+      <!-- first row -->
+      <b-row>
+        <b-col>
+            <b-card title="Spending habits over time" body-class="text-center" border-variant="primary" bg-variant="light">
             <LineChart :data="this.chartDataLine" :options="this.chartOptionsLine"></LineChart>
           </b-card>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm">
-          <b-card border-variant="primary" bg-variant="light">
-            <BarChart2 :data="this.chartDataBar" :options="this.chartOptionsBar"></BarChart2>
+        </b-col>
+      </b-row>
+      <!-- second row -->
+      <b-row>
+        <b-col>
+            <b-card border-variant="primary" bg-variant="light">
+            <BarChart :data="this.chartDataBar" :options="this.chartOptionsBar"></BarChart>
           </b-card>
-        </div>
-        <div class="col-sm">
-          <b-card border-variant="primary" bg-variant="light">
-            <PieChart2 :data="this.chartDataPie" :options="this.chartOptionsPie"></PieChart2>
+        </b-col>
+        <b-col>
+            <b-card body-class="text-center" border-variant="primary" bg-variant="light">
+            <PieChart :data="this.chartDataPie" :options="this.chartOptionsPie"></PieChart>
           </b-card>
-        </div>
-      </div>
-    </div>
+        </b-col>
+      </b-row>
+    </b-container>
+
+
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
 //import Datepicker from 'vuejs-datepicker';
 import moment from 'moment';
 import { mapGetters } from 'vuex';
 import Datepicker from "vuejs-datepicker";
-//import BarChartComponent from "@/components/BarChart.vue";
-//import PieChartComponent from "@/components/PieChart.vue";
-import PieChart2 from "@/components/PieChart2.vue";
-import BarChart2 from "@/components/BarChart2.vue";
+import PieChart from "@/components/PieChart.vue";
+import BarChart from "@/components/BarChart.vue";
 import LineChart from "@/components/LineChart.vue";
 
 import { filterPurchasesByDate, getPurchasesByCategory } from './purchaseFilters.js';
@@ -71,11 +72,9 @@ export default {
   inheritAttrs: false,
   //props: ["user"],
   components: {
-    //BarChartComponent,
-    //PieChartComponent,
     Datepicker,
-    PieChart2,
-    BarChart2,
+    PieChart,
+    BarChart,
     LineChart,
   },
   created: function() {
@@ -84,10 +83,10 @@ export default {
   mounted() {
     this.purchasesFiltered = this.getPurchases;
     this.fetchData();
-    this.filterLastMonth();
+    this.filterPresetButtonHandle(1);
   },
   computed: {
-    ...mapGetters(['getUser', 'getCategories', 'getPurchases', 'isUserAuth']),
+    ...mapGetters(['isUserAuth', 'getUser', 'getCategories', 'getPurchases']),
   },
   watch: {
     purchasesFiltered() {
@@ -127,16 +126,15 @@ export default {
       // Line chart
       chartOptionsLine: [],
       chartDataLine: [],
-
-      
-
     }
   },
   methods: {
     fetchData() {
       var categoriesMap = getPurchasesByCategory(this.purchasesFiltered, this.getCategories);
+      /*******************
+       * Data for Pie Chart
+      ********************/
       this.chartDataPie = {
-        //labels: this.categoriesToString(),
         labels: Array.from(categoriesMap.keys()),
         datasets: [
           {
@@ -147,12 +145,15 @@ export default {
           }
         ]
       }
+      /*******************
+       * Options for Pie Chart
+      ********************/
       this.chartOptionsPie =  {
         responsive: true,
         maintainAspectRatio: false,
         title: {
           display: true,
-          text: 'Pie Chart: Purchases by Category',
+          //text: 'Pie Chart: Purchases by Category',
         },
         legend: {
           display: true,
@@ -175,16 +176,21 @@ export default {
           }
         },
       }
+      /*******************
+       * Options for Bar Chart
+      ********************/
       this.chartOptionsBar = {
         responsive: true,
         maintainAspectRatio: false,
         title: {
           display: true,
-          text: "Bar chart: Purchases by Category"
+          //text: "Bar chart: Purchases by Category"
         }
       }
+      /*******************
+       * Data for Bar Chart
+      ********************/
       this.chartDataBar = {
-        //labels: this.categoriesToString(),
         labels: Array.from(categoriesMap.keys()),
         datasets: [
           {
@@ -195,14 +201,17 @@ export default {
           }
         ]
       }
+      /*******************
+       * Options for Line Chart
+      ********************/
       this.chartOptionsLine = {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
           xAxes: [{
-            // ticks: {
-            //   maxTicksLimit: 8
-            // }
+            ticks: {
+              reverse: true,
+            }
           }],
           title: {
             display: true,
@@ -216,6 +225,9 @@ export default {
         },
       }
       var purchasesMap = this.getPurchasesByDay(this.purchasesFiltered);
+      /*******************
+       * Data for Line Chart
+      ********************/
       this.chartDataLine = {
         labels: Array.from(purchasesMap.keys()).reverse(),
         datasets: [
@@ -230,39 +242,21 @@ export default {
     formatDate(date) {
       return moment(date).format('MMM Do, YYYY');
     },
-    filterLastMonth() {
+    // ***Action to perform if a preset date filter is clicked 
+    filterPresetButtonHandle(numMonths) {
       var end = new Date();
       var start = new Date();
-      start.setMonth(start.getMonth()-1);
+      start.setMonth(start.getMonth() - numMonths);
       this.startDateDisplay = start;
       this.endDateDisplay = end;
-      this.currentPurchaseFilter = 'lastMonth';
+      if (numMonths == 1) this.currentPurchaseFilter = "lastMonth";
+      else if (numMonths == 3) this.currentPurchaseFilter = "lastThreeMonths";
+      else this.currentPurchaseFilter = "lastYear";
       this.purchasesFiltered = filterPurchasesByDate(this.getPurchases, start, end);
       var map = this.getPurchasesByDay(this.purchasesFiltered);
       this.fetchData(map);
     },
-    filterLastThreeMonths() {
-      var end = new Date();
-      var start = new Date();
-      start.setMonth(start.getMonth()-3);
-      this.startDateDisplay = start;
-      this.endDateDisplay = end;
-      this.currentPurchaseFilter = 'lastThreeMonths';
-      this.purchasesFiltered = filterPurchasesByDate(this.getPurchases, start, end);
-      var map = this.getPurchasesByDay(this.purchasesFiltered);
-      this.fetchData(map);
-    },
-    filterLastYear() {
-      var end = new Date();
-      var start = new Date();
-      start.setFullYear(start.getFullYear() - 1);
-      this.startDateDisplay = start;
-      this.endDateDisplay = end;
-      this.currentPurchaseFilter = 'lastYear';
-      this.purchasesFiltered = filterPurchasesByDate(this.getPurchases, start, end);
-      var map = this.getPurchasesByDay(this.purchasesFiltered);
-      this.fetchData(map);
-    },
+    // ***Actions to perform if the custom date filter is clicked.
     filterCustomDates() {
       this.currentPurchaseFilter = 'custom';
     },
@@ -287,7 +281,8 @@ export default {
     getPurchasesByDay(purchasesToMap) {
       // TODO: fix this section so it works with just one purchase / just one day
       var end = this.endDateDisplay;
-      var start = purchasesToMap[purchasesToMap.length-1].createdAt.toDate();
+      //var start = purchasesToMap[0].createdAt.toDate();
+      var start = this.startDateDisplay;
       var daysArray =  this.enumerateDaysBetweenDates(start, end);
 
       var purchMap = new Map();
@@ -298,7 +293,7 @@ export default {
         var purchDate = purch.createdAt.toDate();
         purchDate = purchDate.toDateString();
         purchMap.set(purchDate, Math.round(100*(purchMap.get(purchDate) + purch.purchaseAmount))/100);
-      })
+      });
       return purchMap;
     },
     getPurchasesByMonth() {

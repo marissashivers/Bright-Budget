@@ -63,9 +63,14 @@ export function getPurchasesByCategory(purchases, categories) {
   });
 
   purchases.forEach(purch => {
-    var purchCat = purch.purchaseCategory;
-    categoriesMap.set(purchCat, Math.round(100*(categoriesMap.get(purchCat) + purch.purchaseAmount))/100);
-  })
+
+    var purchAmount = parseFloat(purch.purchaseAmount);
+
+    // Add category amounts together in hashmap
+    categoriesMap.set(purch.purchaseCategory, parseFloat(categoriesMap.get(purch.purchaseCategory)) + purchAmount);
+    //categoriesMap.set(purchCategory, Math.round(100*(categoriesMap.get(purchCat) + purch.purchaseAmount))/100);
+  });
+
   return categoriesMap;
 }
 
