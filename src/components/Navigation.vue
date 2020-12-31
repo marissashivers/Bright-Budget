@@ -61,6 +61,7 @@ export default {
         ...mapActions(["signOutAction"]),
         signOut() {
             this.signOutAction();
+            this.$router.push({ path: "/login" })
         }
     }
 }

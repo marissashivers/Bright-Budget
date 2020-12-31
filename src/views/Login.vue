@@ -86,6 +86,7 @@ export default {
     signIn() {
       console.log("sign in", this.email, this.password);
       this.signInAction({ email: this.email, password: this.password });
+      this.$router.push({ path: "/"})
     },
   },
 }

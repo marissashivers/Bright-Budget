@@ -2,9 +2,7 @@
   <div class="main-container">
     <!-- NAVBAR -->
     <Navigation />
-    <section v-if="isUserAuth">
-          Welcome {{ getUser.email }}
-    </section>
+
     <!-- pass props to router -->
     <!-- TODO: remove passing props to router, should be using Vuex store. -->
     <router-view />

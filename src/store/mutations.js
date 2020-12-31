@@ -6,11 +6,11 @@ const mutations = {
     },
     setCategories(state, payload) {
         state.categories = payload;
-        console.log("categories set in mutations");
+        console.log("MUTATIONS -- Categories set");
     },
     setPurchases(state, payload) {
         state.purchases = payload;
-        console.log("purchases set in mutations");
+        console.log("MUTATIONS -- Purchases set");
     },
     setError(state, payload) {
         state.error = payload;

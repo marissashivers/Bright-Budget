@@ -3,13 +3,17 @@ import 'firebase/firestore';
 
 const actions = {
     // Every time the auth state changes we will update the Global State
-    authAction({commit}) {
+    authAction({commit, dispatch}) {
         firebase.auth().onAuthStateChanged(user => {
             if (user) {
                 commit("setUser", user);
+                console.log("user set in authAction");            
+                dispatch("fetchCategories");
+                dispatch("fetchPurchases");
             } 
             else {
                 commit("setUser", null);
+                console.log("null set in authAction");
             }
         });
     },
@@ -34,15 +38,13 @@ const actions = {
         });
     },
     // returns a Promise
-    signInAction({ commit, dispatch }, payload) {
+    signInAction({ commit }, payload) {
         var auth = firebase.auth();
 
         return auth.signInWithEmailAndPassword(payload.email, payload.password)
         .then(() => {
             var user = auth.currentUser;
             commit("setUser", user);
-            dispatch("fetchCategories");
-            dispatch("fetchPurchases");
         })
         .catch(error => {
             console.log(`GOT ERROR: ` + error.code);
@@ -118,6 +120,7 @@ const actions = {
             console.log(error.code);
             console.log(error.message);
         });
+        // Update local Vuex store.
         dispatch('fetchCategories');
     },
     // ****************************
