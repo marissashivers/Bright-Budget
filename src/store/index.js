@@ -11,6 +11,7 @@ const initialState = () => {
     user: null, 
     purchases: [],
     categories: [],
+    budgets: [],
     error: null 
   };
 };

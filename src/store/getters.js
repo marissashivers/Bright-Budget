@@ -11,6 +11,9 @@ const getters = {
     getPurchases(state) {
         return state.purchases;
     },
+    getBudgets(state) {
+        return state.budgets;
+    },
     getError(state) {
         return state.error;
     }

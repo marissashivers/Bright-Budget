@@ -17,9 +17,15 @@
                   aria-describedby="buttonAdd"
                   ref="budgetCategory"
                 >
+                <!--
                   <option value="null" disabled hidden>Category</option>
-                  <option v-for="item in categories" :key="item.id" :disabled="budgets.includes(item.category)">
-                    {{ item.category }} <span v-if="budgets.includes(item.category)">(already exists)</span>
+                  <option v-for="item in this.getCategories" :key="item.id" :disabled="this.getBudgets.includes(item.category)">
+                    {{ item.category }} <span v-if="this.getBudgets.includes(item.category)">(already exists)</span>
+                  </option>     
+                  -->
+                  <option value="null" disabled hidden>Category</option>
+                  <option v-for="cat in this.getCategories" :key="cat.id">
+                    {{ cat.category }}
                   </option>
                 </select>
                 <!-- budget amount -->
@@ -49,6 +55,7 @@
         <button class="btn btn-md btn-info" id="buttonManage" @click="showBudgets()">
           {{ buttonManageText }}
         </button>
+
         <!-- Display and edit budgets -->
         <!-- TODO: allow editing/deleting budgets. Maybe using modal for editing? -->
         <table class="table table-striped table-sm table-fit" v-if="buttonManageText=='Done'">
@@ -60,7 +67,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in budgets" :key="item.id" :class="{editing: item == editedBudget && editMode == true}" v-cloak>
+            <tr v-for="item in this.getBudgets" :key="item.id" :class="{editing: item == editedBudget && editMode == true}" v-cloak>
               <!-- budget category -->
               <td class="fit">
                 <div class="view">
@@ -80,12 +87,14 @@
                   role="group"
                   aria-label="Budget Options"
                 >
+                <!--
                   <button 
                     class="btn btn-sm btn-outline-secondary view"
                     @click="handleEditBudget(item)"
-                  >
+                  >                  
                     <font-awesome-icon icon="pencil-alt" />
                   </button>
+                  -->
                   <button 
                     class="btn btn-sm btn-outline-secondary" 
                     @click="handleDeleteBudget(item)"
@@ -134,58 +143,62 @@
           ref="budgetCategory"
         >
           <option value="null" disabled hidden>Category</option>
-          <option v-for="item in categories" :key="item.id">
+          <option v-for="item in this.getCategories" :key="item.id">
             {{ item.category }}
           </option>
         </select>
       </b-form-group>
     </b-modal>
-
-    <div class="row justify-content-center">
-      <span class="glyphicon glyphicon-menu-left">
-        <button @click="getLastMonthPurchases(dateReference)">
-          <font-awesome-icon icon="arrow-left" size="2x" />
-        </button>
-      </span>
-      <span style="margin-left:10px; margin-right:10px;">
-        <h3>{{ moment(dateReference).format("MMMM YYYY") }}</h3>
-      </span>
-      <span>
-        <button @click="getNextMonthPurchases(dateReference)">
-          <font-awesome-icon icon="arrow-right" size="2x" />
-        </button>
-      </span>
-    </div>
-
+    
     <div class="budget-container">
       <b-card bg-variant="light">
-        <template v-slot:header>
-          <h4 class="mb-0">Your Budgets:</h4>
+        <template v-slot:header> 
+          <div style="text-align:center;">
+            <span class="glyphicon glyphicon-menu-left">
+              <button @click="getLastMonthPurchases(dateReference)">
+                <font-awesome-icon icon="arrow-left" size="2x" />
+              </button>
+            </span>
+            <span style="margin-left:10px; margin-right:10px; font-size:2em">
+              {{ moment(dateReference).format("MMMM YYYY") }}
+            </span>
+            <span>
+              <button @click="getNextMonthPurchases(dateReference)">
+                <font-awesome-icon icon="arrow-right" size="2x" />
+              </button>
+            </span>
+          </div>
         </template>
-        <div v-for="budget in this.budgets" :key="budget.id">
-          <h4>{{ budget.budgetCategory }}: ${{ categoriesMap.get(budget.budgetCategory).toFixed(2) }} / ${{ Number(budget.budgetAmount).toFixed(2) }} <span v-if="categoriesMap.get(budget.budgetCategory) > budget.budgetAmount">(EXCEEDED!)</span></h4>
-          <b-progress height="2rem" :value="categoriesMap.get(budget.budgetCategory)" :max="budget.budgetAmount" :variant="computeVariant(categoriesMap.get(budget.budgetCategory), budget.budgetAmount)" show-value class="mb-3"></b-progress>
+        <div v-for="budget in this.getBudgets" :key="budget.id">
+          <h4>
+            {{ budget.budgetCategory }}: ${{ categoriesMap.get(budget.budgetCategory) }} / ${{ parseFloat(budget.budgetAmount).toFixed(2) }} 
+            <span v-if="parseFloat(categoriesMap.get(budget.budgetCategory)) > parseFloat(budget.budgetAmount)">
+              (EXCEEDED!)
+            </span>
+          </h4>
+          <b-progress 
+            height="2rem" 
+            :value="categoriesMap.get(budget.budgetCategory)" 
+            :max="budget.budgetAmount" 
+            :variant="computeVariant(categoriesMap.get(budget.budgetCategory), budget.budgetAmount)" 
+            show-value 
+            class="mb-3" />
         </div>
       </b-card>
     </div>
+    
+
   </div>
 </template>
 
 <script>
 import moment from 'moment';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'Budgets',
   computed: {
-    purchases() {
-      return this.$store.getters.purchases;
-    },
-    categories() {
-      return this.$store.getters.categories;
-    },
-    budgets() {
-      return this.$store.getters.budgets;
-    },
+    ...mapGetters(['getUser', 'getPurchases', 'getBudgets', 'getCategories', 'isUserAuth']),
   },
   mounted() {
     this.purchasesFiltered = this.getCurrentMonthPurchases();
@@ -220,12 +233,12 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['addBudgetAction', 'deleteBudgetAction']),
     handleAddBudget() {
-      var budgetObject = {
+      this.addBudgetAction({
         "budgetAmount": this.budgetAmount,
         "budgetCategory": this.budgetCategory
-      };
-      this.$store.dispatch("addBudget", budgetObject);
+      });
       // reset form
       this.budgetAmount = null;
       this.budgetCategory = null;
@@ -235,17 +248,20 @@ export default {
     // uses purchasesFiltered array when mapping values
     getPurchasesByCategory() {
       var categoriesArray = [];
-      this.categories.forEach(item => categoriesArray.push(item.category));
+      this.getCategories.forEach(item => categoriesArray.push(item.category));
       var map = new Map();
 
       categoriesArray.forEach(cat => {
         map.set(cat, 0);
       });
 
+      console.log(this.purchasesFiltered);
+
       this.purchasesFiltered.forEach(purch => {
         var purchCat = purch.purchaseCategory;
-        map.set(purchCat, Math.round(100*(map.get(purchCat) + purch.purchaseAmount))/100);
+        map.set(purchCat, (parseFloat(map.get(purchCat)) + parseFloat(purch.purchaseAmount)).toFixed(2));
       })
+      console.log(map);
       return map;
     },
     // getCurrentBudgetsArray() {
@@ -256,7 +272,7 @@ export default {
     //   return arr;
     // },
     computeVariant(amountSpent, budgetAmount) {
-      if (amountSpent > budgetAmount) return "danger";
+      if (parseFloat(amountSpent) > parseFloat(budgetAmount)) return "danger";
       else return "info";
     },
     getCurrentMonthPurchases() {
@@ -264,12 +280,17 @@ export default {
       this.dateReference = date;
       var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
       var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-      var results = this.purchases.filter(purch => {
+      lastDay.setHours(23,59,59,999);
+      var results = this.getPurchases.filter(purch => {
         let date = purch.createdAt.toDate();
+        console.log(date >= firstDay && date <= lastDay);
         return date >= firstDay && date <= lastDay;
       })
-      // console.log(firstDay);
-      // console.log(lastDay);
+      console.log(firstDay);
+      console.log(lastDay);
+      console.log("results");
+      console.log(this.getPurchases);
+      console.log(results);
       return results;
     },
     getLastMonthPurchases(prevDate) {
@@ -305,7 +326,7 @@ export default {
     },
     // editing and deleting
     handleDeleteBudget(budgetObject) {
-      this.$store.dispatch("deleteBudget", budgetObject);
+      this.deleteBudgetAction(budgetObject.id);
     },
     showBudgets() {
       if (this.buttonManageText == "Done") this.buttonManageText = "Manage my budgets";

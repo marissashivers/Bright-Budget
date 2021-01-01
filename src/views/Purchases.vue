@@ -125,16 +125,6 @@
 
     <DisplayPurchases :key="componentKey" :purchases="this.getPurchases" :categories="this.getCategories" />
 
-    <b-form inline>
-      <b-form-group>
-        <b-form-input v-model="addCategory" placeholder="test add category" />
-      </b-form-group>
-      <b-button @click.prevent="addCategoryVuex()">Add</b-button>
-    </b-form>
-
-    <ul v-for="item in this.getCategories" :key="item.id">
-      <li>{{ item.category }}</li>
-    </ul>
 
   </div>
 </template>
@@ -179,7 +169,6 @@ export default {
   },
   methods: {
     ...mapActions(['addCategoryAction', 'addPurchaseAction', 'deleteCategoryAction']),
-    // TODO: Migrate adding purchase to use Vuex store.
     handleAddPurchase: function() {
       this.addPurchaseAction( {
         "purchaseLocation": this.purchaseLocation,

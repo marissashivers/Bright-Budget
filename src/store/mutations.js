@@ -12,6 +12,10 @@ const mutations = {
         state.purchases = payload;
         console.log("MUTATIONS -- Purchases set");
     },
+    setBudgets(state, payload) {
+        state.budgets = payload;
+        console.log("MUTATIONS -- Budgets set");
+    },
     setError(state, payload) {
         state.error = payload;
     },

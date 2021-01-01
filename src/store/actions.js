@@ -10,6 +10,7 @@ const actions = {
                 console.log("user set in authAction");            
                 dispatch("fetchCategories");
                 dispatch("fetchPurchases");
+                dispatch("fetchBudgets");
             } 
             else {
                 commit("setUser", null);
@@ -86,21 +87,6 @@ const actions = {
         });
         console.log("fetchCategories from actions invoked -- Firebase");
         commit("setCategories", categories);
-
-        // db.collection('users').doc(user.uid).collection('categories').orderBy('category').onSnapshot((querySnapshot) => {
-        //     if (querySnapshot.empty) {
-        //         console.log('empty');
-        //     } 
-        //     else {
-        //         var categories = [];
-        //         querySnapshot.forEach(doc => {
-        //             categories.push(doc.data());
-        //         });
-
-        //         commit("setCategories", categories);
-        //         console.log("fetchCategories from actions invoked -- Firebase");
-        //     }
-        // });
     },
     addCategoryAction({ getters, dispatch }, payload) {
         var db = firebase.firestore();
@@ -176,7 +162,59 @@ const actions = {
             console.log(error.message);
         });
         dispatch('fetchPurchases');
-    }
+    },
+    // ****************************
+    // BUDGETS
+    // ****************************
+    async fetchBudgets({ commit, getters }) {
+        var db = firebase.firestore();
+        var user = getters.getUser;
+
+        var querySnapshot = await db.collection('users')
+            .doc(user.uid)
+            .collection('budgets')
+            .orderBy('budgetCategory')
+            .get();
+        
+        var budgets = [];
+        querySnapshot.forEach(doc => {
+            budgets.push({
+                id: doc.id,
+                budgetCategory: doc.data().budgetCategory,
+                budgetAmount: doc.data().budgetAmount,
+            });
+        });
+        console.log(budgets);
+        console.log("fetchBudgets from actions invoked -- Firebase");
+        commit("setBudgets", budgets);
+    },
+    addBudgetAction({ getters, dispatch }, payload) {
+        var db = firebase.firestore();
+        var user = getters.getUser;
+        db.collection('users').doc(user.uid).collection('budgets').add({
+            budgetCategory: payload.budgetCategory,
+            budgetAmount: payload.budgetAmount,
+        })
+        .then(docRef => {
+            // TODO: add ID to purchase object in Vuex store so we can easily edit/delete purchases.
+            // Already done for categories.
+            console.log("Budget added with ID: " + docRef.id);
+        });
+        dispatch('fetchBudgets');
+    },
+    // payload is document ID
+    deleteBudgetAction({ getters, dispatch }, payload) {
+        var db = firebase.firestore();
+        var user = getters.getUser;
+        db.collection('users').doc(user.uid).collection('budgets').doc(payload).delete().then(function() {
+            console.log('Document successfully deleted');
+        }).catch(error => {
+            console.log("Error occurred while deleting document");
+            console.log(error.code);
+            console.log(error.message);
+        });
+        dispatch('fetchBudgets');
+    },
 };
 
 export default actions;
