@@ -7,7 +7,6 @@
               Please resolve the following error(s) before proceeding:
               <ul style="margin-top:0.3em; margin-left:1em">
                 <li v-for="(error, index) in validationErrors" :key="`error-${index}`" v-html="error" />
-                <li>{{ getError }}</li>
               </ul>
           </b-alert>
         </div>
@@ -42,7 +41,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 export default {
   name: 'Login',
   data: function() {
@@ -54,13 +53,15 @@ export default {
       }
   },
   computed: {
-    ...mapGetters(['getError']),
+    ...mapGetters(['getError', 'isUserAuth']),
   },
   methods: {
     ...mapActions(["signInAction"]),
+    ...mapMutations(['setError']),
     validate() {
       // Clear errors before we validate again
       this.validationErrors = [];
+      this.setError(null);
 
       // email validation
       if (!this.email) {
@@ -78,15 +79,22 @@ export default {
           "<strong>Password</strong> must be at least 6 characters long"
         );
       }
+      if (this.getError) {
+        this.validationErrors.push(this.getError);
+      }
       // when valid then sign in
       if (this.validationErrors.length <= 0) {
-        this.signIn();
+        this.signInAction({ email: this.email, password: this.password })
+        .then(() => {
+          if (!this.getError) {
+            this.validationErrors = [];
+            this.$router.push({ path: "/"});  
+          }
+          else {
+            this.validationErrors.push(this.getError);
+          }
+        });
       }
-    },
-    signIn() {
-      console.log("sign in", this.email, this.password);
-      this.signInAction({ email: this.email, password: this.password });
-      this.$router.push({ path: "/"})
     },
   },
 }

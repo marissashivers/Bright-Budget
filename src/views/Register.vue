@@ -7,7 +7,6 @@
               Please resolve the following error(s) before proceeding:
               <ul style="margin-top:0.3em; margin-left:1em">
                 <li v-for="(error, index) in validationErrors" :key="`error-${index}`" v-html="error" />
-                <li>{{ getError }}</li>
               </ul>
           </b-alert>
         </div>
@@ -88,15 +87,25 @@ export default {
         this.validationErrors
             .push("<strong>Passwords</strong> did not match");
       }
-      // when valid then sign in
+      // when valid then sign up
       if (this.validationErrors.length <= 0) {
-        this.signUp();
+        this.signUpAction({ email: this.email, password: this.password })
+        .then(() => {
+          if (!this.getError) {
+            this.validationErrors = [];
+            this.$router.push({ path: "/"});
+            console.log("Registration successful");
+          }
+          else {
+             this.validationErrors.push(this.getError);
+          }
+        });
       }
     },
-    signUp() {
-      console.log("sign up", this.email, this.password);
-      this.signUpAction({ email: this.email, password: this.password });
-    },
+    // signUp() {
+    //   console.log("sign up", this.email, this.password);
+    //   this.signUpAction({ email: this.email, password: this.password });
+    // },
   },
 }
 </script>

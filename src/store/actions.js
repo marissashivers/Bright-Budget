@@ -22,21 +22,35 @@ const actions = {
     signUpAction({ commit }, payload) {
         var auth = firebase.auth();
 
-        var promise = auth.createUserWithEmailAndPassword(payload.email, payload.password);
-        // IF there are any errors stop the process.
-        promise.catch(error => {
-            console.log(`GOT ERROR: ` + error.code);
-            commit("setError", error.message);
-        });
-        // When no errors create the account
-        promise.then(function() {
+        // var promise = auth.createUserWithEmailAndPassword(payload.email, payload.password);
+        // // IF there are any errors stop the process.
+        // promise.catch(error => {
+        //     console.log(`GOT ERROR: ` + error.code);
+        //     commit("setError", error.message);
+        // });
+        // // When no errors create the account
+        // promise.then(function() {
+        //     commit("setError", null);
+        //     var user = auth.currentUser;
+        //     var db = firebase.firestore();
+
+        //     db.collection('users').doc(user.uid).set({
+        //         email: user.email,
+        //     });
+        // });
+        return auth.createUserWithEmailAndPassword(payload.email, payload.password)
+        .then(() => {
+            commit("setError", null);
             var user = auth.currentUser;
             var db = firebase.firestore();
-
             db.collection('users').doc(user.uid).set({
                 email: user.email,
             });
-        });
+        })
+        .catch(error => {
+            console.log(`GOT ERROR: ` + error.code);
+            commit("setError", error.message);
+        })
     },
     // returns a Promise
     signInAction({ commit }, payload) {
@@ -46,6 +60,7 @@ const actions = {
         .then(() => {
             var user = auth.currentUser;
             commit("setUser", user);
+            commit("setError", null);
         })
         .catch(error => {
             console.log(`GOT ERROR: ` + error.code);
@@ -58,6 +73,7 @@ const actions = {
             .signOut()
             .then(() => {
                 commit("setUser", null);
+                commit("setError", null);
                 commit("setCategories", []);
                 commit("setPurchases", []);
             })
