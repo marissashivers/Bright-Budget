@@ -155,17 +155,40 @@
         <template v-slot:header> 
           <div style="text-align:center;">
             <span class="glyphicon glyphicon-menu-left">
-              <button @click="getLastMonthPurchases(dateReference)">
+              <!-- <button @click="getLastMonthPurchases(dateReference)">
                 <font-awesome-icon icon="arrow-left" size="2x" />
-              </button>
+              </button> -->
             </span>
-            <span style="margin-left:10px; margin-right:10px; font-size:2em">
-              {{ moment(dateReference).format("MMMM YYYY") }}
+            <span style="display:inline-block; font-size:large">
+              <b-button-toolbar>
+                <button @click="getLastMonthPurchases(dateReference)">
+                  <font-awesome-icon icon="arrow-left" size="2x" />
+                </button>
+                <b-input-group>
+                  <datepicker 
+                    :minimumView="'month'" 
+                    :maximumView="'year'" 
+                    :initialView="'month'" 
+                    :format="'MMMM yyyy'" 
+                    placeholder="date" 
+                    v-model="dateReference"
+                    class="transparent-input centered text-center"
+                    style="margin-left:4em"
+                  >
+                  </datepicker>
+                </b-input-group>
+                <button @click="getNextMonthPurchases(dateReference)">
+                  <font-awesome-icon icon="arrow-right" size="2x" />
+                </button>
+              </b-button-toolbar>
+             <!-- {{ moment(dateReference).format("MMMM YYYY") }} -->
+              <!-- <datepicker :minimumView="'month'" :maximumView="'year'" :initialView="'month'" :format="'MMMM yyyy'" placeholder="date">
+              </datepicker> -->
             </span>
             <span>
-              <button @click="getNextMonthPurchases(dateReference)">
+              <!-- <button @click="getNextMonthPurchases(dateReference)">
                 <font-awesome-icon icon="arrow-right" size="2x" />
-              </button>
+              </button> -->
             </span>
           </div>
         </template>
@@ -185,8 +208,7 @@
             class="mb-3" />
         </div>
       </b-card>
-    </div>
-    
+    </div>    
 
   </div>
 </template>
@@ -194,9 +216,13 @@
 <script>
 import moment from 'moment';
 import { mapGetters, mapActions } from 'vuex';
+import Datepicker from "vuejs-datepicker";
 
 export default {
   name: 'Budgets',
+  components: {
+    Datepicker,
+  },
   computed: {
     ...mapGetters(['getUser', 'getPurchases', 'getBudgets', 'getCategories', 'isUserAuth']),
   },
@@ -212,6 +238,10 @@ export default {
     // },
     purchasesFiltered: function() {
       this.categoriesMap = this.getPurchasesByCategory();
+    },
+    dateReference: function() {
+      console.log("date changed");
+      // TODO: add logic here that updates the budgets displayed for the selected month
     }
   },
   data() {
@@ -243,6 +273,9 @@ export default {
       this.budgetAmount = null;
       this.budgetCategory = null;
     },
+    handleDeleteBudget(budgetObject) {
+      this.deleteBudgetAction(budgetObject.id);
+    },
     // key -> category
     // value -> amount
     // uses purchasesFiltered array when mapping values
@@ -255,13 +288,11 @@ export default {
         map.set(cat, 0);
       });
 
-      console.log(this.purchasesFiltered);
-
       this.purchasesFiltered.forEach(purch => {
         var purchCat = purch.purchaseCategory;
         map.set(purchCat, (parseFloat(map.get(purchCat)) + parseFloat(purch.purchaseAmount)).toFixed(2));
       })
-      console.log(map);
+
       return map;
     },
     // getCurrentBudgetsArray() {
@@ -283,7 +314,6 @@ export default {
       lastDay.setHours(23,59,59,999);
       var results = this.getPurchases.filter(purch => {
         let date = purch.createdAt.toDate();
-        console.log(date >= firstDay && date <= lastDay);
         return date >= firstDay && date <= lastDay;
       })
       console.log(firstDay);
@@ -296,38 +326,38 @@ export default {
     getLastMonthPurchases(prevDate) {
       // go back one month
       var date = new Date(prevDate.getTime());
-      date.setMonth(date.getMonth() - 1);
+      date.setDate(0);
       this.dateReference = date;
       var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
       var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-      var results = this.purchases.filter(purch => {
+      lastDay.setHours(23,59,59,999);
+      var results = this.getPurchases.filter(purch => {
         let date = purch.createdAt.toDate();
         return date >= firstDay && date <= lastDay;
       })
       this.purchasesFiltered = results;
+      return results;
     },
     getNextMonthPurchases(prevDate) {
       // go forward one month
       var date = new Date(prevDate.getTime());
+      date.setDate(1);
       date.setMonth(date.getMonth() + 1);
       this.dateReference = date;
       var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
       var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-      var results = this.purchases.filter(purch => {
+      lastDay.setHours(23,59,59,999);
+      var results = this.getPurchases.filter(purch => {
         let date = purch.createdAt.toDate();
         return date >= firstDay && date <= lastDay;
       })
-      // console.log(firstDay);
-      // console.log(lastDay);
       this.purchasesFiltered = results;
+      return results;
     },
     formatDate(date) {
       return moment(date).format('MMM Do, YYYY');
     },
-    // editing and deleting
-    handleDeleteBudget(budgetObject) {
-      this.deleteBudgetAction(budgetObject.id);
-    },
+    // editing
     showBudgets() {
       if (this.buttonManageText == "Done") this.buttonManageText = "Manage my budgets";
       else this.buttonManageText = "Done";
@@ -344,16 +374,15 @@ export default {
       this.$store.dispatch("editAndSaveBudget", budget);
       this.$bvModal.hide('bv-modal-edit');
     },
-
   }, // end methods
 
 }
 </script>
 
 <style scoped>
-.budgets {
-  margin: 25px;
-}
+  .budgets {
+    margin: 25px;
+  }
   .budget-container {
     margin-top: 50px;
     margin-left: 200px;
@@ -373,4 +402,10 @@ export default {
     margin-left: auto;
     margin-right: auto;
   }
+  /* for date display and arrows to next/last dates */
+  .transparent-input{
+       background-color:rgba(255, 0, 0, 0) !important;
+       border:black !important;
+    }
+    
 </style>

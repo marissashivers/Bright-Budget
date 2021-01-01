@@ -6,6 +6,7 @@
       <button :disabled="currentPurchaseFilter=='lastThreeMonths'" type="button" class="btn btn-outline-primary" @click="filterPresetButtonHandle(3)">Last 3 Months</button>
       <button :disabled="currentPurchaseFilter=='lastYear'" type="button" class="btn btn-outline-primary" @click="filterPresetButtonHandle(12)">Last 365 Days</button>
       <button :disabled="currentPurchaseFilter=='custom'" type="button" class="btn btn-outline-primary" @click="filterCustomDates()">Custom</button>
+      
       <!-- Custom date filter -- only display if user clicked "custom" -->
       <b-card v-if="currentPurchaseFilter=='custom'" bg-variant="light" class="custom-container">
         <form>
@@ -353,11 +354,6 @@ export default {
   button {
     margin-right: 15px;
   }
-  .container {
-    padding-left: 50px;
-    padding-right: 50px;
-    margin: 25px;
-  }
   .buttons-container {
     text-align: center;
     display: block;
@@ -367,14 +363,5 @@ export default {
   }
   .custom-container {
     margin: 20px 250px;
-  }
-  .viz-container {
-    text-align: center;
-  }
-  .col-sm {
-    background-color: white;
-    margin: 10px;
-    padding: 10px;
-    font-size: 30px;
   }
 </style>
