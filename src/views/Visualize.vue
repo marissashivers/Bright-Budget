@@ -33,7 +33,7 @@
       <!-- first row -->
       <b-row>
         <b-col>
-            <b-card title="Spending habits over time" body-class="text-center" border-variant="primary" bg-variant="light">
+            <b-card title="Daily spending habits over time" body-class="text-center" border-variant="primary" bg-variant="light">
             <LineChart :data="this.chartDataLine" :options="this.chartOptionsLine"></LineChart>
           </b-card>
         </b-col>
@@ -293,7 +293,8 @@ export default {
       purchasesToMap.forEach(purch => {
         var purchDate = purch.createdAt.toDate();
         purchDate = purchDate.toDateString();
-        purchMap.set(purchDate, Math.round(100*(purchMap.get(purchDate) + purch.purchaseAmount))/100);
+        //purchMap.set(purchDate, Math.round(100*(purchMap.get(purchDate) + purch.purchaseAmount))/100);
+        purchMap.set(purchDate, parseFloat(purchMap.get(purchDate)) + parseFloat(purch.purchaseAmount));
       });
       return purchMap;
     },
