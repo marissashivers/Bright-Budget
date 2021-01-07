@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@fortawesome/free-brands-svg-icons": "^5.14.0",
+    "@popperjs/core": "^2.6.0",
     "bootstrap-vue": "^2.15.0",
     "chart.js": "^2.9.3",
     "core-js": "^3.6.4",
@@ -37,7 +38,6 @@
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "firebase": "^7.24.0",
-    "jquery": "^3.5.1",
     "popper.js": "^1.16.1",
     "sass": "^1.19.0",
     "sass-loader": "^8.0.0",

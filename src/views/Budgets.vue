@@ -155,13 +155,13 @@
         <template v-slot:header> 
           <div style="text-align:center;">
             <span class="glyphicon glyphicon-menu-left">
-              <!-- <button @click="getLastMonthPurchases(dateReference)">
+              <!-- <button @click="goBackOneMonth(dateReference)">
                 <font-awesome-icon icon="arrow-left" size="2x" />
               </button> -->
             </span>
             <span style="display:inline-block; font-size:large">
               <b-button-toolbar>
-                <button @click="getLastMonthPurchases(dateReference)">
+                <button @click="goBackOneMonth()">
                   <font-awesome-icon icon="arrow-left" size="2x" />
                 </button>
                 <b-input-group>
@@ -177,7 +177,7 @@
                   >
                   </datepicker>
                 </b-input-group>
-                <button @click="getNextMonthPurchases(dateReference)">
+                <button @click="goForwardOneMonth()">
                   <font-awesome-icon icon="arrow-right" size="2x" />
                 </button>
               </b-button-toolbar>
@@ -186,7 +186,7 @@
               </datepicker> -->
             </span>
             <span>
-              <!-- <button @click="getNextMonthPurchases(dateReference)">
+              <!-- <button @click="goForwardOneMonth(dateReference)">
                 <font-awesome-icon icon="arrow-right" size="2x" />
               </button> -->
             </span>
@@ -239,9 +239,11 @@ export default {
     purchasesFiltered: function() {
       this.categoriesMap = this.getPurchasesByCategory();
     },
+    // Update budget automatically when dateReference is changed - either by clicking left/right arrows or 
+    // selecting month from the datepicker
     dateReference: function() {
-      console.log("date changed");
-      // TODO: add logic here that updates the budgets displayed for the selected month
+      console.log("watch: date changed to: " + this.dateReference);
+      this.getSelectedMonthPurchases(this.dateReference);
     }
   },
   data() {
@@ -295,13 +297,6 @@ export default {
 
       return map;
     },
-    // getCurrentBudgetsArray() {
-    //   var arr = [];
-    //   this.budgets.forEach(item => {
-    //     arr.push(item.budgetCategory);
-    //   })
-    //   return arr;
-    // },
     computeVariant(amountSpent, budgetAmount) {
       if (parseFloat(amountSpent) > parseFloat(budgetAmount)) return "danger";
       else return "info";
@@ -316,41 +311,32 @@ export default {
         let date = purch.createdAt.toDate();
         return date >= firstDay && date <= lastDay;
       })
-      console.log(firstDay);
-      console.log(lastDay);
-      console.log("results");
-      console.log(this.getPurchases);
-      console.log(results);
       return results;
     },
-    getLastMonthPurchases(prevDate) {
-      // go back one month
-      var date = new Date(prevDate.getTime());
+    goBackOneMonth() {
+      var date = new Date(this.dateReference);
       date.setDate(0);
-      this.dateReference = date;
-      var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-      var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-      lastDay.setHours(23,59,59,999);
-      var results = this.getPurchases.filter(purch => {
-        let date = purch.createdAt.toDate();
-        return date >= firstDay && date <= lastDay;
-      })
-      this.purchasesFiltered = results;
-      return results;
-    },
-    getNextMonthPurchases(prevDate) {
-      // go forward one month
-      var date = new Date(prevDate.getTime());
       date.setDate(1);
-      date.setMonth(date.getMonth() + 1);
       this.dateReference = date;
+    },
+    goForwardOneMonth() {
+      var date = new Date(this.dateReference);
+      date.setDate(1);
+      date.setMonth(date.getMonth()+1, 1);
+      this.dateReference = date;
+    },
+    getSelectedMonthPurchases() {
+      // Get the month (first and last day) that the user picked from the date picker
+      var date = this.dateReference;
       var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
       var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
       lastDay.setHours(23,59,59,999);
+      // Get all purchases within the selected month
       var results = this.getPurchases.filter(purch => {
         let date = purch.createdAt.toDate();
         return date >= firstDay && date <= lastDay;
       })
+      // Set purchases to be displayed
       this.purchasesFiltered = results;
       return results;
     },
@@ -375,7 +361,6 @@ export default {
       this.$bvModal.hide('bv-modal-edit');
     },
   }, // end methods
-
 }
 </script>
 

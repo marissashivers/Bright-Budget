@@ -8,7 +8,6 @@ import store from './store'
 import { firestorePlugin } from 'vuefire'
 Vue.use(firestorePlugin)
 
-
 // Moment.js
 import moment from 'moment'
 Vue.prototype.moment = moment
@@ -16,6 +15,9 @@ Vue.prototype.moment = moment
 // Vuetify
 import vuetify from './plugins/vuetify';
 import "./plugins/firebase";
+
+// import 'bootstrap'; 
+// import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Bootstrap Vue
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
