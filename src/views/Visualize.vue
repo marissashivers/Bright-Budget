@@ -28,9 +28,7 @@
 
     <h4 class="font-weight-light text-center" style="text-align:center;">Dates displayed: {{ formatDate(this.startDateDisplay) }} to {{ formatDate(this.endDateDisplay) }}</h4>
 
-    <!-- BOOTSTRAP VUE GRID SYSTEM -->
     <b-container>
-      <!-- first row -->
       <b-row>
         <b-col>
             <b-card title="Daily spending habits over time" body-class="text-center" border-variant="primary" bg-variant="light">
@@ -38,21 +36,19 @@
           </b-card>
         </b-col>
       </b-row>
-      <!-- second row -->
-      <b-row>
-        <b-col>
+      <b-row class="justify-content-md-center">
+        <b-col sm="auto">
             <b-card border-variant="primary" bg-variant="light">
             <BarChart :data="this.chartDataBar" :options="this.chartOptionsBar"></BarChart>
           </b-card>
         </b-col>
-        <b-col>
+        <b-col sm="auto">
             <b-card body-class="text-center" border-variant="primary" bg-variant="light">
             <PieChart :data="this.chartDataPie" :options="this.chartOptionsPie"></PieChart>
           </b-card>
         </b-col>
       </b-row>
     </b-container>
-
 
   </div>
 </template>

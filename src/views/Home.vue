@@ -80,7 +80,10 @@ export default {
       else return "You're up late";
     }
   },
-  mounted() {
+  data() {
+    return {
+      dialog: false,
+    }
   },
   methods: {
   }

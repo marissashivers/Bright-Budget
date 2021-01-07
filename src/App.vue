@@ -85,7 +85,10 @@ $theme-colors: (
   primary: #352369,
   info: #908aa1,
 );
-$font-family-base: "Roboto", sans-serif;
-@import "node_modules/bootstrap/scss/bootstrap";
-@import url("https://fonts.googleapis.com/css2?family=Montserrat&family=Roboto&family=Source+Sans+Pro&display=swap");
+$primary:  #352369;
+// Bootstrap and its default variables
+@import '../node_modules/bootstrap/scss/bootstrap';
+// BootstrapVue and its default variables
+@import '../node_modules/bootstrap-vue/src/index.scss';
+
 </style>

@@ -16,7 +16,7 @@ Vue.prototype.moment = moment
 import vuetify from './plugins/vuetify';
 import "./plugins/firebase";
 
-// import 'bootstrap'; 
+import 'bootstrap'; 
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Bootstrap Vue
